@@ -3,16 +3,21 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
 from app.api.serializers import exercise_list_items
+from app.api.subjects import get_subject_or_404
 from app.core.deps import DB, CurrentUser
-from app.models.exercise import Attempt, Exercise, ExerciseNodeLink
+from app.models.document import Document
+from app.models.exercise import Attempt, Exercise, ExerciseNodeLink, ExercisePart
+from app.models.plan import Plan, PlanNode
 from app.models.subject import Subject
 from app.schemas.api import (
     AttemptCreate,
     AttemptOut,
+    ExerciseCreate,
     ExerciseFigureOut,
     ExerciseListItem,
     ExerciseOut,
     ExercisePartOut,
+    ExerciseUpdate,
 )
 
 router = APIRouter(prefix="/exercises", tags=["exercises"])
@@ -37,8 +42,15 @@ def _get_exercise(db: DB, exercise_id: int, user_id: int) -> Exercise:
 
 def _exercise_out(db: DB, ex: Exercise) -> ExerciseOut:
     item = exercise_list_items(db, [ex])[0]
+    doc_title = (
+        db.scalar(select(Document.title).where(Document.id == ex.document_id))
+        if ex.document_id
+        else None
+    )
     return ExerciseOut(
         **item.model_dump(),
+        document_id=ex.document_id,
+        document_title=doc_title,
         statement=ex.statement,
         hints=ex.hints,
         solution=ex.solution,
@@ -81,6 +93,84 @@ def list_exercises(
 @router.get("/{exercise_id}", response_model=ExerciseOut)
 def get(exercise_id: int, db: DB, user: CurrentUser) -> ExerciseOut:
     return _exercise_out(db, _get_exercise(db, exercise_id, user.id))
+
+
+def _subject_node_ids(db: DB, subject_id: int) -> set[int]:
+    return set(db.scalars(select(PlanNode.id).join(Plan).where(Plan.subject_id == subject_id)))
+
+
+@router.post("", response_model=ExerciseOut, status_code=201)
+def create(body: ExerciseCreate, db: DB, user: CurrentUser) -> ExerciseOut:
+    subject = get_subject_or_404(db, body.subject_id, user.id)
+    ex = Exercise(
+        subject_id=subject.id,
+        number=body.number,
+        title=body.title.strip(),
+        statement=body.statement,
+        hints=body.hints,
+        solution=body.solution,
+        difficulty=body.difficulty,
+        tags=body.tags,
+        source_label="Manual",
+    )
+    ex.parts = [
+        ExercisePart(
+            label=p.label, statement=p.statement, hints=p.hints, solution=p.solution, sort_order=i
+        )
+        for i, p in enumerate(body.parts)
+    ]
+    allowed = _subject_node_ids(db, subject.id)
+    ex.node_links = [
+        ExerciseNodeLink(node_id=n) for n in dict.fromkeys(body.node_ids) if n in allowed
+    ]
+    db.add(ex)
+    db.commit()
+    return _exercise_out(db, _get_exercise(db, ex.id, user.id))
+
+
+@router.patch("/{exercise_id}", response_model=ExerciseOut)
+def update(exercise_id: int, body: ExerciseUpdate, db: DB, user: CurrentUser) -> ExerciseOut:
+    ex = _get_exercise(db, exercise_id, user.id)
+    data = body.model_dump(exclude_unset=True)
+    parts = data.pop("parts", None)
+    node_ids = data.pop("node_ids", None)
+    if data.pop("clear_solution", False):
+        ex.solution = None
+        data.pop("solution", None)
+    if data.pop("clear_difficulty", False):
+        ex.difficulty = None
+        data.pop("difficulty", None)
+    for field, value in data.items():
+        setattr(
+            ex,
+            field,
+            value.strip() if isinstance(value, str) and field in ("title", "number") else value,
+        )
+    if parts is not None:
+        ex.parts = [
+            ExercisePart(
+                label=p.label,
+                statement=p.statement,
+                hints=p.hints,
+                solution=p.solution,
+                sort_order=i,
+            )
+            for i, p in enumerate(body.parts or [])
+        ]
+    if node_ids is not None:
+        allowed = _subject_node_ids(db, ex.subject_id)
+        ex.node_links = [
+            ExerciseNodeLink(node_id=n) for n in dict.fromkeys(node_ids) if n in allowed
+        ]
+    db.commit()
+    return _exercise_out(db, _get_exercise(db, exercise_id, user.id))
+
+
+@router.delete("/{exercise_id}", status_code=204)
+def delete(exercise_id: int, db: DB, user: CurrentUser) -> None:
+    ex = _get_exercise(db, exercise_id, user.id)
+    db.delete(ex)
+    db.commit()
 
 
 @router.post("/{exercise_id}/attempts", response_model=ExerciseOut, status_code=201)

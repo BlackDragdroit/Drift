@@ -127,12 +127,22 @@ docker compose up -d --build
    (all required prerequisites done).
 4. When the LLM revises the plan, import it again: content updates, progress and notes stay.
 5. **Export** a plan (with or without your progress) from the plan menu.
+6. **PDF exercise sheets:** on a subject page, upload a PDF under *Exercise sheets*, click
+   *Extract exercises* (choose a page range and the plan whose topics should be suggested). Claude
+   reads the pages in chunks; progress and token cost are shown live. When it is done, open
+   **Review**: the original page on the left, editable exercises on the right. Fix LaTeX, merge or
+   split exercises, delete noise, draw rectangles on the page to add or replace figures, confirm the
+   suggested topics, then **Save**. Every saved exercise keeps a link to its source page.
+   Scanned PDFs (no text layer) are sent as page images automatically.
+
+   Try the review screen without an API key: `cd backend && uv run python scripts/seed_review_job.py`.
 
 ## Roadmap
 
-- **Phase 1 (this):** subjects, plan import/validation/merge/export, mind map, outline, progress,
+- **Phase 1 (done):** subjects, plan import/validation/merge/export, mind map, outline, progress,
   notes, Docker/Coolify.
-- **Phase 2:** PDF exercise import (Claude extraction, figure cropping, review screen).
+- **Phase 2 (done):** PDF exercise import (Claude extraction with strict schema, chunking, figure
+  cropping, scanned fallback, review screen, exercise editing).
 - **Phase 3:** practice mode, schedule view, dashboard with streaks/weak spots, search, command
   palette, study timer.
 - **Phase 4:** FSRS flashcards, similar-exercise generation, backup/restore ZIP, PWA.

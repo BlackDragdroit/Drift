@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -11,6 +12,7 @@ from app.api.router import api_router
 from app.core.config import get_settings
 from app.core.db import get_engine, get_sessionmaker, run_migrations
 from app.core.security import ensure_owner_user, purge_expired_sessions
+from app.services.jobs import recover_stale_jobs, runner
 
 log = logging.getLogger("app")
 
@@ -22,11 +24,16 @@ async def lifespan(app: FastAPI):
     settings = get_settings()
     logging.basicConfig(level=settings.log_level.upper())
     run_migrations()
+    runner.attach(asyncio.get_running_loop())
     with get_sessionmaker()() as db:
         ensure_owner_user(db)
         purge_expired_sessions(db)
+        stale = recover_stale_jobs(db)
+        if stale:
+            log.warning("Marked %d interrupted extraction job(s) as failed", stale)
     log.info("Data directory: %s", settings.data_dir.resolve())
     yield
+    await runner.shutdown()
 
 
 def create_app() -> FastAPI:

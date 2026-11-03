@@ -7,7 +7,7 @@ from app.core.deps import DB, CurrentUser
 from app.core.text import slugify, unique_slug
 from app.models.plan import Plan, PlanNode
 from app.models.subject import Subject
-from app.schemas.api import SubjectCreate, SubjectOut, SubjectUpdate
+from app.schemas.api import SubjectCreate, SubjectNodeOut, SubjectOut, SubjectUpdate
 
 router = APIRouter(prefix="/subjects", tags=["subjects"])
 
@@ -91,3 +91,18 @@ def delete(subject_id: int, db: DB, user: CurrentUser) -> None:
     subject = get_subject_or_404(db, subject_id, user.id)
     db.delete(subject)
     db.commit()
+
+
+@router.get("/{subject_id}/nodes", response_model=list[SubjectNodeOut])
+def list_nodes(subject_id: int, db: DB, user: CurrentUser) -> list[SubjectNodeOut]:
+    get_subject_or_404(db, subject_id, user.id)
+    rows = db.execute(
+        select(PlanNode.id, PlanNode.key, PlanNode.title, Plan.id, Plan.title)
+        .join(Plan, Plan.id == PlanNode.plan_id)
+        .where(Plan.subject_id == subject_id, PlanNode.archived.is_(False))
+        .order_by(Plan.id, PlanNode.sort_order)
+    ).all()
+    return [
+        SubjectNodeOut(id=i, key=k, title=t, plan_id=pid, plan_title=pt)
+        for i, k, t, pid, pt in rows
+    ]

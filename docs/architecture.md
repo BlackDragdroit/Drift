@@ -29,7 +29,10 @@
 | `app/services/plan_export.py` | DB → plan JSON (optionally with progress/notes) |
 | `app/services/plan_prompt.py` | Generation prompt built from the pydantic models |
 | `app/services/graph.py` | Ready-to-learn, blocking prerequisites, aggregated progress, topological order |
-| `app/api/` | Routers: `auth`, `dashboard`, `subjects`, `plans`, `nodes`, `exercises`; `serializers.py` maps models → API |
+| `app/services/pdf.py` | PyMuPDF: inspect (page count, text layer), render pages, crop figures, sub-PDFs, content-addressed upload storage |
+| `app/services/extraction.py` | Claude extraction: output schema (`ChunkOut`), system/user prompts, forced tool call, validation retry, chunk planning, stitching, draft building, cost table |
+| `app/services/jobs.py` | In-process job runner (`JobRunner`), `run_extraction`, startup recovery |
+| `app/api/` | Routers: `auth`, `dashboard`, `subjects`, `plans`, `nodes`, `exercises`, `documents`, `jobs`, `files`; `serializers.py` maps models → API |
 | `alembic/` | Migrations (run automatically on startup) |
 | `tests/` | pytest: validation, merge, markdown, graph, API workflow |
 | `scripts/export_openapi.py` | Dumps `openapi.json` for the frontend type generator |
@@ -60,6 +63,22 @@ Type safety across the wire: `python scripts/export_openapi.py && npm run gen:ap
 3. `preview_import` diffs the spec against the existing plan (by plan id within the subject) → counts, per-node changes.
 4. UI shows issues/diff/options → `POST /api/plans/import` → `apply_import` in one transaction.
 5. Query cache invalidated → navigate to the plan.
+
+## Pipeline for a PDF import
+
+1. `POST /api/documents` (multipart) → stored content-addressed under `uploads/documents/`, inspected
+   with PyMuPDF (page count, text layer, sha256). Same content → same document.
+2. `POST /api/documents/{id}/extract` → `extraction_jobs` row (`pending`) → `JobRunner.start`.
+3. `run_extraction`: page range split into chunks → per chunk a sub-PDF (or JPEG pages for scans) +
+   topic list of the subject/plan → Claude with the forced `record_exercises` tool → pydantic
+   validation (one retry with feedback) → progress + tokens written after each chunk.
+4. `stitch` merges exercises crossing chunk boundaries; `build_drafts` crops every figure to PNG
+   under `uploads/figures/` → job status `review`, drafts stored on the job.
+5. Review screen (`/jobs/{id}/review`): page images from `/api/documents/{id}/pages/{n}`, drafts
+   edited client-side and autosaved via `PUT /api/jobs/{id}/draft`; drawing a rectangle calls
+   `POST /api/jobs/{id}/figures`.
+6. `POST /api/jobs/{id}/commit` → `exercises`, `exercise_parts`, `exercise_figures`,
+   `exercise_node_links`; job `done`.
 
 ## Data flow for the map
 

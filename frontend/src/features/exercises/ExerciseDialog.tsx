@@ -1,20 +1,30 @@
-import { Eye, EyeOff, Lightbulb } from 'lucide-react'
+import { Eye, EyeOff, FileText, Lightbulb, MoreHorizontal, Pencil, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
+import { pageImageUrl, useDeleteExercise } from '@/api/documents'
 import { useAddAttempt, useExercise } from '@/api/hooks'
 import type { AttemptResult, Exercise } from '@/api/types'
 import { Markdown } from '@/components/Markdown'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { Textarea } from '@/components/ui/input'
-import { Badge, Spinner } from '@/components/ui/misc'
+import { Badge, Dropdown, DropdownContent, DropdownItem, DropdownSeparator, DropdownTrigger, Spinner } from '@/components/ui/misc'
 import { t } from '@/i18n'
 import { cn, difficultyDots, formatDate } from '@/lib/utils'
 
+import { ExerciseEditDialog } from './ExerciseEditDialog'
 import { RESULT_COLOR } from './ExerciseRow'
 
 export function ExerciseDialog({ exerciseId, onClose }: { exerciseId: number | null; onClose: () => void }) {
   const { data: exercise, isLoading } = useExercise(exerciseId)
+  const del = useDeleteExercise()
+  const [editOpen, setEditOpen] = useState(false)
+  const [sourceOpen, setSourceOpen] = useState(false)
+
+  const onDelete = () => {
+    if (exercise && confirm(t('exercise.deleteConfirm'))) del.mutate(exercise.id, { onSuccess: onClose })
+  }
+
   return (
     <Dialog open={exerciseId !== null} onOpenChange={(v) => !v && onClose()}>
       <DialogContent
@@ -27,8 +37,58 @@ export function ExerciseDialog({ exerciseId, onClose }: { exerciseId: number | n
             <Spinner />
           </div>
         ) : (
-          <ExerciseBody key={exercise.id} exercise={exercise} />
+          <>
+            <div className="-mt-1 mb-3 flex items-center gap-1">
+              {exercise.document_id && exercise.page_from && (
+                <Button size="sm" variant="outline" onClick={() => setSourceOpen(true)}>
+                  <FileText className="h-3.5 w-3.5" /> {t('exercise.showSource')}
+                </Button>
+              )}
+              <Dropdown>
+                <DropdownTrigger asChild>
+                  <Button size="sm" variant="ghost" className="ml-auto" aria-label={t('common.more')}>
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                </DropdownTrigger>
+                <DropdownContent>
+                  <DropdownItem onSelect={() => setEditOpen(true)}>
+                    <Pencil className="h-4 w-4" /> {t('exercise.edit')}
+                  </DropdownItem>
+                  <DropdownSeparator />
+                  <DropdownItem danger onSelect={onDelete}>
+                    <Trash2 className="h-4 w-4" /> {t('exercise.delete')}
+                  </DropdownItem>
+                </DropdownContent>
+              </Dropdown>
+            </div>
+            <ExerciseBody key={exercise.id} exercise={exercise} />
+            <ExerciseEditDialog open={editOpen} onOpenChange={setEditOpen} exercise={exercise} subjectId={exercise.subject_id} />
+            {exercise.document_id && exercise.page_from && (
+              <SourcePageDialog open={sourceOpen} onOpenChange={setSourceOpen} documentId={exercise.document_id} pageFrom={exercise.page_from} pageTo={exercise.page_to ?? exercise.page_from} title={exercise.document_title ?? ''} />
+            )}
+          </>
         )}
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+function SourcePageDialog({ open, onOpenChange, documentId, pageFrom, pageTo, title }: { open: boolean; onOpenChange: (v: boolean) => void; documentId: number; pageFrom: number; pageTo: number; title: string }) {
+  const [page, setPage] = useState(pageFrom)
+  useEffect(() => { if (open) setPage(pageFrom) }, [open, pageFrom])
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent title={title} description={`p. ${page}`} className="max-w-3xl">
+        <div className="mb-2 flex items-center justify-center gap-2 text-sm">
+          <Button size="sm" variant="ghost" disabled={page <= 1} onClick={() => setPage(page - 1)}>‹</Button>
+          <span className="tabular-nums">{page}</span>
+          <Button size="sm" variant="ghost" onClick={() => setPage(page + 1)}>›</Button>
+          {pageTo > pageFrom && <span className="text-xs text-fg-subtle">({pageFrom}–{pageTo})</span>}
+          <Button size="sm" variant="link" asChild>
+            <a href={`/api/documents/${documentId}/file#page=${page}`} target="_blank" rel="noreferrer">{t('documents.openPdf')}</a>
+          </Button>
+        </div>
+        <img src={pageImageUrl(documentId, page, 2)} alt={`Page ${page}`} className="mx-auto w-full rounded-md border bg-white" />
       </DialogContent>
     </Dialog>
   )
@@ -46,6 +106,7 @@ function ExerciseBody({ exercise }: { exercise: Exercise }) {
   }, [exercise.id])
 
   const log = (result: AttemptResult) => addAttempt.mutate({ exerciseId: exercise.id, body: { result, notes } }, { onSuccess: () => setNotes('') })
+  const figureFor = (partId: number | null) => exercise.figures.filter((f) => f.part_id === partId)
 
   return (
     <div className="space-y-5">
@@ -57,11 +118,8 @@ function ExerciseBody({ exercise }: { exercise: Exercise }) {
       </div>
 
       {exercise.statement && <Markdown>{exercise.statement}</Markdown>}
-      {exercise.figures.map((f) => (
-        <figure key={f.id} className="overflow-hidden rounded-lg border bg-white">
-          <img src={f.url} alt={f.caption} className="mx-auto max-h-80 object-contain" />
-          {f.caption && <figcaption className="border-t px-3 py-1.5 text-xs text-fg-muted">{f.caption}</figcaption>}
-        </figure>
+      {figureFor(null).map((f) => (
+        <Figure key={f.id} url={f.url} caption={f.caption} />
       ))}
 
       {exercise.parts.length > 0 && (
@@ -72,6 +130,9 @@ function ExerciseBody({ exercise }: { exercise: Exercise }) {
                 <span className="mt-0.5 font-mono text-sm font-semibold text-fg-muted">{p.label})</span>
                 <div className="min-w-0 flex-1 space-y-2">
                   <Markdown>{p.statement}</Markdown>
+                  {figureFor(p.id).map((f) => (
+                    <Figure key={f.id} url={f.url} caption={f.caption} />
+                  ))}
                   <HintList hints={p.hints} />
                   {p.solution && <Solution text={p.solution} />}
                 </div>
@@ -144,6 +205,15 @@ function ExerciseBody({ exercise }: { exercise: Exercise }) {
         )}
       </section>
     </div>
+  )
+}
+
+function Figure({ url, caption }: { url: string; caption: string }) {
+  return (
+    <figure className="overflow-hidden rounded-lg border bg-white">
+      <img src={url} alt={caption} className="mx-auto max-h-80 object-contain" />
+      {caption && <figcaption className="border-t bg-bg-elevated px-3 py-1.5 text-xs text-fg-muted">{caption}</figcaption>}
+    </figure>
   )
 }
 

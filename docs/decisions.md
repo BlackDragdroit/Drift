@@ -61,3 +61,43 @@ now, German can be added as a second file.
 
 **Dev-only dependency audit finding** (`minimatch` via `openapi-typescript` → `@redocly/openapi-core`)
 is accepted: it is a code-generation tool that never ships to the browser or the server.
+
+## 2026-11-03 — Phase 2 (PDF exercise import)
+
+**Structured output via forced tool use.** Each chunk request forces the `record_exercises` tool
+whose `input_schema` is generated from the pydantic `ChunkOut` model (refs inlined). Output is
+validated with pydantic; on failure the request is retried once with the validation errors appended.
+A second failure fails the job with a readable error.
+
+**Chunking without overlap, stitching with flags.** Pages are sent in chunks of
+`EXTRACT_CHUNK_PAGES` (default 8; a 1-page remainder is folded into the previous chunk). Instead of
+overlapping pages (which produces duplicates), the model marks `continues_on_next` /
+`continues_from_previous`; adjacent flagged exercises with compatible numbers are merged.
+
+**Text PDFs go as PDF, scanned PDFs as JPEG pages.** `inspect_pdf` samples up to six pages; if fewer
+than half have a text layer the document is treated as scanned and each page is rendered at ~100 dpi
+JPEG. The sub-PDF path keeps the model's text extraction exact; the image path is the fallback.
+
+**Figures are cropped server-side at 200 dpi** from the model's normalised bounding boxes (ordered,
+clamped, +1% margin). Bad boxes are reported as notes, never fatal. The review screen lets you draw
+a replacement rectangle; the crop goes through the same endpoint.
+
+**Jobs run in-process, one at a time.** An `asyncio` task per job, guarded by a semaphore, progress
+written to SQLite after every chunk, cancellation checked between chunks. Jobs that were running
+when the process died are marked failed on startup ("start again"). Good enough for one user; a
+queue service would be the upgrade path.
+
+**Draft lives on the job.** The review screen autosaves the edited drafts to `extraction_jobs.draft`
+(debounced), so a reload or a phone/desktop switch never loses work. Commit turns drafts into
+`exercises` rows, links figures to parts by label, filters topic ids to the subject, skips empty
+drafts, and clears the draft.
+
+**Uploads are content-addressed per subject** (`uploads/documents/s{subject}-{sha16}.pdf`); the
+original filename lives in the database. Re-uploading the same file returns the existing document.
+Page previews are cached as PNG under `uploads/pages/`.
+
+**Cost estimate uses a static price table** (prefix-matched on the model id); unknown models show
+tokens only.
+
+**PyMuPDF pinned to 1.x.** 2.x pulls in onnxruntime/numpy for layout analysis that this project does
+not use (would add ~250 MB to the image).

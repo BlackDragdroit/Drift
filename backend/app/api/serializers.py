@@ -5,11 +5,16 @@ from __future__ import annotations
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, selectinload
 
+from app.models.document import ExtractionJob
 from app.models.exercise import Attempt, Exercise, ExerciseNodeLink
 from app.models.plan import Plan, PlanNode
 from app.models.subject import Subject
 from app.schemas.api import (
+    DocumentOut,
+    ExerciseDraft,
     ExerciseListItem,
+    JobDetailOut,
+    JobOut,
     NodeOut,
     NodeProgressOut,
     PlanDetailOut,
@@ -18,6 +23,7 @@ from app.schemas.api import (
     ProgressSummary,
     SubjectOut,
 )
+from app.services.extraction import estimate_cost_usd
 from app.services.graph import NodeState, compute_progress, compute_states
 
 
@@ -186,6 +192,41 @@ def exercise_list_items(db: Session, exercises: list[Exercise]) -> list[Exercise
         )
         for e in exercises
     ]
+
+
+def job_out(job: ExtractionJob) -> JobOut:
+    return JobOut(
+        id=job.id,
+        document_id=job.document_id,
+        plan_id=job.plan_id,
+        status=job.status,
+        model=job.model,
+        page_from=job.page_from,
+        page_to=job.page_to,
+        chunks_total=job.chunks_total,
+        chunks_done=job.chunks_done,
+        current_pages=job.current_pages,
+        used_images=job.used_images,
+        error=job.error,
+        notes=job.notes or [],
+        input_tokens=job.input_tokens,
+        output_tokens=job.output_tokens,
+        estimated_cost_usd=estimate_cost_usd(job.model, job.input_tokens, job.output_tokens),
+        created_exercise_ids=job.created_exercise_ids or [],
+        created_at=job.created_at,
+        started_at=job.started_at,
+        finished_at=job.finished_at,
+    )
+
+
+def job_detail_out(job: ExtractionJob, document: DocumentOut) -> JobDetailOut:
+    drafts = None
+    if job.draft is not None:
+        drafts = []
+        for d in job.draft:
+            figures = [{**f, "url": f"/api/files/{f['path']}"} for f in d.get("figures", [])]
+            drafts.append(ExerciseDraft.model_validate({**d, "figures": figures}))
+    return JobDetailOut(**job_out(job).model_dump(), draft=drafts, document=document)
 
 
 def load_subject(db: Session, subject_id: int, user_id: int) -> Subject | None:

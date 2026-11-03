@@ -275,6 +275,8 @@ class ExerciseListItem(ORMModel):
 
 
 class ExerciseOut(ExerciseListItem):
+    document_id: int | None = None
+    document_title: str | None = None
     statement: str
     hints: list[str]
     solution: str | None
@@ -304,3 +306,151 @@ class NodeDetailOut(NodeOut):
 
 class GenerationPromptOut(BaseModel):
     prompt: str
+
+
+class SubjectNodeOut(BaseModel):
+    id: int
+    key: str
+    title: str
+    plan_id: int
+    plan_title: str
+
+
+# ----------------------------------------------------------------------------- exercise editing
+
+
+class ExercisePartIn(BaseModel):
+    label: str = Field(min_length=1, max_length=16)
+    statement: str = ""
+    hints: list[str] = []
+    solution: str | None = None
+
+
+class ExerciseUpdate(BaseModel):
+    number: str | None = Field(None, max_length=32)
+    title: str | None = Field(None, max_length=200)
+    statement: str | None = None
+    hints: list[str] | None = None
+    solution: str | None = None
+    clear_solution: bool = False
+    difficulty: int | None = Field(None, ge=1, le=5)
+    clear_difficulty: bool = False
+    tags: list[str] | None = None
+    parts: list[ExercisePartIn] | None = None
+    node_ids: list[int] | None = None
+
+
+class ExerciseCreate(BaseModel):
+    subject_id: int
+    number: str | None = Field(None, max_length=32)
+    title: str = Field(min_length=1, max_length=200)
+    statement: str = ""
+    hints: list[str] = []
+    solution: str | None = None
+    difficulty: int | None = Field(None, ge=1, le=5)
+    tags: list[str] = []
+    parts: list[ExercisePartIn] = []
+    node_ids: list[int] = []
+
+
+# ----------------------------------------------------------------------------- documents & extraction
+
+
+class JobOut(ORMModel):
+    id: int
+    document_id: int
+    plan_id: int | None
+    status: Literal["pending", "running", "review", "done", "failed", "cancelled"]
+    model: str
+    page_from: int
+    page_to: int
+    chunks_total: int
+    chunks_done: int
+    current_pages: str | None
+    used_images: bool
+    error: str | None
+    notes: list[str]
+    input_tokens: int
+    output_tokens: int
+    estimated_cost_usd: float | None = None
+    created_exercise_ids: list[int]
+    created_at: datetime
+    started_at: datetime | None
+    finished_at: datetime | None
+
+
+class DocumentOut(ORMModel):
+    id: int
+    subject_id: int
+    filename: str
+    title: str
+    page_count: int
+    size_bytes: int
+    has_text_layer: bool
+    created_at: datetime
+    exercise_count: int = 0
+    latest_job: JobOut | None = None
+
+
+class StartExtractionRequest(BaseModel):
+    plan_id: int | None = None
+    page_from: int | None = Field(None, ge=1)
+    page_to: int | None = Field(None, ge=1)
+
+
+class FigureDraft(BaseModel):
+    id: str
+    page: int
+    bbox: list[float] = Field(min_length=4, max_length=4)
+    caption: str = ""
+    part_label: str | None = None
+    path: str
+    url: str | None = None
+
+
+class PartDraft(BaseModel):
+    id: str
+    label: str = Field(min_length=1, max_length=16)
+    statement: str = ""
+    hints: list[str] = []
+    solution: str | None = None
+
+
+class ExerciseDraft(BaseModel):
+    id: str
+    number: str | None = None
+    title: str = ""
+    statement: str = ""
+    parts: list[PartDraft] = []
+    hints: list[str] = []
+    solution: str | None = None
+    difficulty: int | None = Field(None, ge=1, le=5)
+    page_from: int
+    page_to: int
+    figures: list[FigureDraft] = []
+    node_ids: list[int] = []
+    suggested_node_ids: list[int] = []
+
+
+class JobDetailOut(JobOut):
+    draft: list[ExerciseDraft] | None = None
+    document: DocumentOut
+
+
+class DraftUpdate(BaseModel):
+    exercises: list[ExerciseDraft]
+
+
+class CropRequest(BaseModel):
+    page: int = Field(ge=1)
+    bbox: list[float] = Field(min_length=4, max_length=4)
+    caption: str = ""
+
+
+class CommitRequest(BaseModel):
+    exercises: list[ExerciseDraft]
+
+
+class CommitOut(BaseModel):
+    exercise_ids: list[int]
+    skipped: int

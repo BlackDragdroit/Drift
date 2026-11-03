@@ -151,7 +151,7 @@ def test_embedded_exercises_and_flashcards_merge_by_key(db_session):
     subject = make_subject(db_session)
     plan = import_fixture(db_session, subject)
     ex = db_session.scalar(select(Exercise).where(Exercise.key == "lti-systems/rect-conv"))
-    db_session.add(Attempt(exercise_id=ex.id, result="solved"))
+    ex.attempts.append(Attempt(result="solved"))
     # user-created flashcard without key must survive
     node(plan, "complex-numbers").flashcards.append(
         Flashcard(key=None, front="mine", back="also mine")

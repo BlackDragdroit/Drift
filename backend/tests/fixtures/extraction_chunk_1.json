@@ -1,0 +1,28 @@
+{
+  "exercises": [
+    {
+      "number": "1",
+      "title": "Convolution of rectangles",
+      "statement": "Let $x(t) = \\mathrm{rect}(t)$ and $h(t) = \\mathrm{rect}(t/2)$.",
+      "parts": [
+        { "label": "a", "statement": "Sketch both signals." },
+        { "label": "b", "statement": "Compute $y(t) = (x * h)(t)$.", "solution": "A trapezoid." }
+      ],
+      "difficulty": 2,
+      "page_from": 1,
+      "page_to": 1,
+      "figures": [{ "page": 1, "bbox": [0.25, 0.35, 0.76, 0.62], "caption": "Figure 1: a blue box" }],
+      "suggested_node_ids": [1, 999]
+    },
+    {
+      "number": "2",
+      "title": "Impulse response",
+      "statement": "An LTI system has $h(t) = e^{-2t}u(t)$. Find the response to",
+      "parts": [{ "label": "a", "statement": "$x(t) = u(t)$." }],
+      "page_from": 2,
+      "page_to": 2,
+      "continues_on_next": true
+    }
+  ],
+  "notes": ["Solutions for exercise 1 are printed inline."]
+}

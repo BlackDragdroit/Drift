@@ -6,6 +6,7 @@ import { useDeleteSubject, useExercises, useSubject } from '@/api/hooks'
 import { PageHeader } from '@/components/layout/AppShell'
 import { Button } from '@/components/ui/button'
 import { Badge, Dropdown, DropdownContent, DropdownItem, DropdownSeparator, DropdownTrigger, EmptyState, ProgressBar, Spinner } from '@/components/ui/misc'
+import { DocumentsSection } from '@/features/documents/DocumentsSection'
 import { ExerciseDialog } from '@/features/exercises/ExerciseDialog'
 import { ExerciseRow } from '@/features/exercises/ExerciseRow'
 import { GenerationPromptDialog } from '@/features/plans/GenerationPromptDialog'
@@ -138,6 +139,8 @@ export function SubjectPage() {
             </ul>
           )}
         </section>
+
+        <DocumentsSection subjectId={subject.id} plans={subject.plans} />
 
         <section>
           <h2 className="mb-2.5 flex items-center gap-2 text-sm font-semibold tracking-tight">

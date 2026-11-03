@@ -338,6 +338,52 @@
     }
    }
   },
+  "/api/subjects/{subject_id}/nodes": {
+   "get": {
+    "tags": [
+     "subjects"
+    ],
+    "summary": "List Nodes",
+    "operationId": "list_nodes_api_subjects__subject_id__nodes_get",
+    "parameters": [
+     {
+      "name": "subject_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Subject Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/SubjectNodeOut"
+         },
+         "title": "Response List Nodes Api Subjects  Subject Id  Nodes Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
   "/api/plans/schema.json": {
    "get": {
     "tags": [
@@ -1048,6 +1094,45 @@
       }
      }
     }
+   },
+   "post": {
+    "tags": [
+     "exercises"
+    ],
+    "summary": "Create",
+    "operationId": "create_api_exercises_post",
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ExerciseCreate"
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ExerciseOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
    }
   },
   "/api/exercises/{exercise_id}": {
@@ -1078,6 +1163,89 @@
         }
        }
       }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "patch": {
+    "tags": [
+     "exercises"
+    ],
+    "summary": "Update",
+    "operationId": "update_api_exercises__exercise_id__patch",
+    "parameters": [
+     {
+      "name": "exercise_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Exercise Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ExerciseUpdate"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ExerciseOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "delete": {
+    "tags": [
+     "exercises"
+    ],
+    "summary": "Delete",
+    "operationId": "delete_api_exercises__exercise_id__delete",
+    "parameters": [
+     {
+      "name": "exercise_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Exercise Id"
+      }
+     }
+    ],
+    "responses": {
+     "204": {
+      "description": "Successful Response"
      },
      "422": {
       "description": "Validation Error",
@@ -1187,6 +1355,706 @@
      }
     }
    }
+  },
+  "/api/documents": {
+   "get": {
+    "tags": [
+     "documents"
+    ],
+    "summary": "List Documents",
+    "operationId": "list_documents_api_documents_get",
+    "parameters": [
+     {
+      "name": "subject_id",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "integer"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Subject Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/DocumentOut"
+         },
+         "title": "Response List Documents Api Documents Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "post": {
+    "tags": [
+     "documents"
+    ],
+    "summary": "Upload",
+    "operationId": "upload_api_documents_post",
+    "requestBody": {
+     "required": true,
+     "content": {
+      "multipart/form-data": {
+       "schema": {
+        "$ref": "#/components/schemas/Body_upload_api_documents_post"
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DocumentOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/documents/{document_id}": {
+   "get": {
+    "tags": [
+     "documents"
+    ],
+    "summary": "Get",
+    "operationId": "get_api_documents__document_id__get",
+    "parameters": [
+     {
+      "name": "document_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Document Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DocumentOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "delete": {
+    "tags": [
+     "documents"
+    ],
+    "summary": "Delete",
+    "operationId": "delete_api_documents__document_id__delete",
+    "parameters": [
+     {
+      "name": "document_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Document Id"
+      }
+     }
+    ],
+    "responses": {
+     "204": {
+      "description": "Successful Response"
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/documents/{document_id}/file": {
+   "get": {
+    "tags": [
+     "documents"
+    ],
+    "summary": "File",
+    "operationId": "file_api_documents__document_id__file_get",
+    "parameters": [
+     {
+      "name": "document_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Document Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/documents/{document_id}/pages/{page}": {
+   "get": {
+    "tags": [
+     "documents"
+    ],
+    "summary": "Page Image",
+    "operationId": "page_image_api_documents__document_id__pages__page__get",
+    "parameters": [
+     {
+      "name": "document_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Document Id"
+      }
+     },
+     {
+      "name": "page",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Page"
+      }
+     },
+     {
+      "name": "zoom",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "number",
+       "default": 1.5,
+       "title": "Zoom"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/documents/{document_id}/extract": {
+   "post": {
+    "tags": [
+     "documents"
+    ],
+    "summary": "Start Extraction",
+    "operationId": "start_extraction_api_documents__document_id__extract_post",
+    "parameters": [
+     {
+      "name": "document_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Document Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/StartExtractionRequest"
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/JobOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/jobs": {
+   "get": {
+    "tags": [
+     "jobs"
+    ],
+    "summary": "List Jobs",
+    "operationId": "list_jobs_api_jobs_get",
+    "parameters": [
+     {
+      "name": "document_id",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "integer"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Document Id"
+      }
+     },
+     {
+      "name": "subject_id",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "integer"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Subject Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/JobOut"
+         },
+         "title": "Response List Jobs Api Jobs Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/jobs/{job_id}": {
+   "get": {
+    "tags": [
+     "jobs"
+    ],
+    "summary": "Get",
+    "operationId": "get_api_jobs__job_id__get",
+    "parameters": [
+     {
+      "name": "job_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Job Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/JobDetailOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "delete": {
+    "tags": [
+     "jobs"
+    ],
+    "summary": "Delete",
+    "operationId": "delete_api_jobs__job_id__delete",
+    "parameters": [
+     {
+      "name": "job_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Job Id"
+      }
+     }
+    ],
+    "responses": {
+     "204": {
+      "description": "Successful Response"
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/jobs/{job_id}/cancel": {
+   "post": {
+    "tags": [
+     "jobs"
+    ],
+    "summary": "Cancel",
+    "operationId": "cancel_api_jobs__job_id__cancel_post",
+    "parameters": [
+     {
+      "name": "job_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Job Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/JobOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/jobs/{job_id}/draft": {
+   "put": {
+    "tags": [
+     "jobs"
+    ],
+    "summary": "Save Draft",
+    "operationId": "save_draft_api_jobs__job_id__draft_put",
+    "parameters": [
+     {
+      "name": "job_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Job Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/DraftUpdate"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/JobDetailOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/jobs/{job_id}/figures": {
+   "post": {
+    "tags": [
+     "jobs"
+    ],
+    "summary": "Crop",
+    "operationId": "crop_api_jobs__job_id__figures_post",
+    "parameters": [
+     {
+      "name": "job_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Job Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/CropRequest"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FigureDraft"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/jobs/{job_id}/commit": {
+   "post": {
+    "tags": [
+     "jobs"
+    ],
+    "summary": "Commit",
+    "operationId": "commit_api_jobs__job_id__commit_post",
+    "parameters": [
+     {
+      "name": "job_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Job Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/CommitRequest"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/CommitOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/files/{path}": {
+   "get": {
+    "tags": [
+     "files"
+    ],
+    "summary": "Serve",
+    "operationId": "serve_api_files__path__get",
+    "parameters": [
+     {
+      "name": "path",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Path"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
   }
  },
  "components": {
@@ -1271,6 +2139,102 @@
      "created_at"
     ],
     "title": "AttemptOut"
+   },
+   "Body_upload_api_documents_post": {
+    "properties": {
+     "file": {
+      "type": "string",
+      "contentMediaType": "application/octet-stream",
+      "title": "File"
+     },
+     "subject_id": {
+      "type": "integer",
+      "title": "Subject Id"
+     },
+     "title": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Title"
+     }
+    },
+    "type": "object",
+    "required": [
+     "file",
+     "subject_id"
+    ],
+    "title": "Body_upload_api_documents_post"
+   },
+   "CommitOut": {
+    "properties": {
+     "exercise_ids": {
+      "items": {
+       "type": "integer"
+      },
+      "type": "array",
+      "title": "Exercise Ids"
+     },
+     "skipped": {
+      "type": "integer",
+      "title": "Skipped"
+     }
+    },
+    "type": "object",
+    "required": [
+     "exercise_ids",
+     "skipped"
+    ],
+    "title": "CommitOut"
+   },
+   "CommitRequest": {
+    "properties": {
+     "exercises": {
+      "items": {
+       "$ref": "#/components/schemas/ExerciseDraft"
+      },
+      "type": "array",
+      "title": "Exercises"
+     }
+    },
+    "type": "object",
+    "required": [
+     "exercises"
+    ],
+    "title": "CommitRequest"
+   },
+   "CropRequest": {
+    "properties": {
+     "page": {
+      "type": "integer",
+      "minimum": 1.0,
+      "title": "Page"
+     },
+     "bbox": {
+      "items": {
+       "type": "number"
+      },
+      "type": "array",
+      "maxItems": 4,
+      "minItems": 4,
+      "title": "Bbox"
+     },
+     "caption": {
+      "type": "string",
+      "title": "Caption",
+      "default": ""
+     }
+    },
+    "type": "object",
+    "required": [
+     "page",
+     "bbox"
+    ],
+    "title": "CropRequest"
    },
    "DashboardExam": {
     "properties": {
@@ -1459,6 +2423,287 @@
      "in_progress"
     ],
     "title": "DashboardOut"
+   },
+   "DocumentOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "subject_id": {
+      "type": "integer",
+      "title": "Subject Id"
+     },
+     "filename": {
+      "type": "string",
+      "title": "Filename"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "page_count": {
+      "type": "integer",
+      "title": "Page Count"
+     },
+     "size_bytes": {
+      "type": "integer",
+      "title": "Size Bytes"
+     },
+     "has_text_layer": {
+      "type": "boolean",
+      "title": "Has Text Layer"
+     },
+     "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Created At"
+     },
+     "exercise_count": {
+      "type": "integer",
+      "title": "Exercise Count",
+      "default": 0
+     },
+     "latest_job": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/JobOut"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "subject_id",
+     "filename",
+     "title",
+     "page_count",
+     "size_bytes",
+     "has_text_layer",
+     "created_at"
+    ],
+    "title": "DocumentOut"
+   },
+   "DraftUpdate": {
+    "properties": {
+     "exercises": {
+      "items": {
+       "$ref": "#/components/schemas/ExerciseDraft"
+      },
+      "type": "array",
+      "title": "Exercises"
+     }
+    },
+    "type": "object",
+    "required": [
+     "exercises"
+    ],
+    "title": "DraftUpdate"
+   },
+   "ExerciseCreate": {
+    "properties": {
+     "subject_id": {
+      "type": "integer",
+      "title": "Subject Id"
+     },
+     "number": {
+      "anyOf": [
+       {
+        "type": "string",
+        "maxLength": 32
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Number"
+     },
+     "title": {
+      "type": "string",
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Title"
+     },
+     "statement": {
+      "type": "string",
+      "title": "Statement",
+      "default": ""
+     },
+     "hints": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Hints",
+      "default": []
+     },
+     "solution": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Solution"
+     },
+     "difficulty": {
+      "anyOf": [
+       {
+        "type": "integer",
+        "maximum": 5.0,
+        "minimum": 1.0
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Difficulty"
+     },
+     "tags": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Tags",
+      "default": []
+     },
+     "parts": {
+      "items": {
+       "$ref": "#/components/schemas/ExercisePartIn"
+      },
+      "type": "array",
+      "title": "Parts",
+      "default": []
+     },
+     "node_ids": {
+      "items": {
+       "type": "integer"
+      },
+      "type": "array",
+      "title": "Node Ids",
+      "default": []
+     }
+    },
+    "type": "object",
+    "required": [
+     "subject_id",
+     "title"
+    ],
+    "title": "ExerciseCreate"
+   },
+   "ExerciseDraft": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "number": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Number"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title",
+      "default": ""
+     },
+     "statement": {
+      "type": "string",
+      "title": "Statement",
+      "default": ""
+     },
+     "parts": {
+      "items": {
+       "$ref": "#/components/schemas/PartDraft"
+      },
+      "type": "array",
+      "title": "Parts",
+      "default": []
+     },
+     "hints": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Hints",
+      "default": []
+     },
+     "solution": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Solution"
+     },
+     "difficulty": {
+      "anyOf": [
+       {
+        "type": "integer",
+        "maximum": 5.0,
+        "minimum": 1.0
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Difficulty"
+     },
+     "page_from": {
+      "type": "integer",
+      "title": "Page From"
+     },
+     "page_to": {
+      "type": "integer",
+      "title": "Page To"
+     },
+     "figures": {
+      "items": {
+       "$ref": "#/components/schemas/FigureDraft"
+      },
+      "type": "array",
+      "title": "Figures",
+      "default": []
+     },
+     "node_ids": {
+      "items": {
+       "type": "integer"
+      },
+      "type": "array",
+      "title": "Node Ids",
+      "default": []
+     },
+     "suggested_node_ids": {
+      "items": {
+       "type": "integer"
+      },
+      "type": "array",
+      "title": "Suggested Node Ids",
+      "default": []
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "page_from",
+     "page_to"
+    ],
+    "title": "ExerciseDraft"
    },
    "ExerciseFigureOut": {
     "properties": {
@@ -1671,6 +2916,28 @@
       "title": "Attempt Count",
       "default": 0
      },
+     "document_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Document Id"
+     },
+     "document_title": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Document Title"
+     },
      "statement": {
       "type": "string",
       "title": "Statement"
@@ -1772,6 +3039,45 @@
     ],
     "title": "ExerciseOut"
    },
+   "ExercisePartIn": {
+    "properties": {
+     "label": {
+      "type": "string",
+      "maxLength": 16,
+      "minLength": 1,
+      "title": "Label"
+     },
+     "statement": {
+      "type": "string",
+      "title": "Statement",
+      "default": ""
+     },
+     "hints": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Hints",
+      "default": []
+     },
+     "solution": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Solution"
+     }
+    },
+    "type": "object",
+    "required": [
+     "label"
+    ],
+    "title": "ExercisePartIn"
+   },
    "ExercisePartOut": {
     "properties": {
      "id": {
@@ -1814,6 +3120,197 @@
      "solution"
     ],
     "title": "ExercisePartOut"
+   },
+   "ExerciseUpdate": {
+    "properties": {
+     "number": {
+      "anyOf": [
+       {
+        "type": "string",
+        "maxLength": 32
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Number"
+     },
+     "title": {
+      "anyOf": [
+       {
+        "type": "string",
+        "maxLength": 200
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Title"
+     },
+     "statement": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Statement"
+     },
+     "hints": {
+      "anyOf": [
+       {
+        "items": {
+         "type": "string"
+        },
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Hints"
+     },
+     "solution": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Solution"
+     },
+     "clear_solution": {
+      "type": "boolean",
+      "title": "Clear Solution",
+      "default": false
+     },
+     "difficulty": {
+      "anyOf": [
+       {
+        "type": "integer",
+        "maximum": 5.0,
+        "minimum": 1.0
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Difficulty"
+     },
+     "clear_difficulty": {
+      "type": "boolean",
+      "title": "Clear Difficulty",
+      "default": false
+     },
+     "tags": {
+      "anyOf": [
+       {
+        "items": {
+         "type": "string"
+        },
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Tags"
+     },
+     "parts": {
+      "anyOf": [
+       {
+        "items": {
+         "$ref": "#/components/schemas/ExercisePartIn"
+        },
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Parts"
+     },
+     "node_ids": {
+      "anyOf": [
+       {
+        "items": {
+         "type": "integer"
+        },
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Node Ids"
+     }
+    },
+    "type": "object",
+    "title": "ExerciseUpdate"
+   },
+   "FigureDraft": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "page": {
+      "type": "integer",
+      "title": "Page"
+     },
+     "bbox": {
+      "items": {
+       "type": "number"
+      },
+      "type": "array",
+      "maxItems": 4,
+      "minItems": 4,
+      "title": "Bbox"
+     },
+     "caption": {
+      "type": "string",
+      "title": "Caption",
+      "default": ""
+     },
+     "part_label": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Part Label"
+     },
+     "path": {
+      "type": "string",
+      "title": "Path"
+     },
+     "url": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Url"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "page",
+     "bbox",
+     "path"
+    ],
+    "title": "FigureDraft"
    },
    "FlashcardOut": {
     "properties": {
@@ -2181,6 +3678,356 @@
      "severity"
     ],
     "title": "IssueOut"
+   },
+   "JobDetailOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "document_id": {
+      "type": "integer",
+      "title": "Document Id"
+     },
+     "plan_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Plan Id"
+     },
+     "status": {
+      "type": "string",
+      "enum": [
+       "pending",
+       "running",
+       "review",
+       "done",
+       "failed",
+       "cancelled"
+      ],
+      "title": "Status"
+     },
+     "model": {
+      "type": "string",
+      "title": "Model"
+     },
+     "page_from": {
+      "type": "integer",
+      "title": "Page From"
+     },
+     "page_to": {
+      "type": "integer",
+      "title": "Page To"
+     },
+     "chunks_total": {
+      "type": "integer",
+      "title": "Chunks Total"
+     },
+     "chunks_done": {
+      "type": "integer",
+      "title": "Chunks Done"
+     },
+     "current_pages": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Current Pages"
+     },
+     "used_images": {
+      "type": "boolean",
+      "title": "Used Images"
+     },
+     "error": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Error"
+     },
+     "notes": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Notes"
+     },
+     "input_tokens": {
+      "type": "integer",
+      "title": "Input Tokens"
+     },
+     "output_tokens": {
+      "type": "integer",
+      "title": "Output Tokens"
+     },
+     "estimated_cost_usd": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Estimated Cost Usd"
+     },
+     "created_exercise_ids": {
+      "items": {
+       "type": "integer"
+      },
+      "type": "array",
+      "title": "Created Exercise Ids"
+     },
+     "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Created At"
+     },
+     "started_at": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date-time"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Started At"
+     },
+     "finished_at": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date-time"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Finished At"
+     },
+     "draft": {
+      "anyOf": [
+       {
+        "items": {
+         "$ref": "#/components/schemas/ExerciseDraft"
+        },
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Draft"
+     },
+     "document": {
+      "$ref": "#/components/schemas/DocumentOut"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "document_id",
+     "plan_id",
+     "status",
+     "model",
+     "page_from",
+     "page_to",
+     "chunks_total",
+     "chunks_done",
+     "current_pages",
+     "used_images",
+     "error",
+     "notes",
+     "input_tokens",
+     "output_tokens",
+     "created_exercise_ids",
+     "created_at",
+     "started_at",
+     "finished_at",
+     "document"
+    ],
+    "title": "JobDetailOut"
+   },
+   "JobOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "document_id": {
+      "type": "integer",
+      "title": "Document Id"
+     },
+     "plan_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Plan Id"
+     },
+     "status": {
+      "type": "string",
+      "enum": [
+       "pending",
+       "running",
+       "review",
+       "done",
+       "failed",
+       "cancelled"
+      ],
+      "title": "Status"
+     },
+     "model": {
+      "type": "string",
+      "title": "Model"
+     },
+     "page_from": {
+      "type": "integer",
+      "title": "Page From"
+     },
+     "page_to": {
+      "type": "integer",
+      "title": "Page To"
+     },
+     "chunks_total": {
+      "type": "integer",
+      "title": "Chunks Total"
+     },
+     "chunks_done": {
+      "type": "integer",
+      "title": "Chunks Done"
+     },
+     "current_pages": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Current Pages"
+     },
+     "used_images": {
+      "type": "boolean",
+      "title": "Used Images"
+     },
+     "error": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Error"
+     },
+     "notes": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Notes"
+     },
+     "input_tokens": {
+      "type": "integer",
+      "title": "Input Tokens"
+     },
+     "output_tokens": {
+      "type": "integer",
+      "title": "Output Tokens"
+     },
+     "estimated_cost_usd": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Estimated Cost Usd"
+     },
+     "created_exercise_ids": {
+      "items": {
+       "type": "integer"
+      },
+      "type": "array",
+      "title": "Created Exercise Ids"
+     },
+     "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Created At"
+     },
+     "started_at": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date-time"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Started At"
+     },
+     "finished_at": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date-time"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Finished At"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "document_id",
+     "plan_id",
+     "status",
+     "model",
+     "page_from",
+     "page_to",
+     "chunks_total",
+     "chunks_done",
+     "current_pages",
+     "used_images",
+     "error",
+     "notes",
+     "input_tokens",
+     "output_tokens",
+     "created_exercise_ids",
+     "created_at",
+     "started_at",
+     "finished_at"
+    ],
+    "title": "JobOut"
    },
    "LoginRequest": {
     "properties": {
@@ -2759,6 +4606,50 @@
     ],
     "title": "NoteUpdate"
    },
+   "PartDraft": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "label": {
+      "type": "string",
+      "maxLength": 16,
+      "minLength": 1,
+      "title": "Label"
+     },
+     "statement": {
+      "type": "string",
+      "title": "Statement",
+      "default": ""
+     },
+     "hints": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Hints",
+      "default": []
+     },
+     "solution": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Solution"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "label"
+    ],
+    "title": "PartDraft"
+   },
    "PlanDetailOut": {
     "properties": {
      "id": {
@@ -3186,6 +5077,47 @@
     ],
     "title": "ProgressUpdate"
    },
+   "StartExtractionRequest": {
+    "properties": {
+     "plan_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Plan Id"
+     },
+     "page_from": {
+      "anyOf": [
+       {
+        "type": "integer",
+        "minimum": 1.0
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Page From"
+     },
+     "page_to": {
+      "anyOf": [
+       {
+        "type": "integer",
+        "minimum": 1.0
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Page To"
+     }
+    },
+    "type": "object",
+    "title": "StartExtractionRequest"
+   },
    "SubjectCreate": {
     "properties": {
      "name": {
@@ -3217,6 +5149,39 @@
      "name"
     ],
     "title": "SubjectCreate"
+   },
+   "SubjectNodeOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "key": {
+      "type": "string",
+      "title": "Key"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "plan_id": {
+      "type": "integer",
+      "title": "Plan Id"
+     },
+     "plan_title": {
+      "type": "string",
+      "title": "Plan Title"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "key",
+     "title",
+     "plan_id",
+     "plan_title"
+    ],
+    "title": "SubjectNodeOut"
    },
    "SubjectOut": {
     "properties": {

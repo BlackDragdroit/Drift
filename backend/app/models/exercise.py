@@ -32,7 +32,9 @@ class Exercise(TimestampMixin, Base):
     tags: Mapped[list[str]] = mapped_column(JSON, default=list, nullable=False)
     source_label: Mapped[str | None] = mapped_column(String(200))
     # Phase 2: link to the uploaded PDF and page range.
-    document_id: Mapped[int | None] = mapped_column(Integer, index=True)
+    document_id: Mapped[int | None] = mapped_column(
+        ForeignKey("documents.id", ondelete="SET NULL"), index=True
+    )
     page_from: Mapped[int | None] = mapped_column(Integer)
     page_to: Mapped[int | None] = mapped_column(Integer)
 
