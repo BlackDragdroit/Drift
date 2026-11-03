@@ -6,6 +6,7 @@ from app.api import (
     documents,
     exercises,
     files,
+    flashcards,
     jobs,
     nodes,
     plans,
@@ -13,6 +14,7 @@ from app.api import (
     search,
     sessions,
     subjects,
+    system,
 )
 
 api_router = APIRouter(prefix="/api")
@@ -28,6 +30,8 @@ for module in (
     practice,
     sessions,
     search,
+    flashcards,
+    system,
     files,
 ):
     api_router.include_router(module.router)

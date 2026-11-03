@@ -112,6 +112,21 @@ export const en = {
     retry: 'Retry these exercises', noWeak: 'No weak spots — keep logging attempts and this fills in.', quickPractice: 'Quick exam mix', continueSession: 'Session running',
     behind: 'behind', needPerDay: '{time}/day',
   },
+  cards: {
+    title: 'Flashcards', review: 'Review', due: '{n} due', new: '{n} new', total: '{n} cards', nothingDue: 'Nothing due right now.', nothingDueHint: 'Cards come back when FSRS thinks you are about to forget them.',
+    showAnswer: 'Show answer', again: 'Again', hard: 'Hard', good: 'Good', easy: 'Easy', done: 'All done for now', reviewed: '{n} reviewed', keys: 'Space flips · 1–4 rate',
+    add: 'Add card', front: 'Front', back: 'Back', generate: 'Generate cards', generating: 'Generating…', generated: '{n} cards generated', count: 'How many', edit: 'Edit card', delete: 'Delete card',
+    reviewNode: 'Review this topic', reviewAll: 'Review all due', retrievability: 'recall {p}%', source: { plan: 'from plan', manual: 'yours', generated: 'AI' },
+  },
+  settings: {
+    title: 'Settings', appearance: 'Appearance', data: 'Data', backup: 'Download backup', backupHint: 'One ZIP with the database and all uploaded files. Keep it somewhere safe.',
+    restore: 'Restore from backup', restoreHint: 'Replaces everything with the contents of a backup ZIP. The current database is kept as app.db.bak-… on the server.',
+    restoreConfirm: 'Replace ALL current data with this backup? This cannot be undone from the app.', restored: 'Restored backup from {date} ({files} files). Reloading…',
+    dbSize: 'Database', uploadsSize: 'Uploads', reindex: 'Rebuild search index', reindexed: 'Indexed {n} entries.', shortcuts: 'Keyboard shortcuts', install: 'Install as app',
+    installHint: 'Add to your home screen: on iPhone use Share → Add to Home Screen; on Android/desktop Chrome use the install icon in the address bar.', version: 'Version',
+    about: 'About',
+  },
+  similar: { generate: 'Generate similar exercise', generating: 'Generating variation…', done: 'Variation created.' },
   errors: { notFound: 'Not found.', offline: 'You appear to be offline.' },
 } as const
 

@@ -18,6 +18,7 @@ from app.schemas.api import (
     WeakSpotOut,
 )
 from app.services import activity
+from app.services.flashcards import due_counts
 from app.services.graph import compute_progress, compute_states, status_of
 from app.services.schedule import build_schedule
 
@@ -170,8 +171,11 @@ def dashboard(
         or 0
     )
     active_session = activity.active_session(db)
+    cards = due_counts(db, user.id)
 
     return DashboardOut(
+        flashcards_due=cards["due"],
+        flashcards_new=cards["new"],
         subjects_count=len(subjects),
         plans_count=plans_count,
         nodes_total=nodes_total,

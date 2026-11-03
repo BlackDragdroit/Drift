@@ -36,7 +36,10 @@
 | `app/services/activity.py` | Activity log, streaks, weak spots, study sessions |
 | `app/services/practice.py` | Practice queue (filters, random / sequential / exam mix) |
 | `app/services/search.py` | FTS5 index maintenance + search |
-| `app/api/` | Routers: `auth`, `dashboard`, `subjects`, `plans` (incl. `/schedule`), `nodes`, `exercises`, `documents`, `jobs`, `files`, `practice`, `sessions`, `search`; `serializers.py` maps models → API |
+| `app/services/flashcards.py` | FSRS scheduling (py-fsrs), due queue, interval previews |
+| `app/services/generation.py` | Claude structured-output helpers: flashcards from a topic, exercise variations |
+| `app/services/backup.py` | ZIP backup (SQLite snapshot + uploads) and restore |
+| `app/api/` | Routers: `auth`, `dashboard`, `subjects`, `plans` (incl. `/schedule`), `nodes`, `exercises`, `documents`, `jobs`, `files`, `practice`, `sessions`, `search`, `flashcards`, `system` (backup/restore/reindex/similar); `serializers.py` maps models → API |
 | `alembic/` | Migrations (run automatically on startup) |
 | `tests/` | pytest: validation, merge, markdown, graph, API workflow |
 | `scripts/export_openapi.py` | Dumps `openapi.json` for the frontend type generator |

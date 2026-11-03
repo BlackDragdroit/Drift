@@ -1,4 +1,4 @@
-import { AlertTriangle, ArrowRight, CalendarClock, Flame, Plus, Sparkles, Target, Upload } from 'lucide-react'
+import { AlertTriangle, ArrowRight, CalendarClock, Flame, Layers, Plus, Sparkles, Target, Upload } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useOutletContext } from 'react-router'
 
@@ -126,6 +126,16 @@ export function DashboardPage() {
 
             <aside className="space-y-5">
               <StreakCard streak={data.streak} />
+              {(data.flashcards_due > 0 || data.flashcards_new > 0) && (
+                <Link to="/review" className="flex items-center gap-3 rounded-xl border bg-bg-elevated p-4 shadow-card transition-colors hover:border-line-strong">
+                  <Layers className="h-5 w-5 text-accent" />
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-sm font-medium">{t('cards.reviewAll')}</span>
+                    <span className="block text-xs text-fg-muted">{t('cards.due', { n: data.flashcards_due })} · {t('cards.new', { n: data.flashcards_new })}</span>
+                  </span>
+                  <ArrowRight className="h-4 w-4 text-fg-subtle" />
+                </Link>
+              )}
               <Section title={t('dashboard.upcomingExams')} count={data.exams.length}>
                 <div className="space-y-2">
                   {data.exams.map((e) => (

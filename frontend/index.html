@@ -9,6 +9,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
     <title>Learning</title>
     <script>
       (function () {
@@ -23,5 +25,10 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      if ('serviceWorker' in navigator && location.protocol === 'https:') {
+        addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}))
+      }
+    </script>
   </body>
 </html>

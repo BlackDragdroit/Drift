@@ -621,7 +621,76 @@ class RetryExerciseOut(BaseModel):
     node_keys: list[str]
 
 
+# ----------------------------------------------------------------------------- flashcards
+
+
+class FlashcardDetailOut(ORMModel):
+    id: int
+    node_id: int
+    front: str
+    back: str
+    due: datetime | None
+    reps: int
+    lapses: int
+    last_review: datetime | None
+    source: str
+    retrievability: float | None = None
+    node_title: str | None = None
+    plan_id: int | None = None
+    subject_id: int | None = None
+    subject_color: str | None = None
+    intervals: dict[str, str] | None = None
+
+
+class FlashcardCreate(BaseModel):
+    node_id: int
+    front: str = Field(min_length=1)
+    back: str = Field(min_length=1)
+
+
+class FlashcardUpdate(BaseModel):
+    front: str | None = Field(None, min_length=1)
+    back: str | None = Field(None, min_length=1)
+
+
+class FlashcardReviewIn(BaseModel):
+    rating: int = Field(ge=1, le=4)
+    duration_ms: int | None = Field(None, ge=0)
+
+
+class DueQueueOut(BaseModel):
+    cards: list[FlashcardDetailOut]
+    due: int
+    new: int
+    total: int
+
+
+class GenerateCardsRequest(BaseModel):
+    count: int = Field(5, ge=1, le=20)
+
+
+class GeneratedOut(BaseModel):
+    created: int
+    input_tokens: int
+    output_tokens: int
+
+
+class BackupInfoOut(BaseModel):
+    db_bytes: int
+    uploads_bytes: int
+    previous_backups: list[str]
+
+
+class RestoreOut(BaseModel):
+    created_at: str | None
+    upload_files: int
+    db_bytes: int
+    previous_kept_as: str
+
+
 class DashboardOut(BaseModel):
+    flashcards_due: int = 0
+    flashcards_new: int = 0
     subjects_count: int
     plans_count: int
     nodes_total: int

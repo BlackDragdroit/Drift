@@ -2,6 +2,7 @@ from app.models.activity import ActivityEvent, StudySession
 from app.models.document import Document, ExtractionJob
 from app.models.exercise import Attempt, Exercise, ExerciseFigure, ExerciseNodeLink, ExercisePart
 from app.models.plan import Flashcard, NodePrerequisite, NodeProgress, Note, Plan, PlanNode
+from app.models.review import FlashcardReview
 from app.models.subject import Subject
 from app.models.user import User, UserSession
 
@@ -15,6 +16,7 @@ __all__ = [
     "ExercisePart",
     "ExtractionJob",
     "Flashcard",
+    "FlashcardReview",
     "NodePrerequisite",
     "NodeProgress",
     "Note",

@@ -4,6 +4,7 @@ import { Link } from 'react-router'
 
 import { useNode, useSaveNote } from '@/api/hooks'
 import { useActiveSession, useStartSession, useStopSession } from '@/api/learning'
+import { useCreateCard, useDeleteCard, useGenerateCards, useNodeCards } from '@/api/phase4'
 import type { NodeDetail, PlanDetail, Prerequisite, Status } from '@/api/types'
 import { Markdown } from '@/components/Markdown'
 import { StatusDot, StatusSegmented } from '@/components/StatusControl'
@@ -197,15 +198,7 @@ function PanelBody({ node, plan, onSelect, onSetStatus }: { node: NodeDetail; pl
         )}
       </Section>
 
-      {node.flashcards.length > 0 && (
-        <Section title={t('node.flashcards')} icon={<Layers className="h-3.5 w-3.5" />} meta={String(node.flashcards.length)}>
-          <ul className="space-y-1.5">
-            {node.flashcards.map((c) => (
-              <FlashcardRow key={c.id} front={c.front} back={c.back} />
-            ))}
-          </ul>
-        </Section>
-      )}
+      <CardsSection node={node} plan={plan} />
 
       {node.keywords.length > 0 && (
         <div className="flex flex-wrap gap-1">
@@ -292,7 +285,62 @@ function LinkList({ items, plan, onSelect }: { items: Prerequisite[]; plan: Plan
   )
 }
 
-function FlashcardRow({ front, back }: { front: string; back: string }) {
+function CardsSection({ node, plan }: { node: NodeDetail; plan: PlanDetail }) {
+  const { data: cards = [] } = useNodeCards(node.id)
+  const create = useCreateCard()
+  const del = useDeleteCard()
+  const generate = useGenerateCards()
+  const [adding, setAdding] = useState(false)
+  const [front, setFront] = useState('')
+  const [back, setBack] = useState('')
+  const [message, setMessage] = useState<string | null>(null)
+  const dueCount = cards.filter((c) => !c.due || new Date(c.due.endsWith('Z') ? c.due : `${c.due}Z`) <= new Date()).length
+  const submit = () => {
+    if (!front.trim() || !back.trim()) return
+    create.mutate({ node_id: node.id, front: front.trim(), back: back.trim() }, { onSuccess: () => { setFront(''); setBack(''); setAdding(false) } })
+  }
+  return (
+    <Section title={t('node.flashcards')} icon={<Layers className="h-3.5 w-3.5" />} meta={cards.length ? `${cards.length} · ${t('cards.due', { n: dueCount })}` : undefined}>
+      {cards.length > 0 && (
+        <ul className="mb-2 space-y-1.5">
+          {cards.map((c) => (
+            <FlashcardRow key={c.id} front={c.front} back={c.back} source={c.source} onDelete={() => del.mutate({ id: c.id, nodeId: node.id })} />
+          ))}
+        </ul>
+      )}
+      {adding ? (
+        <div className="space-y-1.5 rounded-lg border p-2">
+          <Textarea value={front} onChange={(e) => setFront(e.target.value)} placeholder={t('cards.front')} rows={2} className="min-h-0 text-xs" autoFocus />
+          <Textarea value={back} onChange={(e) => setBack(e.target.value)} placeholder={t('cards.back')} rows={2} className="min-h-0 text-xs" />
+          <div className="flex justify-end gap-1.5">
+            <Button size="sm" variant="ghost" onClick={() => setAdding(false)}>{t('common.cancel')}</Button>
+            <Button size="sm" variant="primary" onClick={submit} disabled={create.isPending || !front.trim() || !back.trim()}>{t('common.save')}</Button>
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-wrap gap-1.5">
+          {dueCount > 0 && (
+            <Button size="sm" variant="primary" asChild>
+              <Link to={`/review?node=${node.id}`}><Layers className="h-3.5 w-3.5" /> {t('cards.reviewNode')}</Link>
+            </Button>
+          )}
+          <Button size="sm" variant="outline" onClick={() => setAdding(true)}>{t('cards.add')}</Button>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={generate.isPending}
+            onClick={() => generate.mutate({ nodeId: node.id, count: 5 }, { onSuccess: (r) => setMessage(t('cards.generated', { n: r.created })), onError: (e) => setMessage(e.message) })}
+          >
+            {generate.isPending ? <Spinner /> : <Sparkles className="h-3.5 w-3.5" style={{ color: plan.subject_color }} />} {generate.isPending ? t('cards.generating') : t('cards.generate')}
+          </Button>
+        </div>
+      )}
+      {message && <p className="mt-1.5 text-xs text-fg-muted">{message}</p>}
+    </Section>
+  )
+}
+
+function FlashcardRow({ front, back, source, onDelete }: { front: string; back: string; source?: string; onDelete?: () => void }) {
   const [open, setOpen] = useState(false)
   return (
     <li className="rounded-lg border">
@@ -300,11 +348,15 @@ function FlashcardRow({ front, back }: { front: string; back: string }) {
         <div className="min-w-0 flex-1">
           <Markdown inline>{front}</Markdown>
         </div>
+        {source && source !== 'plan' && <Badge className="shrink-0">{t(`cards.source.${source as 'manual' | 'generated'}`)}</Badge>}
         <ChevronDown className={cn('mt-0.5 h-4 w-4 shrink-0 text-fg-subtle transition-transform', open && 'rotate-180')} />
       </button>
       {open && (
         <div className="border-t bg-bg-sunken/50 px-3 py-2 text-sm">
           <Markdown>{back}</Markdown>
+          {onDelete && (
+            <button onClick={onDelete} className="mt-1 text-[11px] text-fg-subtle hover:text-red-600">{t('cards.delete')}</button>
+          )}
         </div>
       )}
     </li>

@@ -1,4 +1,4 @@
-import { Home, Library, LogOut, Monitor, Moon, Plus, Search, Sparkles, Sun } from 'lucide-react'
+import { Home, Layers, Library, LogOut, Monitor, Moon, Plus, Search, Settings, Sparkles, Sun } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router'
 
@@ -84,6 +84,7 @@ function Sidebar({ onImport, onSearch }: { onImport: () => void; onSearch: () =>
         <SideLink to="/" icon={<Home className="h-4 w-4" />} label={t('nav.home')} end />
         <SideLink to="/subjects" icon={<Library className="h-4 w-4" />} label={t('nav.subjects')} end />
         <SideLink to="/practice" icon={<Sparkles className="h-4 w-4" />} label={t('practice.title')} />
+        <SideLink to="/review" icon={<Layers className="h-4 w-4" />} label={t('cards.title')} />
       </nav>
       <div className="mt-4 flex items-center justify-between px-4 text-[11px] font-medium tracking-wide text-fg-subtle uppercase">
         <span>{t('nav.subjects')}</span>
@@ -193,6 +194,10 @@ export function UserMenu({ compact }: { compact?: boolean }) {
           </DropdownItem>
         ))}
         <DropdownSeparator />
+        <DropdownItem onSelect={() => navigate('/settings')}>
+          <Settings className="h-4 w-4" />
+          {t('settings.title')}
+        </DropdownItem>
         <DropdownItem onSelect={() => logout.mutate(undefined, { onSuccess: () => navigate('/login') })}>
           <LogOut className="h-4 w-4" />
           {t('nav.logout')}

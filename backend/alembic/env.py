@@ -13,6 +13,11 @@ if config.config_file_name is not None:
 target_metadata = Base.metadata
 
 
+def include_object(obj, name, type_, reflected, compare_to):
+    # FTS5 virtual table + shadow tables are managed by raw SQL in migration 0003
+    return not (type_ == "table" and name.startswith("search_index"))
+
+
 def run_migrations_offline() -> None:
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
@@ -21,6 +26,7 @@ def run_migrations_offline() -> None:
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
         render_as_batch=True,
+        include_object=include_object,
     )
     with context.begin_transaction():
         context.run_migrations()

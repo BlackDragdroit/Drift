@@ -2515,6 +2515,519 @@
     }
    }
   },
+  "/api/flashcards/due": {
+   "get": {
+    "tags": [
+     "flashcards"
+    ],
+    "summary": "Due",
+    "operationId": "due_api_flashcards_due_get",
+    "parameters": [
+     {
+      "name": "subject_id",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "integer"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Subject Id"
+      }
+     },
+     {
+      "name": "plan_id",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "integer"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Plan Id"
+      }
+     },
+     {
+      "name": "node_id",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "integer"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Node Id"
+      }
+     },
+     {
+      "name": "limit",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "default": 30,
+       "title": "Limit"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DueQueueOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/flashcards": {
+   "get": {
+    "tags": [
+     "flashcards"
+    ],
+    "summary": "List Cards",
+    "operationId": "list_cards_api_flashcards_get",
+    "parameters": [
+     {
+      "name": "node_id",
+      "in": "query",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Node Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/FlashcardDetailOut"
+         },
+         "title": "Response List Cards Api Flashcards Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "post": {
+    "tags": [
+     "flashcards"
+    ],
+    "summary": "Create",
+    "operationId": "create_api_flashcards_post",
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/FlashcardCreate"
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FlashcardDetailOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/flashcards/{card_id}": {
+   "patch": {
+    "tags": [
+     "flashcards"
+    ],
+    "summary": "Update",
+    "operationId": "update_api_flashcards__card_id__patch",
+    "parameters": [
+     {
+      "name": "card_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Card Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/FlashcardUpdate"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FlashcardDetailOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "delete": {
+    "tags": [
+     "flashcards"
+    ],
+    "summary": "Delete",
+    "operationId": "delete_api_flashcards__card_id__delete",
+    "parameters": [
+     {
+      "name": "card_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Card Id"
+      }
+     }
+    ],
+    "responses": {
+     "204": {
+      "description": "Successful Response"
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/flashcards/{card_id}/review": {
+   "post": {
+    "tags": [
+     "flashcards"
+    ],
+    "summary": "Review",
+    "operationId": "review_api_flashcards__card_id__review_post",
+    "parameters": [
+     {
+      "name": "card_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Card Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/FlashcardReviewIn"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FlashcardDetailOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/flashcards/generate/{node_id}": {
+   "post": {
+    "tags": [
+     "flashcards"
+    ],
+    "summary": "Generate",
+    "operationId": "generate_api_flashcards_generate__node_id__post",
+    "parameters": [
+     {
+      "name": "node_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Node Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/GenerateCardsRequest"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/GeneratedOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/system/stats": {
+   "get": {
+    "tags": [
+     "system"
+    ],
+    "summary": "Stats",
+    "operationId": "stats_api_system_stats_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/BackupInfoOut"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/system/backup": {
+   "get": {
+    "tags": [
+     "system"
+    ],
+    "summary": "Backup",
+    "operationId": "backup_api_system_backup_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/system/restore": {
+   "post": {
+    "tags": [
+     "system"
+    ],
+    "summary": "Restore",
+    "operationId": "restore_api_system_restore_post",
+    "requestBody": {
+     "content": {
+      "multipart/form-data": {
+       "schema": {
+        "$ref": "#/components/schemas/Body_restore_api_system_restore_post"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/RestoreOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/system/reindex": {
+   "post": {
+    "tags": [
+     "system"
+    ],
+    "summary": "Reindex",
+    "operationId": "reindex_api_system_reindex_post",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": {
+          "type": "integer"
+         },
+         "type": "object",
+         "title": "Response Reindex Api System Reindex Post"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/system/exercises/{exercise_id}/similar": {
+   "post": {
+    "tags": [
+     "system"
+    ],
+    "summary": "Similar Exercise",
+    "operationId": "similar_exercise_api_system_exercises__exercise_id__similar_post",
+    "parameters": [
+     {
+      "name": "exercise_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Exercise Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ExerciseOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
   "/api/files/{path}": {
    "get": {
     "tags": [
@@ -2638,6 +3151,46 @@
      "created_at"
     ],
     "title": "AttemptOut"
+   },
+   "BackupInfoOut": {
+    "properties": {
+     "db_bytes": {
+      "type": "integer",
+      "title": "Db Bytes"
+     },
+     "uploads_bytes": {
+      "type": "integer",
+      "title": "Uploads Bytes"
+     },
+     "previous_backups": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Previous Backups"
+     }
+    },
+    "type": "object",
+    "required": [
+     "db_bytes",
+     "uploads_bytes",
+     "previous_backups"
+    ],
+    "title": "BackupInfoOut"
+   },
+   "Body_restore_api_system_restore_post": {
+    "properties": {
+     "file": {
+      "type": "string",
+      "contentMediaType": "application/octet-stream",
+      "title": "File"
+     }
+    },
+    "type": "object",
+    "required": [
+     "file"
+    ],
+    "title": "Body_restore_api_system_restore_post"
    },
    "Body_upload_api_documents_post": {
     "properties": {
@@ -2894,6 +3447,16 @@
    },
    "DashboardOut": {
     "properties": {
+     "flashcards_due": {
+      "type": "integer",
+      "title": "Flashcards Due",
+      "default": 0
+     },
+     "flashcards_new": {
+      "type": "integer",
+      "title": "Flashcards New",
+      "default": 0
+     },
      "subjects_count": {
       "type": "integer",
       "title": "Subjects Count"
@@ -3066,6 +3629,37 @@
      "exercises"
     ],
     "title": "DraftUpdate"
+   },
+   "DueQueueOut": {
+    "properties": {
+     "cards": {
+      "items": {
+       "$ref": "#/components/schemas/FlashcardDetailOut"
+      },
+      "type": "array",
+      "title": "Cards"
+     },
+     "due": {
+      "type": "integer",
+      "title": "Due"
+     },
+     "new": {
+      "type": "integer",
+      "title": "New"
+     },
+     "total": {
+      "type": "integer",
+      "title": "Total"
+     }
+    },
+    "type": "object",
+    "required": [
+     "cards",
+     "due",
+     "new",
+     "total"
+    ],
+    "title": "DueQueueOut"
    },
    "ExerciseCreate": {
     "properties": {
@@ -3875,6 +4469,169 @@
     ],
     "title": "FigureDraft"
    },
+   "FlashcardCreate": {
+    "properties": {
+     "node_id": {
+      "type": "integer",
+      "title": "Node Id"
+     },
+     "front": {
+      "type": "string",
+      "minLength": 1,
+      "title": "Front"
+     },
+     "back": {
+      "type": "string",
+      "minLength": 1,
+      "title": "Back"
+     }
+    },
+    "type": "object",
+    "required": [
+     "node_id",
+     "front",
+     "back"
+    ],
+    "title": "FlashcardCreate"
+   },
+   "FlashcardDetailOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "node_id": {
+      "type": "integer",
+      "title": "Node Id"
+     },
+     "front": {
+      "type": "string",
+      "title": "Front"
+     },
+     "back": {
+      "type": "string",
+      "title": "Back"
+     },
+     "due": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date-time"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Due"
+     },
+     "reps": {
+      "type": "integer",
+      "title": "Reps"
+     },
+     "lapses": {
+      "type": "integer",
+      "title": "Lapses"
+     },
+     "last_review": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date-time"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Last Review"
+     },
+     "source": {
+      "type": "string",
+      "title": "Source"
+     },
+     "retrievability": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Retrievability"
+     },
+     "node_title": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Node Title"
+     },
+     "plan_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Plan Id"
+     },
+     "subject_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Subject Id"
+     },
+     "subject_color": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Subject Color"
+     },
+     "intervals": {
+      "anyOf": [
+       {
+        "additionalProperties": {
+         "type": "string"
+        },
+        "type": "object"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Intervals"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "node_id",
+     "front",
+     "back",
+     "due",
+     "reps",
+     "lapses",
+     "last_review",
+     "source"
+    ],
+    "title": "FlashcardDetailOut"
+   },
    "FlashcardOut": {
     "properties": {
      "id": {
@@ -3897,6 +4654,99 @@
      "back"
     ],
     "title": "FlashcardOut"
+   },
+   "FlashcardReviewIn": {
+    "properties": {
+     "rating": {
+      "type": "integer",
+      "maximum": 4.0,
+      "minimum": 1.0,
+      "title": "Rating"
+     },
+     "duration_ms": {
+      "anyOf": [
+       {
+        "type": "integer",
+        "minimum": 0.0
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Duration Ms"
+     }
+    },
+    "type": "object",
+    "required": [
+     "rating"
+    ],
+    "title": "FlashcardReviewIn"
+   },
+   "FlashcardUpdate": {
+    "properties": {
+     "front": {
+      "anyOf": [
+       {
+        "type": "string",
+        "minLength": 1
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Front"
+     },
+     "back": {
+      "anyOf": [
+       {
+        "type": "string",
+        "minLength": 1
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Back"
+     }
+    },
+    "type": "object",
+    "title": "FlashcardUpdate"
+   },
+   "GenerateCardsRequest": {
+    "properties": {
+     "count": {
+      "type": "integer",
+      "maximum": 20.0,
+      "minimum": 1.0,
+      "title": "Count",
+      "default": 5
+     }
+    },
+    "type": "object",
+    "title": "GenerateCardsRequest"
+   },
+   "GeneratedOut": {
+    "properties": {
+     "created": {
+      "type": "integer",
+      "title": "Created"
+     },
+     "input_tokens": {
+      "type": "integer",
+      "title": "Input Tokens"
+     },
+     "output_tokens": {
+      "type": "integer",
+      "title": "Output Tokens"
+     }
+    },
+    "type": "object",
+    "required": [
+     "created",
+     "input_tokens",
+     "output_tokens"
+    ],
+    "title": "GeneratedOut"
    },
    "GenerationPromptOut": {
     "properties": {
@@ -5766,6 +6616,41 @@
      "status"
     ],
     "title": "ProgressUpdate"
+   },
+   "RestoreOut": {
+    "properties": {
+     "created_at": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Created At"
+     },
+     "upload_files": {
+      "type": "integer",
+      "title": "Upload Files"
+     },
+     "db_bytes": {
+      "type": "integer",
+      "title": "Db Bytes"
+     },
+     "previous_kept_as": {
+      "type": "string",
+      "title": "Previous Kept As"
+     }
+    },
+    "type": "object",
+    "required": [
+     "created_at",
+     "upload_files",
+     "db_bytes",
+     "previous_kept_as"
+    ],
+    "title": "RestoreOut"
    },
    "RetryExerciseOut": {
     "properties": {

@@ -747,6 +747,178 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/flashcards/due": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Due */
+        get: operations["due_api_flashcards_due_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/flashcards": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Cards */
+        get: operations["list_cards_api_flashcards_get"];
+        put?: never;
+        /** Create */
+        post: operations["create_api_flashcards_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/flashcards/{card_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete */
+        delete: operations["delete_api_flashcards__card_id__delete"];
+        options?: never;
+        head?: never;
+        /** Update */
+        patch: operations["update_api_flashcards__card_id__patch"];
+        trace?: never;
+    };
+    "/api/flashcards/{card_id}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Review */
+        post: operations["review_api_flashcards__card_id__review_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/flashcards/generate/{node_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Generate */
+        post: operations["generate_api_flashcards_generate__node_id__post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/system/stats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Stats */
+        get: operations["stats_api_system_stats_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/system/backup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Backup */
+        get: operations["backup_api_system_backup_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/system/restore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Restore */
+        post: operations["restore_api_system_restore_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/system/reindex": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reindex */
+        post: operations["reindex_api_system_reindex_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/system/exercises/{exercise_id}/similar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Similar Exercise */
+        post: operations["similar_exercise_api_system_exercises__exercise_id__similar_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/files/{path}": {
         parameters: {
             query?: never;
@@ -801,6 +973,20 @@ export interface components {
              * Format: date-time
              */
             created_at: string;
+        };
+        /** BackupInfoOut */
+        BackupInfoOut: {
+            /** Db Bytes */
+            db_bytes: number;
+            /** Uploads Bytes */
+            uploads_bytes: number;
+            /** Previous Backups */
+            previous_backups: string[];
+        };
+        /** Body_restore_api_system_restore_post */
+        Body_restore_api_system_restore_post: {
+            /** File */
+            file: string;
         };
         /** Body_upload_api_documents_post */
         Body_upload_api_documents_post: {
@@ -897,6 +1083,16 @@ export interface components {
         };
         /** DashboardOut */
         DashboardOut: {
+            /**
+             * Flashcards Due
+             * @default 0
+             */
+            flashcards_due: number;
+            /**
+             * Flashcards New
+             * @default 0
+             */
+            flashcards_new: number;
             /** Subjects Count */
             subjects_count: number;
             /** Plans Count */
@@ -954,6 +1150,17 @@ export interface components {
         DraftUpdate: {
             /** Exercises */
             exercises: components["schemas"]["ExerciseDraft"][];
+        };
+        /** DueQueueOut */
+        DueQueueOut: {
+            /** Cards */
+            cards: components["schemas"]["FlashcardDetailOut"][];
+            /** Due */
+            due: number;
+            /** New */
+            new: number;
+            /** Total */
+            total: number;
         };
         /** ExerciseCreate */
         ExerciseCreate: {
@@ -1218,6 +1425,50 @@ export interface components {
             /** Url */
             url?: string | null;
         };
+        /** FlashcardCreate */
+        FlashcardCreate: {
+            /** Node Id */
+            node_id: number;
+            /** Front */
+            front: string;
+            /** Back */
+            back: string;
+        };
+        /** FlashcardDetailOut */
+        FlashcardDetailOut: {
+            /** Id */
+            id: number;
+            /** Node Id */
+            node_id: number;
+            /** Front */
+            front: string;
+            /** Back */
+            back: string;
+            /** Due */
+            due: string | null;
+            /** Reps */
+            reps: number;
+            /** Lapses */
+            lapses: number;
+            /** Last Review */
+            last_review: string | null;
+            /** Source */
+            source: string;
+            /** Retrievability */
+            retrievability?: number | null;
+            /** Node Title */
+            node_title?: string | null;
+            /** Plan Id */
+            plan_id?: number | null;
+            /** Subject Id */
+            subject_id?: number | null;
+            /** Subject Color */
+            subject_color?: string | null;
+            /** Intervals */
+            intervals?: {
+                [key: string]: string;
+            } | null;
+        };
         /** FlashcardOut */
         FlashcardOut: {
             /** Id */
@@ -1226,6 +1477,37 @@ export interface components {
             front: string;
             /** Back */
             back: string;
+        };
+        /** FlashcardReviewIn */
+        FlashcardReviewIn: {
+            /** Rating */
+            rating: number;
+            /** Duration Ms */
+            duration_ms?: number | null;
+        };
+        /** FlashcardUpdate */
+        FlashcardUpdate: {
+            /** Front */
+            front?: string | null;
+            /** Back */
+            back?: string | null;
+        };
+        /** GenerateCardsRequest */
+        GenerateCardsRequest: {
+            /**
+             * Count
+             * @default 5
+             */
+            count: number;
+        };
+        /** GeneratedOut */
+        GeneratedOut: {
+            /** Created */
+            created: number;
+            /** Input Tokens */
+            input_tokens: number;
+            /** Output Tokens */
+            output_tokens: number;
         };
         /** GenerationPromptOut */
         GenerationPromptOut: {
@@ -1830,6 +2112,17 @@ export interface components {
              * @enum {string}
              */
             status: "not_started" | "in_progress" | "understood" | "mastered";
+        };
+        /** RestoreOut */
+        RestoreOut: {
+            /** Created At */
+            created_at: string | null;
+            /** Upload Files */
+            upload_files: number;
+            /** Db Bytes */
+            db_bytes: number;
+            /** Previous Kept As */
+            previous_kept_as: string;
         };
         /** RetryExerciseOut */
         RetryExerciseOut: {
@@ -3852,6 +4145,364 @@ export interface operations {
                     "application/json": {
                         [key: string]: number;
                     };
+                };
+            };
+        };
+    };
+    due_api_flashcards_due_get: {
+        parameters: {
+            query?: {
+                subject_id?: number | null;
+                plan_id?: number | null;
+                node_id?: number | null;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DueQueueOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_cards_api_flashcards_get: {
+        parameters: {
+            query: {
+                node_id: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlashcardDetailOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_api_flashcards_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FlashcardCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlashcardDetailOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_api_flashcards__card_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                card_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_api_flashcards__card_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                card_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FlashcardUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlashcardDetailOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    review_api_flashcards__card_id__review_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                card_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FlashcardReviewIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FlashcardDetailOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    generate_api_flashcards_generate__node_id__post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GenerateCardsRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GeneratedOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    stats_api_system_stats_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BackupInfoOut"];
+                };
+            };
+        };
+    };
+    backup_api_system_backup_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    restore_api_system_restore_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_restore_api_system_restore_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RestoreOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reindex_api_system_reindex_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: number;
+                    };
+                };
+            };
+        };
+    };
+    similar_exercise_api_system_exercises__exercise_id__similar_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                exercise_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExerciseOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

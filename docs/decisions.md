@@ -140,3 +140,32 @@ inside math. Queries are tokenised into quoted prefix terms, so partial words ma
 **Command palette (cmdk)** combines navigation, actions and search; `Ctrl/Cmd+K` or `/` open it,
 `?` shows the shortcut sheet, `g h / g s / g p` navigate, `m / o / s` switch plan views, and in
 practice `h / s / 1 2 3 / n` drive the session.
+
+## 2026-11-03 — Phase 4 (flashcards, generation, backup, PWA)
+
+**FSRS via `py-fsrs` 6**, default parameters, desired retention 0.9, fuzzing on. The full card state
+is stored as JSON on the flashcard (`fsrs`) with `due` denormalised and indexed for the queue; every
+review is logged (`flashcard_reviews`) and counts as activity. New cards are due immediately. The
+four rating buttons preview the next interval (computed without fuzz so they are stable).
+
+**Card sources are tracked** (`plan` / `manual` / `generated`). Plan re-imports still only manage
+cards with a plan key; manual and generated cards are never touched by an import.
+
+**Generation uses the same structured-output path as the PDF extractor** (`generation.structured_call`),
+with the student's own note for the topic and the existing card fronts passed in to avoid duplicates.
+"Similar exercise" produces a variation that keeps structure, difficulty, language and topic links
+(`tags: ["generated"]`, source "Variation of …").
+
+**Backup = SQLite online-backup snapshot + uploads (minus the page-preview cache) in one ZIP** with a
+manifest. **Restore overwrites the live database's contents through the SQLite backup API** instead
+of renaming files — that works with open connections and on Windows — after copying the current
+database to `app.db.bak-<stamp>`; uploads are swapped the same way (`uploads.bak-<stamp>`). Migrations
+and a search reindex run afterwards so older backups come up to date.
+
+**FTS5 shadow tables are excluded from Alembic autogenerate** (`include_object`), and the search
+service recreates the virtual table if it is missing, because SQLite DDL is not transactional and a
+failed migration run can leave it half-applied.
+
+**PWA is deliberately minimal**: a web manifest + a hand-written service worker that caches hashed
+assets and the app shell for offline start, and never touches `/api`. No background sync; the app
+needs the server for data anyway.

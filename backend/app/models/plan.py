@@ -148,5 +148,14 @@ class Flashcard(TimestampMixin, Base):
     key: Mapped[str | None] = mapped_column(String(120))
     front: Mapped[str] = mapped_column(Text, nullable=False)
     back: Mapped[str] = mapped_column(Text, nullable=False)
+    # FSRS scheduling state (None until the first review); `due` is indexed for the review queue.
+    fsrs: Mapped[dict[str, Any] | None] = mapped_column(JSON)
+    due: Mapped[datetime | None] = mapped_column(DateTime, index=True)
+    reps: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    lapses: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    last_review: Mapped[datetime | None] = mapped_column(DateTime)
+    source: Mapped[str] = mapped_column(
+        String(16), default="plan", nullable=False
+    )  # plan | manual | generated
 
     node: Mapped[PlanNode] = relationship(back_populates="flashcards")

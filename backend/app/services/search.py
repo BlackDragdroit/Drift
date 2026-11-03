@@ -107,7 +107,18 @@ def index_plan_tree(db: Session, plan: Plan) -> None:
             index_note(db, n.note, n, plan.subject_id)
 
 
+FTS_DDL = (
+    "CREATE VIRTUAL TABLE IF NOT EXISTS search_index USING fts5("
+    "kind UNINDEXED, ref_id UNINDEXED, subject_id UNINDEXED, title, body, tokenize='unicode61 remove_diacritics 2')"
+)
+
+
+def ensure_table(db: Session) -> None:
+    db.execute(text(FTS_DDL))
+
+
 def reindex_all(db: Session) -> int:
+    ensure_table(db)
     db.execute(text("DELETE FROM search_index"))
     count = 0
     for subject in db.scalars(select(Subject)):

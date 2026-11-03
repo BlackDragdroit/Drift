@@ -1,8 +1,9 @@
-import { Eye, EyeOff, FileText, Lightbulb, MoreHorizontal, Pencil, Trash2 } from 'lucide-react'
+import { Eye, EyeOff, FileText, Lightbulb, MoreHorizontal, Pencil, Sparkles, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 import { pageImageUrl, useDeleteExercise } from '@/api/documents'
 import { useAddAttempt, useExercise } from '@/api/hooks'
+import { useSimilarExercise } from '@/api/phase4'
 import type { AttemptResult, Exercise } from '@/api/types'
 import { Markdown } from '@/components/Markdown'
 import { Button } from '@/components/ui/button'
@@ -16,8 +17,12 @@ import { ExerciseEditDialog } from './ExerciseEditDialog'
 import { RESULT_COLOR } from './ExerciseRow'
 
 export function ExerciseDialog({ exerciseId, onClose }: { exerciseId: number | null; onClose: () => void }) {
-  const { data: exercise, isLoading } = useExercise(exerciseId)
+  const [overrideId, setOverrideId] = useState<number | null>(null)
+  const currentId = overrideId ?? exerciseId
+  const { data: exercise, isLoading } = useExercise(currentId)
+  const similar = useSimilarExercise()
   const del = useDeleteExercise()
+  useEffect(() => { setOverrideId(null) }, [exerciseId])
   const [editOpen, setEditOpen] = useState(false)
   const [sourceOpen, setSourceOpen] = useState(false)
 
@@ -26,7 +31,7 @@ export function ExerciseDialog({ exerciseId, onClose }: { exerciseId: number | n
   }
 
   return (
-    <Dialog open={exerciseId !== null} onOpenChange={(v) => !v && onClose()}>
+    <Dialog open={currentId !== null} onOpenChange={(v) => !v && onClose()}>
       <DialogContent
         title={exercise ? `${exercise.number ? `${exercise.number} · ` : ''}${exercise.title}` : t('exercise.title')}
         description={exercise?.source_label ?? undefined}
@@ -38,6 +43,7 @@ export function ExerciseDialog({ exerciseId, onClose }: { exerciseId: number | n
           </div>
         ) : (
           <>
+            {similar.isPending && <p className="mb-2 flex items-center gap-2 text-xs text-fg-muted"><Spinner /> {t('similar.generating')}</p>}
             <div className="-mt-1 mb-3 flex items-center gap-1">
               {exercise.document_id && exercise.page_from && (
                 <Button size="sm" variant="outline" onClick={() => setSourceOpen(true)}>
@@ -53,6 +59,9 @@ export function ExerciseDialog({ exerciseId, onClose }: { exerciseId: number | n
                 <DropdownContent>
                   <DropdownItem onSelect={() => setEditOpen(true)}>
                     <Pencil className="h-4 w-4" /> {t('exercise.edit')}
+                  </DropdownItem>
+                  <DropdownItem disabled={similar.isPending} onSelect={() => similar.mutate(exercise.id, { onSuccess: (ex) => setOverrideId(ex.id) })}>
+                    <Sparkles className="h-4 w-4" /> {similar.isPending ? t('similar.generating') : t('similar.generate')}
                   </DropdownItem>
                   <DropdownSeparator />
                   <DropdownItem danger onSelect={onDelete}>
