@@ -63,8 +63,8 @@ export function DashboardPage() {
           />
         )}
         {data && data.subjects_count > 0 && (
-          <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-            <div className="space-y-8">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+            <div className="min-w-0 space-y-8">
               {data.due_today.length > 0 && (
                 <Section title={t('dashboard2.dueToday')} count={data.due_today.length}>
                   <NodeList nodes={data.due_today} />
@@ -81,8 +81,8 @@ export function DashboardPage() {
 
               {(data.weak_spots.length > 0 || data.retry_exercises.length > 0) && (
                 <Section title={t('dashboard2.weakSpots')} count={data.weak_spots.length} hint={t('dashboard2.weakHint')}>
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <ul className="space-y-2">
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <ul className="min-w-0 space-y-2">
                       {data.weak_spots.map((w) => (
                         <li key={w.node_id}>
                           <Link to={`/plans/${w.plan_id}?node=${w.node_id}`} className="flex items-center gap-3 rounded-xl border bg-bg-elevated p-3 shadow-card hover:border-line-strong" style={{ borderLeftColor: w.subject_color, borderLeftWidth: 3 }}>
@@ -231,9 +231,9 @@ function Section({ title, count, empty, hint, children }: { title: string; count
 
 function NodeList({ nodes, ready }: { nodes: DashboardNode[]; ready?: boolean }) {
   return (
-    <ul className="grid gap-2 sm:grid-cols-2">
+    <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
       {nodes.map((n) => (
-        <li key={n.node_id}>
+        <li key={n.node_id} className="min-w-0">
           <Link
             to={`/plans/${n.plan_id}?node=${n.node_id}`}
             className="group flex items-center gap-3 rounded-xl border bg-bg-elevated p-3 shadow-card transition-colors hover:border-line-strong"

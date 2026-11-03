@@ -108,7 +108,7 @@ export function SubjectPage() {
               }
             />
           ) : (
-            <ul className="grid gap-3 md:grid-cols-2">
+            <ul className="grid grid-cols-1 gap-3 md:grid-cols-2">
               {subject.plans.map((p) => {
                 const days = p.exam_date ? daysUntil(p.exam_date) : null
                 return (
