@@ -35,6 +35,7 @@ export const en = {
     notesPlaceholder: 'Your notes (Markdown + $LaTeX$)…', preview: 'Preview', write: 'Write', noExercises: 'No exercises linked yet.', children: 'Subtopics',
     childrenDone: '{done}/{total} subtopics done', markAll: 'Mark subtopics', readyHint: 'All prerequisites are done — this is a good next step.',
     blockedHint: 'Finish the required prerequisites first.', editTitle: 'Edit topic', estimatedMinutes: 'Estimated minutes',
+    fullscreen: 'Open full screen', backToPlan: 'Back to plan', prevTopic: 'Previous topic', nextTopic: 'Next topic', focusMode: 'Focus',
   },
   import: {
     title: 'Import learning plan', subtitle: 'Paste JSON in the plan format, or a Markdown outline. We validate before anything is saved.',

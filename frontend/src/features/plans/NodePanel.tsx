@@ -1,4 +1,4 @@
-import { ArrowDownRight, ArrowUpRight, BookOpen, Check, ChevronDown, ClipboardList, Clock, Dumbbell, ExternalLink, Gauge, Layers, Lock, Pencil, Play, Sparkles, Square, Timer } from 'lucide-react'
+import { ArrowDownRight, ArrowUpRight, BookOpen, Check, ChevronDown, ClipboardList, Clock, Dumbbell, ExternalLink, Gauge, Layers, Lock, Maximize2, Pencil, Play, Sparkles, Square, Timer } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
 
@@ -47,7 +47,7 @@ export function NodePanel({ plan, nodeId, onClose, onSelect, onSetStatus }: Prop
   )
 }
 
-function PanelBody({ node, plan, onSelect, onSetStatus }: { node: NodeDetail; plan: PlanDetail; onSelect: (id: number) => void; onSetStatus: (id: number, status: Status) => void }) {
+export function PanelBody({ node, plan, onSelect, onSetStatus, wide }: { node: NodeDetail; plan: PlanDetail; onSelect: (id: number) => void; onSetStatus: (id: number, status: Status) => void; wide?: boolean }) {
   const [editOpen, setEditOpen] = useState(false)
   const [exerciseId, setExerciseId] = useState<number | null>(null)
   const byId = new Map(plan.nodes.map((n) => [n.id, n]))
@@ -66,7 +66,7 @@ function PanelBody({ node, plan, onSelect, onSetStatus }: { node: NodeDetail; pl
                 {parent.title} ›
               </button>
             )}
-            <h2 className="text-lg leading-tight font-semibold tracking-tight">{node.title}</h2>
+            <h2 className={cn('leading-tight font-semibold tracking-tight', wide ? 'text-2xl' : 'text-lg')}>{node.title}</h2>
             <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-fg-muted">
               {node.estimated_minutes > 0 && (
                 <span className="inline-flex items-center gap-1">
@@ -81,6 +81,13 @@ function PanelBody({ node, plan, onSelect, onSetStatus }: { node: NodeDetail; pl
               <code className="font-mono text-[11px] text-fg-subtle">{node.key}</code>
             </div>
           </div>
+          {!wide && (
+            <Button variant="ghost" size="icon-sm" asChild aria-label={t('node.fullscreen')} title={t('node.fullscreen')}>
+              <Link to={`/plans/${plan.id}/topic/${node.id}`}>
+                <Maximize2 className="h-4 w-4" />
+              </Link>
+            </Button>
+          )}
           <Button variant="ghost" size="icon-sm" onClick={() => setEditOpen(true)} aria-label={t('common.edit')}>
             <Pencil className="h-4 w-4" />
           </Button>
@@ -208,7 +215,7 @@ function PanelBody({ node, plan, onSelect, onSetStatus }: { node: NodeDetail; pl
         </div>
       )}
 
-      <NotesEditor planId={plan.id} nodeId={node.id} initial={node.note.content} />
+      <NotesEditor planId={plan.id} nodeId={node.id} initial={node.note.content} tall={wide} />
 
       <NodeEditDialog open={editOpen} onOpenChange={setEditOpen} planId={plan.id} node={node} />
       <ExerciseDialog exerciseId={exerciseId} onClose={() => setExerciseId(null)} />
@@ -363,7 +370,7 @@ function FlashcardRow({ front, back, source, onDelete }: { front: string; back: 
   )
 }
 
-function NotesEditor({ planId, nodeId, initial }: { planId: number; nodeId: number; initial: string }) {
+function NotesEditor({ planId, nodeId, initial, tall }: { planId: number; nodeId: number; initial: string; tall?: boolean }) {
   const save = useSaveNote(planId)
   const [value, setValue] = useState(initial)
   const [mode, setMode] = useState<'write' | 'preview'>(initial.trim() ? 'preview' : 'write')
@@ -416,7 +423,7 @@ function NotesEditor({ planId, nodeId, initial }: { planId: number; nodeId: numb
           }}
           onBlur={flush}
           placeholder={t('node.notesPlaceholder')}
-          className="min-h-[140px] font-mono text-xs leading-relaxed"
+          className={cn('font-mono text-xs leading-relaxed', tall ? 'min-h-[360px] text-[13px]' : 'min-h-[140px]')}
         />
       ) : (
         <div className="min-h-[60px] rounded-md border bg-bg-sunken/40 px-3 py-2" onDoubleClick={() => setMode('write')}>

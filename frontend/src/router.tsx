@@ -12,6 +12,7 @@ import { SettingsPage } from './routes/SettingsPage'
 import { ReviewPage } from './routes/ReviewPage'
 import { SubjectPage } from './routes/SubjectPage'
 import { SubjectsPage } from './routes/SubjectsPage'
+import { TopicPage } from './routes/TopicPage'
 
 export const router = createBrowserRouter([
   { path: '/login', element: <LoginPage /> },
@@ -26,6 +27,7 @@ export const router = createBrowserRouter([
       { path: '/subjects', element: <SubjectsPage /> },
       { path: '/subjects/:subjectId', element: <SubjectPage /> },
       { path: '/plans/:planId', element: <PlanPage /> },
+      { path: '/plans/:planId/topic/:nodeId', element: <TopicPage /> },
       { path: '/plans/:planId/:view', element: <PlanPage /> },
       { path: '/jobs/:jobId/review', element: <ReviewPage /> },
       { path: '/practice', element: <PracticePage /> },
