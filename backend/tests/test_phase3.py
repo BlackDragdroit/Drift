@@ -68,12 +68,34 @@ def test_schedule_flags_behind_and_done_nodes_disappear(db_session):
     assert s.days[0].nodes[0].ready is True
 
 
+def test_schedule_never_says_on_track_while_finishing_after_the_exam(db_session):
+    # 630 min of work, one 4h topic, 5 days left -> 4 study days. Without splitting, the 4h topic
+    # alone would occupy a day and the plan would overflow past the exam.
+    plan = make_plan(db_session, exam_in_days=5, capacity=180)
+    s = build_schedule(plan)
+    assert s.summary.study_days == 4
+    assert s.summary.finish_date <= plan.exam_date - timedelta(days=1)
+    assert len(s.days) <= s.summary.study_days
+    assert sum(d.minutes for d in s.days) == s.summary.remaining_minutes
+    assert s.summary.needed_per_day <= 180 and not s.summary.behind
+    long_parts = [n for d in s.days for n in d.nodes if n.key == "lti-systems"]
+    assert len(long_parts) >= 2 and [n.part for n in long_parts] == list(
+        range(1, len(long_parts) + 1)
+    )
+    assert all(n.parts == len(long_parts) for n in long_parts)
+    assert all(n.minutes >= 30 for d in s.days for n in d.nodes)
+    # a topic may be split, but its chunks stay on consecutive days
+    dates = [d.date for d in s.days for n in d.nodes if n.key == "lti-systems"]
+    assert all((b - a).days == 1 for a, b in zip(dates, dates[1:], strict=False))
+
+
 def test_schedule_without_exam_uses_capacity(db_session):
     plan = make_plan(db_session, exam_in_days=None, capacity=90)
     s = build_schedule(plan)
     assert s.summary.exam_date is None and s.summary.days_left is None
-    assert s.summary.study_days == 7 and s.summary.needed_per_day == 90
-    assert len(s.days) >= 4 and s.summary.finish_date == s.days[-1].date
+    assert s.summary.needed_per_day == 90 and s.summary.study_days == len(s.days)
+    assert all(d.minutes <= 90 for d in s.days)  # splitting keeps every day within capacity
+    assert s.summary.finish_date == s.days[-1].date
 
 
 def test_schedule_endpoint_and_dashboard_due_today(auth_client: TestClient):

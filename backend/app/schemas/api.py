@@ -467,6 +467,8 @@ class ScheduledNodeOut(BaseModel):
     minutes: int
     status: Status
     ready: bool
+    part: int | None = None
+    parts: int | None = None
 
 
 class ScheduleDayOut(BaseModel):

@@ -1911,6 +1911,10 @@ export interface components {
             status: "not_started" | "in_progress" | "understood" | "mastered";
             /** Ready */
             ready: boolean;
+            /** Part */
+            part?: number | null;
+            /** Parts */
+            parts?: number | null;
         };
         /** SearchHitOut */
         SearchHitOut: {

@@ -125,7 +125,10 @@ export function ScheduleView({ plan, selectedId, onSelect, onSetStatus, onEditPl
                         <StatusIcon status={n.status} className="h-[18px] w-[18px]" />
                       </button>
                       <button className="flex min-w-0 flex-1 items-center gap-2 py-2 text-left" onClick={() => onSelect(n.node_id)}>
-                        <span className="truncate text-sm">{n.title}</span>
+                        <span className="truncate text-sm">
+                          {n.title}
+                          {n.part && n.parts && <span className="ml-1.5 text-xs text-fg-subtle">{n.part}/{n.parts}</span>}
+                        </span>
                         {n.ready && n.status === 'not_started' && (
                           <span className="hidden shrink-0 rounded-full px-1.5 py-px text-[9.5px] font-semibold tracking-wide uppercase sm:inline" style={{ color: plan.subject_color, background: `color-mix(in oklab, ${plan.subject_color} 12%, transparent)` }}>
                             {t('status.ready')}

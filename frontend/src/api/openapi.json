@@ -5989,6 +5989,28 @@
      "ready": {
       "type": "boolean",
       "title": "Ready"
+     },
+     "part": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Part"
+     },
+     "parts": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Parts"
      }
     },
     "type": "object",
