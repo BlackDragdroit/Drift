@@ -1,0 +1,69 @@
+# Architecture
+
+```
+┌──────────────────────────────── Docker image ────────────────────────────────┐
+│  FastAPI (uvicorn :8000)                                                     │
+│   ├─ /api/*            JSON API (auth, subjects, plans, nodes, exercises…)  │
+│   ├─ /api/health       health check used by Docker/Coolify                  │
+│   ├─ /api/docs         OpenAPI UI                                           │
+│   └─ /*                React SPA (static files from the Node build stage)   │
+│                                                                              │
+│  /data (volume)   app.db (SQLite, WAL)   uploads/ (PDFs, cropped figures)    │
+└──────────────────────────────────────────────────────────────────────────────┘
+```
+
+## Backend (`backend/`)
+
+| Path | Purpose |
+|---|---|
+| `app/main.py` | App factory, CSRF header guard, health endpoint, SPA fallback, startup migrations |
+| `app/core/config.py` | Settings from env (`pydantic-settings`), `.env` for local dev |
+| `app/core/db.py` | SQLAlchemy engine/session, SQLite pragmas (WAL, FK), Alembic runner |
+| `app/core/security.py` | Password check, session tokens, login rate limiter |
+| `app/models/` | SQLAlchemy models: users/sessions, subjects, plans/nodes/prerequisites/progress/notes/flashcards, exercises/parts/figures/attempts |
+| `app/schemas/plan_format.py` | **The plan format** (pydantic) → validator, JSON Schema, prompt |
+| `app/schemas/api.py` | Request/response models for the API |
+| `app/services/plan_validation.py` | normalize → pydantic → semantic checks → `Issue[]` |
+| `app/services/plan_markdown.py` | Markdown outline → raw plan dict |
+| `app/services/plan_import.py` | parse, preview diff, apply (create/merge), `set_status` |
+| `app/services/plan_export.py` | DB → plan JSON (optionally with progress/notes) |
+| `app/services/plan_prompt.py` | Generation prompt built from the pydantic models |
+| `app/services/graph.py` | Ready-to-learn, blocking prerequisites, aggregated progress, topological order |
+| `app/api/` | Routers: `auth`, `dashboard`, `subjects`, `plans`, `nodes`, `exercises`; `serializers.py` maps models → API |
+| `alembic/` | Migrations (run automatically on startup) |
+| `tests/` | pytest: validation, merge, markdown, graph, API workflow |
+| `scripts/export_openapi.py` | Dumps `openapi.json` for the frontend type generator |
+
+Business rules live in `services/` as plain functions over ORM objects, so they are unit-testable
+without HTTP.
+
+## Frontend (`frontend/`)
+
+| Path | Purpose |
+|---|---|
+| `src/api/` | `client.ts` (openapi-fetch + CSRF header + 401 broadcast), `schema.d.ts` (generated), `hooks.ts` (TanStack Query hooks with optimistic status updates) |
+| `src/i18n/` | All UI strings + typed `t()` |
+| `src/components/ui/` | Button, inputs, Dialog/Sheet, dropdown, tooltip, progress, badges |
+| `src/components/` | `Markdown` (react-markdown + KaTeX), `StatusControl`, layout shell |
+| `src/routes/` | Login, Dashboard, Subjects, Subject, Plan |
+| `src/features/plans/` | `graph.ts` (visibility/collapse/focus, pure), `layout.ts` (ELK compound layout), `MindMap`, `PlanNodeCard`, `PlanGroupNode`, `OutlineView`, `NodePanel`, `ImportDialog`, `GenerationPromptDialog`, edit dialogs |
+| `src/features/exercises/` | Exercise row + dialog (hints → solution reveal, attempt logging) |
+| `src/features/subjects/` | Subject dialog + icon set |
+
+Type safety across the wire: `python scripts/export_openapi.py && npm run gen:api` regenerates
+`schema.d.ts`; the hooks are typed against it.
+
+## Request flow for an import
+
+1. User pastes JSON/Markdown → `POST /api/plans/import/preview` (debounced).
+2. `parse_content` detects the format → `validate_plan` → issues + `PlanSpec`.
+3. `preview_import` diffs the spec against the existing plan (by plan id within the subject) → counts, per-node changes.
+4. UI shows issues/diff/options → `POST /api/plans/import` → `apply_import` in one transaction.
+5. Query cache invalidated → navigate to the plan.
+
+## Data flow for the map
+
+`GET /api/plans/{id}` returns nodes with computed `ready`, `blocked_by`, descendant progress and
+counts. The frontend only decides *visibility* (collapse, hide finished, focus) and *layout*
+(ELK, run in the browser, re-run only when the visible structure changes). Status changes are
+optimistic and then refetched so readiness of neighbours updates.

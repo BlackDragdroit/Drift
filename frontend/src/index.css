@@ -1,0 +1,175 @@
+@import 'tailwindcss';
+@import 'katex/dist/katex.min.css';
+@import '@xyflow/react/dist/style.css';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, 'JetBrains Mono', 'Cascadia Code', Menlo, Consolas, monospace;
+
+  --color-bg: var(--bg);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-bg-sunken: var(--bg-sunken);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-subtle: var(--fg-subtle);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+
+  --color-status-none: var(--status-none);
+  --color-status-progress: var(--status-progress);
+  --color-status-understood: var(--status-understood);
+  --color-status-mastered: var(--status-mastered);
+  --color-ready: var(--ready);
+
+  --radius-md: 0.625rem;
+  --radius-lg: 0.875rem;
+  --radius-xl: 1.125rem;
+
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.04), 0 4px 16px -8px rgb(0 0 0 / 0.1);
+  --shadow-pop: 0 2px 6px rgb(0 0 0 / 0.08), 0 16px 40px -16px rgb(0 0 0 / 0.25);
+
+  --animate-fade-in: fade-in 180ms ease-out both;
+  --animate-rise: rise 220ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  --animate-pulse-ring: pulse-ring 2.4s ease-out infinite;
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse-ring {
+    0% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--ready) 55%, transparent); }
+    70% { box-shadow: 0 0 0 10px transparent; }
+    100% { box-shadow: 0 0 0 0 transparent; }
+  }
+}
+
+:root {
+  --bg: #f7f7f5;
+  --bg-elevated: #ffffff;
+  --bg-sunken: #efefeb;
+  --fg: #16181d;
+  --fg-muted: #5b606b;
+  --fg-subtle: #8c919c;
+  --line: #e4e4df;
+  --line-strong: #cfcfc8;
+  --accent: #4f46e5;
+  --accent-fg: #ffffff;
+
+  --status-none: #a1a1aa;
+  --status-progress: #f59e0b;
+  --status-understood: #0ea5e9;
+  --status-mastered: #10b981;
+  --ready: #8b5cf6;
+
+  color-scheme: light;
+}
+
+.dark {
+  --bg: #0f1115;
+  --bg-elevated: #171a20;
+  --bg-sunken: #0b0d10;
+  --fg: #e8e8e3;
+  --fg-muted: #a3a7b0;
+  --fg-subtle: #6b7079;
+  --line: #262a32;
+  --line-strong: #363b45;
+  --accent: #818cf8;
+  --accent-fg: #0f1115;
+
+  --status-none: #71717a;
+  --status-progress: #fbbf24;
+  --status-understood: #38bdf8;
+  --status-mastered: #34d399;
+  --ready: #a78bfa;
+
+  color-scheme: dark;
+}
+
+@layer base {
+  * {
+    border-color: var(--line);
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-bg text-fg font-sans antialiased;
+    font-feature-settings: 'cv11', 'ss01', 'tnum';
+    overscroll-behavior-y: none;
+  }
+  ::selection {
+    background: color-mix(in oklab, var(--accent) 25%, transparent);
+  }
+  button, [role='button'] {
+    cursor: pointer;
+  }
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  input, textarea, select {
+    font: inherit;
+  }
+}
+
+@layer components {
+  .prose-md {
+    @apply text-[0.95rem] leading-relaxed text-fg;
+  }
+  .prose-md > :first-child { margin-top: 0; }
+  .prose-md > :last-child { margin-bottom: 0; }
+  .prose-md p { @apply my-2; }
+  .prose-md h1, .prose-md h2, .prose-md h3, .prose-md h4 { @apply mt-4 mb-1.5 font-semibold tracking-tight; }
+  .prose-md h1 { @apply text-xl; }
+  .prose-md h2 { @apply text-lg; }
+  .prose-md h3 { @apply text-base; }
+  .prose-md ul { @apply my-2 list-disc pl-5; }
+  .prose-md ol { @apply my-2 list-decimal pl-5; }
+  .prose-md li { @apply my-0.5; }
+  .prose-md li > p { @apply my-0; }
+  .prose-md a { @apply text-accent underline underline-offset-2; }
+  .prose-md code { @apply rounded bg-bg-sunken px-1 py-0.5 font-mono text-[0.85em]; }
+  .prose-md pre { @apply my-2 overflow-x-auto rounded-md bg-bg-sunken p-3 text-[0.85em]; }
+  .prose-md pre code { @apply bg-transparent p-0; }
+  .prose-md blockquote { @apply my-2 border-l-2 border-line-strong pl-3 text-fg-muted; }
+  .prose-md table { @apply my-2 w-full text-sm; }
+  .prose-md th, .prose-md td { @apply border px-2 py-1 text-left; }
+  .prose-md hr { @apply my-4; }
+  .prose-md .katex-display { @apply my-3 overflow-x-auto overflow-y-hidden py-1; }
+  .prose-md .katex { font-size: 1.05em; }
+
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--line-strong) transparent;
+  }
+}
+
+/* React Flow theming */
+.react-flow {
+  --xy-background-color: var(--bg-sunken);
+  --xy-edge-stroke-default: var(--line-strong);
+  --xy-edge-stroke-width-default: 1.5;
+  --xy-controls-button-background-color-default: var(--bg-elevated);
+  --xy-controls-button-background-color-hover-default: var(--bg);
+  --xy-controls-button-color-default: var(--fg-muted);
+  --xy-controls-button-border-color-default: var(--line);
+  --xy-minimap-background-color-default: var(--bg-elevated);
+  --xy-minimap-mask-background-color-default: color-mix(in oklab, var(--bg-sunken) 70%, transparent);
+  --xy-attribution-background-color-default: transparent;
+}
+.react-flow__attribution { display: none; }
+.react-flow__node { font-family: inherit; }
+.react-flow__handle { opacity: 0; pointer-events: none; }
+.react-flow__edge.selected .react-flow__edge-path { stroke: var(--accent); }
+.react-flow__controls { box-shadow: var(--shadow-card); border-radius: 0.625rem; overflow: hidden; }
+.react-flow__controls-button { border-bottom: 1px solid var(--line); }
+.react-flow__controls-button svg { fill: currentColor; }

@@ -1,0 +1,3439 @@
+{
+ "openapi": "3.1.0",
+ "info": {
+  "title": "Learning Platform",
+  "version": "0.1.0"
+ },
+ "paths": {
+  "/api/health": {
+   "get": {
+    "tags": [
+     "health"
+    ],
+    "summary": "Health",
+    "operationId": "health_api_health_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": {
+          "type": "string"
+         },
+         "type": "object",
+         "title": "Response Health Api Health Get"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/auth/login": {
+   "post": {
+    "tags": [
+     "auth"
+    ],
+    "summary": "Login",
+    "operationId": "login_api_auth_login_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/LoginRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/UserOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/auth/logout": {
+   "post": {
+    "tags": [
+     "auth"
+    ],
+    "summary": "Logout",
+    "operationId": "logout_api_auth_logout_post",
+    "responses": {
+     "204": {
+      "description": "Successful Response"
+     }
+    }
+   }
+  },
+  "/api/auth/me": {
+   "get": {
+    "tags": [
+     "auth"
+    ],
+    "summary": "Me",
+    "operationId": "me_api_auth_me_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/UserOut"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/dashboard": {
+   "get": {
+    "tags": [
+     "dashboard"
+    ],
+    "summary": "Dashboard",
+    "operationId": "dashboard_api_dashboard_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DashboardOut"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/subjects": {
+   "get": {
+    "tags": [
+     "subjects"
+    ],
+    "summary": "List Subjects",
+    "operationId": "list_subjects_api_subjects_get",
+    "parameters": [
+     {
+      "name": "include_archived",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "boolean",
+       "default": false,
+       "title": "Include Archived"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/SubjectOut"
+         },
+         "title": "Response List Subjects Api Subjects Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "post": {
+    "tags": [
+     "subjects"
+    ],
+    "summary": "Create",
+    "operationId": "create_api_subjects_post",
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/SubjectCreate"
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SubjectOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/subjects/{subject_id}": {
+   "get": {
+    "tags": [
+     "subjects"
+    ],
+    "summary": "Get",
+    "operationId": "get_api_subjects__subject_id__get",
+    "parameters": [
+     {
+      "name": "subject_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Subject Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SubjectOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "patch": {
+    "tags": [
+     "subjects"
+    ],
+    "summary": "Update",
+    "operationId": "update_api_subjects__subject_id__patch",
+    "parameters": [
+     {
+      "name": "subject_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Subject Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/SubjectUpdate"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SubjectOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "delete": {
+    "tags": [
+     "subjects"
+    ],
+    "summary": "Delete",
+    "operationId": "delete_api_subjects__subject_id__delete",
+    "parameters": [
+     {
+      "name": "subject_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Subject Id"
+      }
+     }
+    ],
+    "responses": {
+     "204": {
+      "description": "Successful Response"
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/plans/schema.json": {
+   "get": {
+    "tags": [
+     "plans"
+    ],
+    "summary": "Schema",
+    "operationId": "schema_api_plans_schema_json_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "type": "object",
+         "title": "Response Schema Api Plans Schema Json Get"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/plans/generation-prompt": {
+   "get": {
+    "tags": [
+     "plans"
+    ],
+    "summary": "Generation Prompt",
+    "operationId": "generation_prompt_api_plans_generation_prompt_get",
+    "parameters": [
+     {
+      "name": "topic",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "maxLength": 300,
+       "default": "<TOPIC>",
+       "title": "Topic"
+      }
+     },
+     {
+      "name": "context",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "maxLength": 2000,
+       "default": "",
+       "title": "Context"
+      }
+     },
+     {
+      "name": "language",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "maxLength": 16,
+       "default": "en",
+       "title": "Language"
+      }
+     },
+     {
+      "name": "exam_date",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string",
+         "maxLength": 10
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Exam Date"
+      }
+     },
+     {
+      "name": "node_count",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "maxLength": 16,
+       "default": "15-30",
+       "title": "Node Count"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/GenerationPromptOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/plans": {
+   "get": {
+    "tags": [
+     "plans"
+    ],
+    "summary": "List Plans",
+    "operationId": "list_plans_api_plans_get",
+    "parameters": [
+     {
+      "name": "subject_id",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "integer"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Subject Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/PlanSummaryOut"
+         },
+         "title": "Response List Plans Api Plans Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/plans/{plan_id}": {
+   "get": {
+    "tags": [
+     "plans"
+    ],
+    "summary": "Get",
+    "operationId": "get_api_plans__plan_id__get",
+    "parameters": [
+     {
+      "name": "plan_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Plan Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/PlanDetailOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "patch": {
+    "tags": [
+     "plans"
+    ],
+    "summary": "Update",
+    "operationId": "update_api_plans__plan_id__patch",
+    "parameters": [
+     {
+      "name": "plan_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Plan Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/PlanUpdate"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/PlanDetailOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "delete": {
+    "tags": [
+     "plans"
+    ],
+    "summary": "Delete",
+    "operationId": "delete_api_plans__plan_id__delete",
+    "parameters": [
+     {
+      "name": "plan_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Plan Id"
+      }
+     }
+    ],
+    "responses": {
+     "204": {
+      "description": "Successful Response"
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/plans/{plan_id}/export": {
+   "get": {
+    "tags": [
+     "plans"
+    ],
+    "summary": "Export",
+    "operationId": "export_api_plans__plan_id__export_get",
+    "parameters": [
+     {
+      "name": "plan_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Plan Id"
+      }
+     },
+     {
+      "name": "include_progress",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "boolean",
+       "default": true,
+       "title": "Include Progress"
+      }
+     },
+     {
+      "name": "include_notes",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "boolean",
+       "default": true,
+       "title": "Include Notes"
+      }
+     },
+     {
+      "name": "download",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "boolean",
+       "default": true,
+       "title": "Download"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/plans/import/preview": {
+   "post": {
+    "tags": [
+     "plans"
+    ],
+    "summary": "Import Preview",
+    "operationId": "import_preview_api_plans_import_preview_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ImportPreviewRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ImportPreviewOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/plans/import": {
+   "post": {
+    "tags": [
+     "plans"
+    ],
+    "summary": "Import Plan",
+    "operationId": "import_plan_api_plans_import_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ImportRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ImportResultOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/nodes/{node_id}": {
+   "get": {
+    "tags": [
+     "nodes"
+    ],
+    "summary": "Get",
+    "operationId": "get_api_nodes__node_id__get",
+    "parameters": [
+     {
+      "name": "node_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Node Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/NodeDetailOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "patch": {
+    "tags": [
+     "nodes"
+    ],
+    "summary": "Update",
+    "operationId": "update_api_nodes__node_id__patch",
+    "parameters": [
+     {
+      "name": "node_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Node Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/NodeUpdate"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/NodeOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/nodes/{node_id}/progress": {
+   "put": {
+    "tags": [
+     "nodes"
+    ],
+    "summary": "Update Progress",
+    "operationId": "update_progress_api_nodes__node_id__progress_put",
+    "parameters": [
+     {
+      "name": "node_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Node Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ProgressUpdate"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/NodeOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/nodes/{node_id}/note": {
+   "put": {
+    "tags": [
+     "nodes"
+    ],
+    "summary": "Update Note",
+    "operationId": "update_note_api_nodes__node_id__note_put",
+    "parameters": [
+     {
+      "name": "node_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Node Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/NoteUpdate"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/NoteOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/exercises": {
+   "get": {
+    "tags": [
+     "exercises"
+    ],
+    "summary": "List Exercises",
+    "operationId": "list_exercises_api_exercises_get",
+    "parameters": [
+     {
+      "name": "subject_id",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "integer"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Subject Id"
+      }
+     },
+     {
+      "name": "node_id",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "integer"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Node Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/ExerciseListItem"
+         },
+         "title": "Response List Exercises Api Exercises Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/exercises/{exercise_id}": {
+   "get": {
+    "tags": [
+     "exercises"
+    ],
+    "summary": "Get",
+    "operationId": "get_api_exercises__exercise_id__get",
+    "parameters": [
+     {
+      "name": "exercise_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Exercise Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ExerciseOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/exercises/{exercise_id}/attempts": {
+   "post": {
+    "tags": [
+     "exercises"
+    ],
+    "summary": "Add Attempt",
+    "operationId": "add_attempt_api_exercises__exercise_id__attempts_post",
+    "parameters": [
+     {
+      "name": "exercise_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Exercise Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/AttemptCreate"
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ExerciseOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/exercises/{exercise_id}/attempts/{attempt_id}": {
+   "delete": {
+    "tags": [
+     "exercises"
+    ],
+    "summary": "Delete Attempt",
+    "operationId": "delete_attempt_api_exercises__exercise_id__attempts__attempt_id__delete",
+    "parameters": [
+     {
+      "name": "exercise_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Exercise Id"
+      }
+     },
+     {
+      "name": "attempt_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Attempt Id"
+      }
+     }
+    ],
+    "responses": {
+     "204": {
+      "description": "Successful Response"
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "components": {
+  "schemas": {
+   "AttemptCreate": {
+    "properties": {
+     "result": {
+      "type": "string",
+      "enum": [
+       "solved",
+       "partial",
+       "failed"
+      ],
+      "title": "Result"
+     },
+     "notes": {
+      "type": "string",
+      "title": "Notes",
+      "default": ""
+     },
+     "duration_seconds": {
+      "anyOf": [
+       {
+        "type": "integer",
+        "minimum": 0.0
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Duration Seconds"
+     }
+    },
+    "type": "object",
+    "required": [
+     "result"
+    ],
+    "title": "AttemptCreate"
+   },
+   "AttemptOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "result": {
+      "type": "string",
+      "enum": [
+       "solved",
+       "partial",
+       "failed"
+      ],
+      "title": "Result"
+     },
+     "notes": {
+      "type": "string",
+      "title": "Notes"
+     },
+     "duration_seconds": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Duration Seconds"
+     },
+     "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Created At"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "result",
+     "notes",
+     "duration_seconds",
+     "created_at"
+    ],
+    "title": "AttemptOut"
+   },
+   "DashboardExam": {
+    "properties": {
+     "plan_id": {
+      "type": "integer",
+      "title": "Plan Id"
+     },
+     "plan_title": {
+      "type": "string",
+      "title": "Plan Title"
+     },
+     "subject_id": {
+      "type": "integer",
+      "title": "Subject Id"
+     },
+     "subject_name": {
+      "type": "string",
+      "title": "Subject Name"
+     },
+     "subject_color": {
+      "type": "string",
+      "title": "Subject Color"
+     },
+     "exam_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Exam Date"
+     },
+     "exam_name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Exam Name"
+     },
+     "days_left": {
+      "type": "integer",
+      "title": "Days Left"
+     },
+     "percent": {
+      "type": "number",
+      "title": "Percent"
+     },
+     "minutes_remaining": {
+      "type": "integer",
+      "title": "Minutes Remaining"
+     }
+    },
+    "type": "object",
+    "required": [
+     "plan_id",
+     "plan_title",
+     "subject_id",
+     "subject_name",
+     "subject_color",
+     "exam_date",
+     "exam_name",
+     "days_left",
+     "percent",
+     "minutes_remaining"
+    ],
+    "title": "DashboardExam"
+   },
+   "DashboardNode": {
+    "properties": {
+     "node_id": {
+      "type": "integer",
+      "title": "Node Id"
+     },
+     "key": {
+      "type": "string",
+      "title": "Key"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "estimated_minutes": {
+      "type": "integer",
+      "title": "Estimated Minutes"
+     },
+     "difficulty": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Difficulty"
+     },
+     "status": {
+      "type": "string",
+      "title": "Status"
+     },
+     "plan_id": {
+      "type": "integer",
+      "title": "Plan Id"
+     },
+     "plan_title": {
+      "type": "string",
+      "title": "Plan Title"
+     },
+     "subject_id": {
+      "type": "integer",
+      "title": "Subject Id"
+     },
+     "subject_name": {
+      "type": "string",
+      "title": "Subject Name"
+     },
+     "subject_color": {
+      "type": "string",
+      "title": "Subject Color"
+     }
+    },
+    "type": "object",
+    "required": [
+     "node_id",
+     "key",
+     "title",
+     "estimated_minutes",
+     "difficulty",
+     "status",
+     "plan_id",
+     "plan_title",
+     "subject_id",
+     "subject_name",
+     "subject_color"
+    ],
+    "title": "DashboardNode"
+   },
+   "DashboardOut": {
+    "properties": {
+     "subjects_count": {
+      "type": "integer",
+      "title": "Subjects Count"
+     },
+     "plans_count": {
+      "type": "integer",
+      "title": "Plans Count"
+     },
+     "nodes_total": {
+      "type": "integer",
+      "title": "Nodes Total"
+     },
+     "nodes_done": {
+      "type": "integer",
+      "title": "Nodes Done"
+     },
+     "exams": {
+      "items": {
+       "$ref": "#/components/schemas/DashboardExam"
+      },
+      "type": "array",
+      "title": "Exams"
+     },
+     "ready": {
+      "items": {
+       "$ref": "#/components/schemas/DashboardNode"
+      },
+      "type": "array",
+      "title": "Ready"
+     },
+     "in_progress": {
+      "items": {
+       "$ref": "#/components/schemas/DashboardNode"
+      },
+      "type": "array",
+      "title": "In Progress"
+     }
+    },
+    "type": "object",
+    "required": [
+     "subjects_count",
+     "plans_count",
+     "nodes_total",
+     "nodes_done",
+     "exams",
+     "ready",
+     "in_progress"
+    ],
+    "title": "DashboardOut"
+   },
+   "ExerciseFigureOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "part_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Part Id"
+     },
+     "url": {
+      "type": "string",
+      "title": "Url"
+     },
+     "caption": {
+      "type": "string",
+      "title": "Caption"
+     },
+     "page": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Page"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "part_id",
+     "url",
+     "caption",
+     "page"
+    ],
+    "title": "ExerciseFigureOut"
+   },
+   "ExerciseListItem": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "subject_id": {
+      "type": "integer",
+      "title": "Subject Id"
+     },
+     "number": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Number"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "difficulty": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Difficulty"
+     },
+     "source_label": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Source Label"
+     },
+     "node_keys": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Node Keys",
+      "default": []
+     },
+     "last_result": {
+      "anyOf": [
+       {
+        "type": "string",
+        "enum": [
+         "solved",
+         "partial",
+         "failed"
+        ]
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Last Result"
+     },
+     "attempt_count": {
+      "type": "integer",
+      "title": "Attempt Count",
+      "default": 0
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "subject_id",
+     "number",
+     "title",
+     "difficulty",
+     "source_label"
+    ],
+    "title": "ExerciseListItem"
+   },
+   "ExerciseOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "subject_id": {
+      "type": "integer",
+      "title": "Subject Id"
+     },
+     "number": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Number"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "difficulty": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Difficulty"
+     },
+     "source_label": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Source Label"
+     },
+     "node_keys": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Node Keys",
+      "default": []
+     },
+     "last_result": {
+      "anyOf": [
+       {
+        "type": "string",
+        "enum": [
+         "solved",
+         "partial",
+         "failed"
+        ]
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Last Result"
+     },
+     "attempt_count": {
+      "type": "integer",
+      "title": "Attempt Count",
+      "default": 0
+     },
+     "statement": {
+      "type": "string",
+      "title": "Statement"
+     },
+     "hints": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Hints"
+     },
+     "solution": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Solution"
+     },
+     "tags": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Tags"
+     },
+     "page_from": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Page From"
+     },
+     "page_to": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Page To"
+     },
+     "parts": {
+      "items": {
+       "$ref": "#/components/schemas/ExercisePartOut"
+      },
+      "type": "array",
+      "title": "Parts"
+     },
+     "figures": {
+      "items": {
+       "$ref": "#/components/schemas/ExerciseFigureOut"
+      },
+      "type": "array",
+      "title": "Figures"
+     },
+     "attempts": {
+      "items": {
+       "$ref": "#/components/schemas/AttemptOut"
+      },
+      "type": "array",
+      "title": "Attempts"
+     },
+     "node_ids": {
+      "items": {
+       "type": "integer"
+      },
+      "type": "array",
+      "title": "Node Ids",
+      "default": []
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "subject_id",
+     "number",
+     "title",
+     "difficulty",
+     "source_label",
+     "statement",
+     "hints",
+     "solution",
+     "tags",
+     "page_from",
+     "page_to",
+     "parts",
+     "figures",
+     "attempts"
+    ],
+    "title": "ExerciseOut"
+   },
+   "ExercisePartOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "label": {
+      "type": "string",
+      "title": "Label"
+     },
+     "statement": {
+      "type": "string",
+      "title": "Statement"
+     },
+     "hints": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Hints"
+     },
+     "solution": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Solution"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "label",
+     "statement",
+     "hints",
+     "solution"
+    ],
+    "title": "ExercisePartOut"
+   },
+   "FlashcardOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "front": {
+      "type": "string",
+      "title": "Front"
+     },
+     "back": {
+      "type": "string",
+      "title": "Back"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "front",
+     "back"
+    ],
+    "title": "FlashcardOut"
+   },
+   "GenerationPromptOut": {
+    "properties": {
+     "prompt": {
+      "type": "string",
+      "title": "Prompt"
+     }
+    },
+    "type": "object",
+    "required": [
+     "prompt"
+    ],
+    "title": "GenerationPromptOut"
+   },
+   "HTTPValidationError": {
+    "properties": {
+     "detail": {
+      "items": {
+       "$ref": "#/components/schemas/ValidationError"
+      },
+      "type": "array",
+      "title": "Detail"
+     }
+    },
+    "type": "object",
+    "title": "HTTPValidationError"
+   },
+   "ImportPreviewOut": {
+    "properties": {
+     "ok": {
+      "type": "boolean",
+      "title": "Ok"
+     },
+     "detected_format": {
+      "anyOf": [
+       {
+        "type": "string",
+        "enum": [
+         "json",
+         "markdown"
+        ]
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Detected Format"
+     },
+     "issues": {
+      "items": {
+       "$ref": "#/components/schemas/IssueOut"
+      },
+      "type": "array",
+      "title": "Issues"
+     },
+     "mode": {
+      "anyOf": [
+       {
+        "type": "string",
+        "enum": [
+         "create",
+         "merge"
+        ]
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Mode"
+     },
+     "plan_key": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Plan Key"
+     },
+     "plan_title": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Plan Title"
+     },
+     "subject_name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Subject Name"
+     },
+     "existing_plan_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Existing Plan Id"
+     },
+     "counts": {
+      "anyOf": [
+       {
+        "additionalProperties": {
+         "type": "integer"
+        },
+        "type": "object"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Counts"
+     },
+     "nodes": {
+      "items": {
+       "$ref": "#/components/schemas/NodeDiffOut"
+      },
+      "type": "array",
+      "title": "Nodes",
+      "default": []
+     },
+     "exercises": {
+      "type": "integer",
+      "title": "Exercises",
+      "default": 0
+     },
+     "flashcards": {
+      "type": "integer",
+      "title": "Flashcards",
+      "default": 0
+     },
+     "has_progress_block": {
+      "type": "boolean",
+      "title": "Has Progress Block",
+      "default": false
+     },
+     "has_notes_block": {
+      "type": "boolean",
+      "title": "Has Notes Block",
+      "default": false
+     }
+    },
+    "type": "object",
+    "required": [
+     "ok",
+     "issues"
+    ],
+    "title": "ImportPreviewOut"
+   },
+   "ImportPreviewRequest": {
+    "properties": {
+     "content": {
+      "type": "string",
+      "minLength": 1,
+      "title": "Content"
+     },
+     "format": {
+      "type": "string",
+      "enum": [
+       "auto",
+       "json",
+       "markdown"
+      ],
+      "title": "Format",
+      "default": "auto"
+     },
+     "subject_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Subject Id"
+     },
+     "plan_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Plan Id"
+     }
+    },
+    "type": "object",
+    "required": [
+     "content"
+    ],
+    "title": "ImportPreviewRequest"
+   },
+   "ImportRequest": {
+    "properties": {
+     "content": {
+      "type": "string",
+      "minLength": 1,
+      "title": "Content"
+     },
+     "format": {
+      "type": "string",
+      "enum": [
+       "auto",
+       "json",
+       "markdown"
+      ],
+      "title": "Format",
+      "default": "auto"
+     },
+     "subject_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Subject Id"
+     },
+     "plan_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Plan Id"
+     },
+     "new_subject_name": {
+      "anyOf": [
+       {
+        "type": "string",
+        "maxLength": 120
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "New Subject Name"
+     },
+     "removed_nodes": {
+      "type": "string",
+      "enum": [
+       "archive",
+       "delete"
+      ],
+      "title": "Removed Nodes",
+      "default": "archive"
+     },
+     "import_progress": {
+      "type": "boolean",
+      "title": "Import Progress",
+      "default": false
+     },
+     "import_notes": {
+      "type": "boolean",
+      "title": "Import Notes",
+      "default": false
+     },
+     "overwrite_existing_progress": {
+      "type": "boolean",
+      "title": "Overwrite Existing Progress",
+      "default": false
+     }
+    },
+    "type": "object",
+    "required": [
+     "content"
+    ],
+    "title": "ImportRequest"
+   },
+   "ImportResultOut": {
+    "properties": {
+     "plan_id": {
+      "type": "integer",
+      "title": "Plan Id"
+     },
+     "subject_id": {
+      "type": "integer",
+      "title": "Subject Id"
+     },
+     "issues": {
+      "items": {
+       "$ref": "#/components/schemas/IssueOut"
+      },
+      "type": "array",
+      "title": "Issues"
+     }
+    },
+    "type": "object",
+    "required": [
+     "plan_id",
+     "subject_id",
+     "issues"
+    ],
+    "title": "ImportResultOut"
+   },
+   "IssueOut": {
+    "properties": {
+     "path": {
+      "type": "string",
+      "title": "Path"
+     },
+     "message": {
+      "type": "string",
+      "title": "Message"
+     },
+     "severity": {
+      "type": "string",
+      "enum": [
+       "error",
+       "warning"
+      ],
+      "title": "Severity"
+     }
+    },
+    "type": "object",
+    "required": [
+     "path",
+     "message",
+     "severity"
+    ],
+    "title": "IssueOut"
+   },
+   "LoginRequest": {
+    "properties": {
+     "password": {
+      "type": "string",
+      "maxLength": 512,
+      "minLength": 1,
+      "title": "Password"
+     }
+    },
+    "type": "object",
+    "required": [
+     "password"
+    ],
+    "title": "LoginRequest"
+   },
+   "NodeDetailOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "key": {
+      "type": "string",
+      "title": "Key"
+     },
+     "parent_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Parent Id"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "description": {
+      "type": "string",
+      "title": "Description"
+     },
+     "objectives": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Objectives"
+     },
+     "estimated_minutes": {
+      "type": "integer",
+      "title": "Estimated Minutes"
+     },
+     "difficulty": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Difficulty"
+     },
+     "resources": {
+      "items": {
+       "additionalProperties": true,
+       "type": "object"
+      },
+      "type": "array",
+      "title": "Resources"
+     },
+     "keywords": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Keywords"
+     },
+     "sort_order": {
+      "type": "integer",
+      "title": "Sort Order"
+     },
+     "prerequisites": {
+      "items": {
+       "$ref": "#/components/schemas/PrerequisiteOut"
+      },
+      "type": "array",
+      "title": "Prerequisites"
+     },
+     "progress": {
+      "$ref": "#/components/schemas/NodeProgressOut"
+     },
+     "ready": {
+      "type": "boolean",
+      "title": "Ready"
+     },
+     "blocked_by": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Blocked By"
+     },
+     "descendants_total": {
+      "type": "integer",
+      "title": "Descendants Total"
+     },
+     "descendants_done": {
+      "type": "integer",
+      "title": "Descendants Done"
+     },
+     "has_note": {
+      "type": "boolean",
+      "title": "Has Note"
+     },
+     "flashcard_count": {
+      "type": "integer",
+      "title": "Flashcard Count"
+     },
+     "exercise_count": {
+      "type": "integer",
+      "title": "Exercise Count"
+     },
+     "plan_id": {
+      "type": "integer",
+      "title": "Plan Id"
+     },
+     "plan_title": {
+      "type": "string",
+      "title": "Plan Title"
+     },
+     "note": {
+      "$ref": "#/components/schemas/NoteOut"
+     },
+     "flashcards": {
+      "items": {
+       "$ref": "#/components/schemas/FlashcardOut"
+      },
+      "type": "array",
+      "title": "Flashcards"
+     },
+     "exercises": {
+      "items": {
+       "$ref": "#/components/schemas/ExerciseListItem"
+      },
+      "type": "array",
+      "title": "Exercises"
+     },
+     "dependents": {
+      "items": {
+       "$ref": "#/components/schemas/PrerequisiteOut"
+      },
+      "type": "array",
+      "title": "Dependents"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "key",
+     "parent_id",
+     "title",
+     "description",
+     "objectives",
+     "estimated_minutes",
+     "difficulty",
+     "resources",
+     "keywords",
+     "sort_order",
+     "prerequisites",
+     "progress",
+     "ready",
+     "blocked_by",
+     "descendants_total",
+     "descendants_done",
+     "has_note",
+     "flashcard_count",
+     "exercise_count",
+     "plan_id",
+     "plan_title",
+     "note",
+     "flashcards",
+     "exercises",
+     "dependents"
+    ],
+    "title": "NodeDetailOut"
+   },
+   "NodeDiffOut": {
+    "properties": {
+     "key": {
+      "type": "string",
+      "title": "Key"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "change": {
+      "type": "string",
+      "enum": [
+       "added",
+       "changed",
+       "unchanged",
+       "removed"
+      ],
+      "title": "Change"
+     },
+     "fields": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Fields"
+     },
+     "has_progress": {
+      "type": "boolean",
+      "title": "Has Progress"
+     },
+     "has_note": {
+      "type": "boolean",
+      "title": "Has Note"
+     }
+    },
+    "type": "object",
+    "required": [
+     "key",
+     "title",
+     "change",
+     "fields",
+     "has_progress",
+     "has_note"
+    ],
+    "title": "NodeDiffOut"
+   },
+   "NodeOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "key": {
+      "type": "string",
+      "title": "Key"
+     },
+     "parent_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Parent Id"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "description": {
+      "type": "string",
+      "title": "Description"
+     },
+     "objectives": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Objectives"
+     },
+     "estimated_minutes": {
+      "type": "integer",
+      "title": "Estimated Minutes"
+     },
+     "difficulty": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Difficulty"
+     },
+     "resources": {
+      "items": {
+       "additionalProperties": true,
+       "type": "object"
+      },
+      "type": "array",
+      "title": "Resources"
+     },
+     "keywords": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Keywords"
+     },
+     "sort_order": {
+      "type": "integer",
+      "title": "Sort Order"
+     },
+     "prerequisites": {
+      "items": {
+       "$ref": "#/components/schemas/PrerequisiteOut"
+      },
+      "type": "array",
+      "title": "Prerequisites"
+     },
+     "progress": {
+      "$ref": "#/components/schemas/NodeProgressOut"
+     },
+     "ready": {
+      "type": "boolean",
+      "title": "Ready"
+     },
+     "blocked_by": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Blocked By"
+     },
+     "descendants_total": {
+      "type": "integer",
+      "title": "Descendants Total"
+     },
+     "descendants_done": {
+      "type": "integer",
+      "title": "Descendants Done"
+     },
+     "has_note": {
+      "type": "boolean",
+      "title": "Has Note"
+     },
+     "flashcard_count": {
+      "type": "integer",
+      "title": "Flashcard Count"
+     },
+     "exercise_count": {
+      "type": "integer",
+      "title": "Exercise Count"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "key",
+     "parent_id",
+     "title",
+     "description",
+     "objectives",
+     "estimated_minutes",
+     "difficulty",
+     "resources",
+     "keywords",
+     "sort_order",
+     "prerequisites",
+     "progress",
+     "ready",
+     "blocked_by",
+     "descendants_total",
+     "descendants_done",
+     "has_note",
+     "flashcard_count",
+     "exercise_count"
+    ],
+    "title": "NodeOut"
+   },
+   "NodeProgressOut": {
+    "properties": {
+     "status": {
+      "type": "string",
+      "enum": [
+       "not_started",
+       "in_progress",
+       "understood",
+       "mastered"
+      ],
+      "title": "Status"
+     },
+     "started_at": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date-time"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Started At"
+     },
+     "understood_at": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date-time"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Understood At"
+     },
+     "mastered_at": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date-time"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Mastered At"
+     },
+     "updated_at": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date-time"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Updated At"
+     }
+    },
+    "type": "object",
+    "required": [
+     "status"
+    ],
+    "title": "NodeProgressOut"
+   },
+   "NodeUpdate": {
+    "properties": {
+     "title": {
+      "anyOf": [
+       {
+        "type": "string",
+        "maxLength": 200,
+        "minLength": 1
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Title"
+     },
+     "description": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Description"
+     },
+     "objectives": {
+      "anyOf": [
+       {
+        "items": {
+         "type": "string"
+        },
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Objectives"
+     },
+     "estimated_minutes": {
+      "anyOf": [
+       {
+        "type": "integer",
+        "minimum": 0.0
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Estimated Minutes"
+     },
+     "difficulty": {
+      "anyOf": [
+       {
+        "type": "integer",
+        "maximum": 5.0,
+        "minimum": 1.0
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Difficulty"
+     },
+     "resources": {
+      "anyOf": [
+       {
+        "items": {
+         "additionalProperties": true,
+         "type": "object"
+        },
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Resources"
+     },
+     "keywords": {
+      "anyOf": [
+       {
+        "items": {
+         "type": "string"
+        },
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Keywords"
+     }
+    },
+    "type": "object",
+    "title": "NodeUpdate"
+   },
+   "NoteOut": {
+    "properties": {
+     "content": {
+      "type": "string",
+      "title": "Content"
+     },
+     "updated_at": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date-time"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Updated At"
+     }
+    },
+    "type": "object",
+    "required": [
+     "content"
+    ],
+    "title": "NoteOut"
+   },
+   "NoteUpdate": {
+    "properties": {
+     "content": {
+      "type": "string",
+      "title": "Content"
+     }
+    },
+    "type": "object",
+    "required": [
+     "content"
+    ],
+    "title": "NoteUpdate"
+   },
+   "PlanDetailOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "subject_id": {
+      "type": "integer",
+      "title": "Subject Id"
+     },
+     "key": {
+      "type": "string",
+      "title": "Key"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "description": {
+      "type": "string",
+      "title": "Description"
+     },
+     "language": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Language"
+     },
+     "exam_date": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Exam Date"
+     },
+     "exam_name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Exam Name"
+     },
+     "tags": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Tags"
+     },
+     "daily_capacity_minutes": {
+      "type": "integer",
+      "title": "Daily Capacity Minutes"
+     },
+     "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Updated At"
+     },
+     "last_imported_at": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date-time"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Last Imported At"
+     },
+     "progress": {
+      "$ref": "#/components/schemas/ProgressSummary"
+     },
+     "resources": {
+      "items": {
+       "additionalProperties": true,
+       "type": "object"
+      },
+      "type": "array",
+      "title": "Resources"
+     },
+     "meta": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Meta"
+     },
+     "schema_version": {
+      "type": "integer",
+      "title": "Schema Version"
+     },
+     "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Created At"
+     },
+     "subject_name": {
+      "type": "string",
+      "title": "Subject Name"
+     },
+     "subject_color": {
+      "type": "string",
+      "title": "Subject Color"
+     },
+     "nodes": {
+      "items": {
+       "$ref": "#/components/schemas/NodeOut"
+      },
+      "type": "array",
+      "title": "Nodes"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "subject_id",
+     "key",
+     "title",
+     "description",
+     "language",
+     "exam_date",
+     "exam_name",
+     "tags",
+     "daily_capacity_minutes",
+     "updated_at",
+     "last_imported_at",
+     "progress",
+     "resources",
+     "meta",
+     "schema_version",
+     "created_at",
+     "subject_name",
+     "subject_color",
+     "nodes"
+    ],
+    "title": "PlanDetailOut"
+   },
+   "PlanSummaryOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "subject_id": {
+      "type": "integer",
+      "title": "Subject Id"
+     },
+     "key": {
+      "type": "string",
+      "title": "Key"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "description": {
+      "type": "string",
+      "title": "Description"
+     },
+     "language": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Language"
+     },
+     "exam_date": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Exam Date"
+     },
+     "exam_name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Exam Name"
+     },
+     "tags": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Tags"
+     },
+     "daily_capacity_minutes": {
+      "type": "integer",
+      "title": "Daily Capacity Minutes"
+     },
+     "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Updated At"
+     },
+     "last_imported_at": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date-time"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Last Imported At"
+     },
+     "progress": {
+      "$ref": "#/components/schemas/ProgressSummary"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "subject_id",
+     "key",
+     "title",
+     "description",
+     "language",
+     "exam_date",
+     "exam_name",
+     "tags",
+     "daily_capacity_minutes",
+     "updated_at",
+     "last_imported_at",
+     "progress"
+    ],
+    "title": "PlanSummaryOut"
+   },
+   "PlanUpdate": {
+    "properties": {
+     "title": {
+      "anyOf": [
+       {
+        "type": "string",
+        "maxLength": 200,
+        "minLength": 1
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Title"
+     },
+     "description": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Description"
+     },
+     "exam_date": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Exam Date"
+     },
+     "exam_name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Exam Name"
+     },
+     "clear_exam": {
+      "type": "boolean",
+      "title": "Clear Exam",
+      "default": false
+     },
+     "daily_capacity_minutes": {
+      "anyOf": [
+       {
+        "type": "integer",
+        "maximum": 960.0,
+        "minimum": 15.0
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Daily Capacity Minutes"
+     }
+    },
+    "type": "object",
+    "title": "PlanUpdate"
+   },
+   "PrerequisiteOut": {
+    "properties": {
+     "node_id": {
+      "type": "integer",
+      "title": "Node Id"
+     },
+     "key": {
+      "type": "string",
+      "title": "Key"
+     },
+     "kind": {
+      "type": "string",
+      "enum": [
+       "required",
+       "recommended"
+      ],
+      "title": "Kind"
+     },
+     "note": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Note"
+     }
+    },
+    "type": "object",
+    "required": [
+     "node_id",
+     "key",
+     "kind"
+    ],
+    "title": "PrerequisiteOut"
+   },
+   "ProgressSummary": {
+    "properties": {
+     "nodes_total": {
+      "type": "integer",
+      "title": "Nodes Total"
+     },
+     "nodes_done": {
+      "type": "integer",
+      "title": "Nodes Done"
+     },
+     "nodes_in_progress": {
+      "type": "integer",
+      "title": "Nodes In Progress"
+     },
+     "minutes_total": {
+      "type": "integer",
+      "title": "Minutes Total"
+     },
+     "minutes_done": {
+      "type": "integer",
+      "title": "Minutes Done"
+     },
+     "ready_count": {
+      "type": "integer",
+      "title": "Ready Count"
+     },
+     "percent": {
+      "type": "number",
+      "title": "Percent"
+     }
+    },
+    "type": "object",
+    "required": [
+     "nodes_total",
+     "nodes_done",
+     "nodes_in_progress",
+     "minutes_total",
+     "minutes_done",
+     "ready_count",
+     "percent"
+    ],
+    "title": "ProgressSummary"
+   },
+   "ProgressUpdate": {
+    "properties": {
+     "status": {
+      "type": "string",
+      "enum": [
+       "not_started",
+       "in_progress",
+       "understood",
+       "mastered"
+      ],
+      "title": "Status"
+     }
+    },
+    "type": "object",
+    "required": [
+     "status"
+    ],
+    "title": "ProgressUpdate"
+   },
+   "SubjectCreate": {
+    "properties": {
+     "name": {
+      "type": "string",
+      "maxLength": 120,
+      "minLength": 1,
+      "title": "Name"
+     },
+     "color": {
+      "type": "string",
+      "pattern": "^#[0-9a-fA-F]{6}$",
+      "title": "Color",
+      "default": "#6366f1"
+     },
+     "icon": {
+      "type": "string",
+      "maxLength": 32,
+      "title": "Icon",
+      "default": "book-open"
+     },
+     "description": {
+      "type": "string",
+      "title": "Description",
+      "default": ""
+     }
+    },
+    "type": "object",
+    "required": [
+     "name"
+    ],
+    "title": "SubjectCreate"
+   },
+   "SubjectOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "slug": {
+      "type": "string",
+      "title": "Slug"
+     },
+     "color": {
+      "type": "string",
+      "title": "Color"
+     },
+     "icon": {
+      "type": "string",
+      "title": "Icon"
+     },
+     "description": {
+      "type": "string",
+      "title": "Description"
+     },
+     "sort_order": {
+      "type": "integer",
+      "title": "Sort Order"
+     },
+     "archived": {
+      "type": "boolean",
+      "title": "Archived"
+     },
+     "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Created At"
+     },
+     "plans": {
+      "items": {
+       "$ref": "#/components/schemas/PlanSummaryOut"
+      },
+      "type": "array",
+      "title": "Plans",
+      "default": []
+     },
+     "progress": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/ProgressSummary"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "exercise_count": {
+      "type": "integer",
+      "title": "Exercise Count",
+      "default": 0
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "name",
+     "slug",
+     "color",
+     "icon",
+     "description",
+     "sort_order",
+     "archived",
+     "created_at"
+    ],
+    "title": "SubjectOut"
+   },
+   "SubjectUpdate": {
+    "properties": {
+     "name": {
+      "anyOf": [
+       {
+        "type": "string",
+        "maxLength": 120,
+        "minLength": 1
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Name"
+     },
+     "color": {
+      "anyOf": [
+       {
+        "type": "string",
+        "pattern": "^#[0-9a-fA-F]{6}$"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Color"
+     },
+     "icon": {
+      "anyOf": [
+       {
+        "type": "string",
+        "maxLength": 32
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Icon"
+     },
+     "description": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Description"
+     },
+     "archived": {
+      "anyOf": [
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Archived"
+     },
+     "sort_order": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Sort Order"
+     }
+    },
+    "type": "object",
+    "title": "SubjectUpdate"
+   },
+   "UserOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "username": {
+      "type": "string",
+      "title": "Username"
+     },
+     "display_name": {
+      "type": "string",
+      "title": "Display Name"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "username",
+     "display_name"
+    ],
+    "title": "UserOut"
+   },
+   "ValidationError": {
+    "properties": {
+     "loc": {
+      "items": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "integer"
+        }
+       ]
+      },
+      "type": "array",
+      "title": "Location"
+     },
+     "msg": {
+      "type": "string",
+      "title": "Message"
+     },
+     "type": {
+      "type": "string",
+      "title": "Error Type"
+     },
+     "input": {
+      "title": "Input"
+     },
+     "ctx": {
+      "type": "object",
+      "title": "Context"
+     }
+    },
+    "type": "object",
+    "required": [
+     "loc",
+     "msg",
+     "type"
+    ],
+    "title": "ValidationError"
+   }
+  }
+ }
+}

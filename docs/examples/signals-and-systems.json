@@ -1,0 +1,203 @@
+{
+  "schemaVersion": 1,
+  "id": "signals-and-systems-ws26",
+  "title": "Signals & Systems",
+  "subject": "Signals & Systems",
+  "language": "en",
+  "description": "Continuous- and discrete-time signals, LTI systems, Fourier/Laplace/z-transforms and sampling. Built for the KV *Signale und Systeme* at JKU, with an eye on biomedical signals (ECG, EEG, ultrasound).",
+  "exam": { "date": "2027-02-05", "name": "Klausur" },
+  "tags": ["bachelor", "3rd-semester", "medical-engineering"],
+  "resources": [
+    { "title": "Oppenheim, Willsky, Nawab – Signals & Systems (2nd ed.)", "type": "book", "note": "Primary reference" },
+    { "title": "3Blue1Brown – But what is the Fourier Transform?", "type": "video", "url": "https://www.youtube.com/watch?v=spUNpyF58BY" }
+  ],
+  "meta": { "author": "Claude", "generatedBy": "claude-sonnet-5-5", "createdAt": "2026-11-03" },
+  "nodes": [
+    {
+      "id": "foundations",
+      "title": "Mathematical foundations",
+      "description": "Refresher of the maths the whole course rests on. Skip what you already master.",
+      "estimatedMinutes": 0
+    },
+    {
+      "id": "complex-numbers",
+      "parent": "foundations",
+      "title": "Complex numbers & Euler's formula",
+      "description": "Cartesian vs. polar form, $e^{j\\theta} = \\cos\\theta + j\\sin\\theta$, phasors and why engineers write $j$ instead of $i$.\n\n$$\\cos(\\omega t) = \\tfrac{1}{2}\\left(e^{j\\omega t} + e^{-j\\omega t}\\right)$$",
+      "objectives": [
+        "Convert between $a + jb$ and $r e^{j\\theta}$ fluently",
+        "Multiply and divide complex numbers in polar form",
+        "Explain why a real sinusoid is a sum of two counter-rotating phasors"
+      ],
+      "estimatedMinutes": 90,
+      "difficulty": 1,
+      "keywords": ["phasor", "Euler", "polar form", "complex exponential"],
+      "resources": [{ "title": "Oppenheim – Appendix A", "type": "book" }],
+      "flashcards": [
+        { "id": "euler", "front": "Euler's formula", "back": "$e^{j\\theta} = \\cos\\theta + j\\sin\\theta$" },
+        { "id": "cos-as-phasors", "front": "Write $\\cos(\\omega t)$ as complex exponentials.", "back": "$\\cos(\\omega t) = \\tfrac12\\left(e^{j\\omega t} + e^{-j\\omega t}\\right)$" }
+      ]
+    },
+    {
+      "id": "integrals-series",
+      "parent": "foundations",
+      "title": "Integrals, series & the geometric sum",
+      "description": "Improper integrals, $\\sum_{n=0}^{N-1} a^n = \\frac{1-a^N}{1-a}$ and its infinite version for $|a|<1$. Needed constantly for DT transforms.",
+      "objectives": ["Evaluate $\\int_{-\\infty}^{\\infty} e^{-a|t|}\\,dt$", "Sum finite and infinite geometric series with complex ratio"],
+      "estimatedMinutes": 60,
+      "difficulty": 1,
+      "keywords": ["geometric series", "improper integral"]
+    },
+    {
+      "id": "signals",
+      "title": "Signals",
+      "description": "Classification and the elementary building blocks every later chapter uses.",
+      "estimatedMinutes": 0
+    },
+    {
+      "id": "signal-classification",
+      "parent": "signals",
+      "title": "Signal classification",
+      "description": "Continuous vs. discrete time, energy vs. power signals, periodicity and fundamental period, even/odd decomposition.",
+      "objectives": [
+        "Decide whether $x[n] = \\cos(\\tfrac{3\\pi}{7} n)$ is periodic and find $N$",
+        "Compute energy and average power of a given signal"
+      ],
+      "estimatedMinutes": 90,
+      "difficulty": 2,
+      "prerequisites": ["complex-numbers"],
+      "keywords": ["periodic", "energy signal", "power signal", "even odd"]
+    },
+    {
+      "id": "elementary-signals",
+      "parent": "signals",
+      "title": "Elementary signals: δ, u, exponentials",
+      "description": "The unit impulse $\\delta(t)$ and its sifting property $\\int x(\\tau)\\delta(\\tau - t_0)\\,d\\tau = x(t_0)$, the unit step $u(t)$, real and complex exponentials, $\\mathrm{rect}$ and $\\mathrm{sinc}$.",
+      "objectives": ["State and use the sifting property", "Sketch time-shifted and time-scaled versions of elementary signals"],
+      "estimatedMinutes": 90,
+      "difficulty": 2,
+      "prerequisites": ["complex-numbers"],
+      "keywords": ["dirac", "unit step", "sifting", "sinc"],
+      "flashcards": [{ "id": "sifting", "front": "Sifting property of $\\delta(t)$", "back": "$\\int_{-\\infty}^{\\infty} x(\\tau)\\,\\delta(\\tau - t_0)\\,d\\tau = x(t_0)$" }]
+    },
+    {
+      "id": "systems",
+      "title": "LTI systems",
+      "description": "Linear time-invariant systems and the convolution integral/sum.",
+      "estimatedMinutes": 0
+    },
+    {
+      "id": "system-properties",
+      "parent": "systems",
+      "title": "System properties",
+      "description": "Linearity, time-invariance, causality, memory, BIBO stability, invertibility — and how to prove or disprove each.",
+      "objectives": ["Test an input–output relation for all five properties with a clean argument or counter-example"],
+      "estimatedMinutes": 120,
+      "difficulty": 3,
+      "prerequisites": ["signal-classification", "elementary-signals"],
+      "keywords": ["linearity", "time invariance", "causality", "BIBO"]
+    },
+    {
+      "id": "convolution",
+      "parent": "systems",
+      "title": "Impulse response & convolution",
+      "description": "Every LTI system is fully described by $h(t)$:\n\n$$y(t) = (x * h)(t) = \\int_{-\\infty}^{\\infty} x(\\tau)\\,h(t-\\tau)\\,d\\tau$$\n\nGraphical convolution (flip–shift–multiply–integrate), properties (commutative, associative, distributive), DT convolution sum.",
+      "objectives": [
+        "Compute convolutions of piecewise signals graphically and analytically",
+        "Determine causality and stability from $h(t)$",
+        "Combine series/parallel LTI systems into one impulse response"
+      ],
+      "estimatedMinutes": 240,
+      "difficulty": 4,
+      "prerequisites": ["system-properties", { "id": "integrals-series", "kind": "recommended", "note": "DT convolution sums are geometric series" }],
+      "keywords": ["convolution", "impulse response", "flip and shift"],
+      "exercises": [
+        {
+          "id": "rect-conv",
+          "title": "Convolution of two rectangles",
+          "statement": "Let $x(t) = \\mathrm{rect}(t)$ and $h(t) = \\mathrm{rect}(t/2)$.",
+          "parts": [
+            { "label": "a", "statement": "Sketch $x(\\tau)$ and $h(t-\\tau)$ for $t = 0$ and $t = 1$.", "hints": ["$h(t-\\tau)$ is $h(\\tau)$ flipped and shifted right by $t$."] },
+            { "label": "b", "statement": "Compute $y(t) = (x * h)(t)$ and sketch it.", "solution": "A trapezoid: linear ramps on $[-1.5,-0.5]$ and $[0.5,1.5]$, plateau of height 1 on $[-0.5,0.5]$, zero elsewhere." }
+          ],
+          "difficulty": 2
+        },
+        {
+          "id": "exp-step",
+          "title": "Exponential through a step",
+          "statement": "An LTI system has impulse response $h(t) = e^{-2t}u(t)$. Find the response to $x(t) = u(t) - u(t-1)$.",
+          "hints": ["Use linearity: respond to $u(t)$ first, then shift."],
+          "solution": "$s(t) = \\tfrac12(1-e^{-2t})u(t)$ is the step response, so $y(t) = s(t) - s(t-1)$.",
+          "difficulty": 3
+        }
+      ]
+    },
+    {
+      "id": "frequency-domain",
+      "title": "Frequency-domain analysis",
+      "description": "Representing signals as sums of complex exponentials — the eigenfunctions of LTI systems.",
+      "estimatedMinutes": 0
+    },
+    {
+      "id": "fourier-series",
+      "parent": "frequency-domain",
+      "title": "Fourier series",
+      "description": "Periodic $x(t) = \\sum_{k=-\\infty}^{\\infty} a_k e^{jk\\omega_0 t}$ with $a_k = \\frac{1}{T}\\int_T x(t)e^{-jk\\omega_0 t}\\,dt$. Parseval, Gibbs phenomenon, symmetry properties.",
+      "objectives": ["Compute $a_k$ of a square wave and sketch the line spectrum", "Relate symmetry of $x(t)$ to properties of $a_k$"],
+      "estimatedMinutes": 180,
+      "difficulty": 3,
+      "prerequisites": ["complex-numbers", "integrals-series", { "id": "convolution", "kind": "recommended", "note": "The eigenfunction property $e^{j\\omega t} \\mapsto H(j\\omega)e^{j\\omega t}$ motivates the whole chapter" }],
+      "keywords": ["Fourier coefficients", "line spectrum", "Parseval", "Gibbs"]
+    },
+    {
+      "id": "fourier-transform",
+      "parent": "frequency-domain",
+      "title": "Continuous-time Fourier transform",
+      "description": "From series to transform as $T \\to \\infty$: $X(j\\omega) = \\int x(t)e^{-j\\omega t}\\,dt$. Properties (linearity, shift, modulation, convolution ↔ multiplication, duality), transform pairs, frequency response $H(j\\omega)$ and ideal filters.",
+      "objectives": [
+        "Derive the transform of $\\mathrm{rect}$, $e^{-at}u(t)$ and $\\delta(t)$",
+        "Use the convolution property to solve an LTI problem in the frequency domain",
+        "Sketch magnitude and phase of a first-order low-pass"
+      ],
+      "estimatedMinutes": 240,
+      "difficulty": 4,
+      "prerequisites": ["fourier-series", "convolution"],
+      "keywords": ["CTFT", "frequency response", "duality", "sinc", "ideal filter"],
+      "flashcards": [
+        { "id": "conv-prop", "front": "Convolution property of the Fourier transform", "back": "$x(t) * h(t) \\;\\longleftrightarrow\\; X(j\\omega)\\,H(j\\omega)$" }
+      ]
+    },
+    {
+      "id": "sampling",
+      "parent": "frequency-domain",
+      "title": "Sampling theorem & aliasing",
+      "description": "Impulse-train sampling, spectrum replication at multiples of $\\omega_s$, Nyquist rate $f_s > 2 f_{\\max}$, ideal reconstruction and aliasing. Where it bites in practice: ECG at 250 Hz, ultrasound Doppler, MRI k-space.",
+      "objectives": ["Determine the minimum sampling rate for a band-limited signal", "Predict the alias frequency of an undersampled sinusoid"],
+      "estimatedMinutes": 150,
+      "difficulty": 3,
+      "prerequisites": ["fourier-transform"],
+      "keywords": ["Nyquist", "aliasing", "reconstruction", "anti-aliasing filter"],
+      "exercises": [
+        {
+          "id": "ecg-alias",
+          "title": "Mains hum in an ECG",
+          "statement": "An ECG amplifier picks up 50 Hz mains interference. The signal is sampled at $f_s = 80\\,\\text{Hz}$ without an anti-aliasing filter. At which frequency does the hum appear in the sampled signal?",
+          "hints": ["Aliases appear at $|f - k f_s|$ for integer $k$."],
+          "solution": "$|50 - 80| = 30\\,\\text{Hz}$ — right inside the QRS band, which is why hardware anti-aliasing filters are mandatory.",
+          "difficulty": 2
+        }
+      ]
+    },
+    {
+      "id": "laplace",
+      "parent": "frequency-domain",
+      "title": "Laplace transform & system functions",
+      "description": "$X(s) = \\int x(t)e^{-st}\\,dt$, region of convergence, poles/zeros, $H(s)$ of differential-equation systems, stability from pole locations.",
+      "objectives": ["Find $H(s)$ and the ROC for a causal LTI system described by a differential equation", "Decide stability from the pole-zero plot"],
+      "estimatedMinutes": 210,
+      "difficulty": 4,
+      "prerequisites": ["fourier-transform"],
+      "keywords": ["Laplace", "ROC", "poles", "zeros", "system function"]
+    }
+  ]
+}

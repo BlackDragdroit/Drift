@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "id": "signals-and-systems",
+  "title": "Signals & Systems",
+  "subject": "Signals & Systems",
+  "language": "en",
+  "description": "LTI systems, Fourier analysis and sampling.",
+  "exam": { "date": "2027-02-05", "name": "Klausur" },
+  "tags": ["bachelor"],
+  "resources": [{ "title": "Oppenheim & Willsky", "type": "book" }],
+  "nodes": [
+    { "id": "foundations", "title": "Mathematical foundations", "estimatedMinutes": 0 },
+    {
+      "id": "complex-numbers",
+      "parent": "foundations",
+      "title": "Complex numbers",
+      "description": "Polar form and $e^{j\\theta}$.",
+      "objectives": ["Convert between forms"],
+      "estimatedMinutes": 90,
+      "difficulty": 1,
+      "keywords": ["phasor"],
+      "flashcards": [{ "id": "euler", "front": "Euler?", "back": "$e^{j\\theta}=\\cos\\theta+j\\sin\\theta$" }]
+    },
+    {
+      "id": "signals-basics",
+      "title": "Signals basics",
+      "estimatedMinutes": 120,
+      "difficulty": 2,
+      "prerequisites": ["complex-numbers"]
+    },
+    {
+      "id": "lti-systems",
+      "title": "LTI systems",
+      "estimatedMinutes": 240,
+      "difficulty": 3,
+      "prerequisites": ["signals-basics"],
+      "exercises": [
+        {
+          "id": "rect-conv",
+          "title": "Convolution of two rectangles",
+          "statement": "Let $x(t)=\\mathrm{rect}(t)$.",
+          "parts": [
+            { "label": "a", "statement": "Sketch." },
+            { "label": "b", "statement": "Compute $y=x*h$.", "solution": "Trapezoid." }
+          ],
+          "difficulty": 2
+        }
+      ]
+    },
+    {
+      "id": "fourier-series",
+      "title": "Fourier series",
+      "estimatedMinutes": 180,
+      "difficulty": 3,
+      "prerequisites": ["complex-numbers", { "id": "lti-systems", "kind": "recommended", "note": "Eigenfunctions" }]
+    }
+  ]
+}

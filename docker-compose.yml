@@ -1,0 +1,15 @@
+services:
+  app:
+    build: .
+    image: learning-platform:local
+    ports:
+      - "8000:8000"
+    env_file: .env
+    environment:
+      DATA_DIR: /data
+    volumes:
+      - learning-data:/data
+    restart: unless-stopped
+
+volumes:
+  learning-data:
