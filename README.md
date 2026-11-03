@@ -164,3 +164,7 @@ docker compose up -d --build
 - **Phase 3 (done):** practice mode with exam mix, schedule view with live recalculation, dashboard with due-today/streak/weak spots, FTS5 search, command palette + shortcuts, study timer.
 - **Phase 4 (done):** FSRS flashcards with Claude generation, similar-exercise generation, backup/restore ZIP, settings page, PWA install.
 - **Ideas next:** FSRS parameter optimisation from review history, notes on attempts in practice mode, weekly review summary, sharing plans with friends (the data model is already per-user).
+
+## License
+
+MIT — see [LICENSE](LICENSE).
