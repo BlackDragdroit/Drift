@@ -1,7 +1,7 @@
 """PDF -> exercises with Claude.
 
 Pipeline (per job): plan page chunks -> for each chunk build a request (sub-PDF document block, or
-page images for scanned PDFs) -> force the `record_exercises` tool so the answer is strict JSON ->
+page images for scanned PDFs) -> structured output (JSON schema, constrained decoding) ->
 validate with pydantic (one retry with the error fed back) -> stitch exercises that cross chunk
 boundaries -> crop figures from the rendered pages -> drafts for the review screen.
 
@@ -22,7 +22,6 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_valida
 
 from app.services import pdf as pdfsvc
 
-TOOL_NAME = "record_exercises"
 MAX_OUTPUT_TOKENS = 24000
 
 # ----------------------------------------------------------------------------- model output schema
@@ -112,7 +111,7 @@ class ChunkOut(StrictModel):
 
 
 def _inline_refs(schema: dict[str, Any]) -> dict[str, Any]:
-    """Resolve local $refs so the tool schema has no $defs (keeps every API happy)."""
+    """Resolve local $refs so the schema has no $defs."""
     defs = schema.pop("$defs", {})
 
     def walk(node: Any) -> Any:
@@ -128,14 +127,49 @@ def _inline_refs(schema: dict[str, Any]) -> dict[str, Any]:
     return walk(schema)
 
 
-def tool_schema() -> dict[str, Any]:
-    return _inline_refs(ChunkOut.model_json_schema())
+_UNSUPPORTED_KEYS = {
+    "minimum",
+    "maximum",
+    "exclusiveMinimum",
+    "exclusiveMaximum",
+    "multipleOf",
+    "minLength",
+    "maxLength",
+    "minItems",
+    "maxItems",
+    "default",
+}
+
+
+def _strictify(node: Any) -> Any:
+    """Make a schema acceptable for Anthropic structured outputs (constrained decoding).
+
+    Objects get additionalProperties=false and every property required (optional fields stay
+    nullable via anyOf); numeric/string/array constraints are dropped (validated by pydantic instead).
+    """
+    if isinstance(node, dict):
+        out = {k: _strictify(v) for k, v in node.items() if k not in _UNSUPPORTED_KEYS}
+        if out.get("type") == "object" and "properties" in out:
+            out["additionalProperties"] = False
+            out["required"] = list(out["properties"].keys())
+        return out
+    if isinstance(node, list):
+        return [_strictify(v) for v in node]
+    return node
+
+
+def output_schema() -> dict[str, Any]:
+    return _strictify(_inline_refs(ChunkOut.model_json_schema()))
+
+
+def tool_schema() -> dict[str, Any]:  # kept for backwards compatibility in tests
+    return output_schema()
 
 
 # ----------------------------------------------------------------------------- prompt
 
 
-SYSTEM_PROMPT = """You extract exercises from university course material (exercise sheets, problem collections, past exams) in mathematics, electrical engineering, signal processing, medical imaging, physics and programming. You always answer by calling the `record_exercises` tool exactly once.
+SYSTEM_PROMPT = """You extract exercises from university course material (exercise sheets, problem collections, past exams) in mathematics, electrical engineering, signal processing, medical imaging, physics and programming. You answer with a single JSON document that follows the required schema (no prose).
 
 Rules:
 1. One entry per exercise. Numbered problems ("Aufgabe 3", "Exercise 2.4", "Problem 7", "Beispiel 12") are exercises; their sub-questions (a), (b), i), ii), 1., 2. become `parts`. Keep the printed numbering in `number` and part `label`.
@@ -199,7 +233,7 @@ ModelCaller = Callable[..., Awaitable[tuple[dict[str, Any], Usage]]]
 async def call_model(
     *, model: str, system: str, content: list[dict[str, Any]], api_key: str | None
 ) -> tuple[dict[str, Any], Usage]:
-    """Send one request to Claude and return the tool input (raw dict) + token usage."""
+    """Send one request to Claude with a JSON-schema output format; return the parsed JSON + usage."""
     import anthropic
 
     if not api_key:
@@ -210,23 +244,23 @@ async def call_model(
         max_tokens=MAX_OUTPUT_TOKENS,
         system=system,
         messages=[{"role": "user", "content": content}],
-        tools=[
-            {
-                "name": TOOL_NAME,
-                "description": "Record the exercises found in the attached pages.",
-                "input_schema": tool_schema(),
-            }
-        ],
-        tool_choice={"type": "tool", "name": TOOL_NAME},
+        output_config={"format": {"type": "json_schema", "schema": output_schema()}},
     )
     usage = Usage(
         getattr(response.usage, "input_tokens", 0) or 0,
         getattr(response.usage, "output_tokens", 0) or 0,
     )
-    for block in response.content:
-        if getattr(block, "type", None) == "tool_use" and block.name == TOOL_NAME:
-            return dict(block.input), usage
-    raise RuntimeError("The model did not call the record_exercises tool.")
+    text = "".join(
+        getattr(block, "text", "")
+        for block in response.content
+        if getattr(block, "type", None) == "text"
+    )
+    if not text.strip():
+        raise RuntimeError(f"The model returned no JSON (stop_reason={response.stop_reason}).")
+    try:
+        return json.loads(text), usage
+    except json.JSONDecodeError as exc:
+        raise RuntimeError(f"The model returned invalid JSON: {exc}") from exc
 
 
 def document_block(pdf_bytes: bytes) -> dict[str, Any]:
