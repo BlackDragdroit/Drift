@@ -1,6 +1,6 @@
 /** All UI strings live here so a second language (e.g. `de.ts`) can be added later. */
 export const en = {
-  app: { name: 'Learning', tagline: 'Your plans, your pace.' },
+  app: { name: 'Drift', tagline: 'Your plans, your pace.' },
   nav: { home: 'Home', subjects: 'Subjects', settings: 'Settings', logout: 'Log out', theme: 'Theme', light: 'Light', dark: 'Dark', system: 'System' },
   common: {
     save: 'Save', cancel: 'Cancel', delete: 'Delete', edit: 'Edit', close: 'Close', back: 'Back', create: 'Create',

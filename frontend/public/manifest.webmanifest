@@ -1,6 +1,6 @@
 {
-  "name": "Learning Platform",
-  "short_name": "Learning",
+  "name": "Drift",
+  "short_name": "Drift",
   "description": "Learning plans, exercises and spaced repetition",
   "start_url": "/",
   "scope": "/",

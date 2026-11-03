@@ -1,4 +1,4 @@
-# Deploying the Learning Platform on Coolify — step-by-step guide
+# Deploying Drift on Coolify — step-by-step guide
 
 This guide is self-contained. It is written so that it can be handed to a person or an AI assistant
 who has access to the Coolify UI (or Coolify's API/SSH) and to the GitHub repository, with no other

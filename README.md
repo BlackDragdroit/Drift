@@ -1,4 +1,4 @@
-# Learning Platform
+# Drift
 
 A self-hosted, single-user study system for a Medical Engineering degree: structured **learning
 plans** as an interactive mind map with prerequisites and progress, **exercise sheets (PDF)** turned
