@@ -76,6 +76,9 @@ cd backend && uv run alembic revision --autogenerate -m "describe change"
 
 ## Deploying on Coolify
 
+A detailed, hand-off-ready guide (also suitable for an AI assistant) is in
+[`docs/coolify-setup.md`](docs/coolify-setup.md). Short version:
+
 1. **Push this repo to GitHub** (private is fine) and connect the repository in Coolify
    (*Projects → New Resource → Public/Private Repository*).
 2. **Build pack:** choose **Dockerfile**. Leave the Dockerfile location as `/Dockerfile`.
