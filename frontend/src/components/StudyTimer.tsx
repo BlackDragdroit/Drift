@@ -113,7 +113,7 @@ export function StudyTimerPill() {
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
       className={cn(
-        'fixed z-40 flex items-center gap-2 rounded-full border bg-bg-elevated/95 shadow-pop backdrop-blur select-none',
+        'fixed z-[60] flex items-center gap-2 rounded-full border bg-bg-elevated/95 shadow-pop backdrop-blur select-none',
         'cursor-grab active:cursor-grabbing touch-none',
         collapsed ? 'py-1.5 pr-3 pl-2.5' : 'py-1.5 pr-1.5 pl-2',
         pos ? 'animate-fade-in' : 'invisible',
