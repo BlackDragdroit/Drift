@@ -277,7 +277,7 @@ function toEdge(e: GraphEdge, selectedId: number | null): Edge {
     target: String(e.target),
     type: 'default',
     animated: connected && !e.satisfied,
-    zIndex: connected ? 10 : 1,
+    zIndex: 0, // always below cards (child nodes are elevated by React Flow); groups are translucent
     style: { stroke: color, strokeWidth: connected ? 2.5 : 1.8, strokeDasharray: e.kind === 'recommended' ? '6 5' : undefined, opacity: connected ? 1 : 0.85 },
     markerEnd: { type: MarkerType.ArrowClosed, color, width: 16, height: 16 },
   }
