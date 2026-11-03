@@ -77,14 +77,13 @@ Save. Without this mount the SQLite database and all uploads are lost on every r
 (Alternatively a *bind mount* to a host directory such as `/opt/learning/data` → `/data` works too
 and makes server-side backups with `rsync` easy. Either is fine; pick one and keep it.)
 
-## 5. Health check (recommended)
+## 5. Health check
 
-Application → **Healthcheck**:
-
-- Enable, Method `GET`, Scheme `http`, Host `localhost`, Port `8000`, Path `/api/health`,
-  Return code `200`, Interval `30`, Timeout `5`, Retries `3`, Start period `30`.
-
-The image also declares a Docker `HEALTHCHECK` on the same endpoint, so this is belt and braces.
+Leave Coolify's own **Healthcheck disabled**. It probes with `curl`/`wget`, which the slim image
+does not contain, so an enabled Coolify healthcheck marks every new container unhealthy and rolls
+the deploy back. The image declares its own Docker `HEALTHCHECK` (a Python one-liner against
+`/api/health`), which Coolify detects ("Custom healthcheck found in Dockerfile") and uses for
+rolling updates.
 
 ## 6. Deploy
 
