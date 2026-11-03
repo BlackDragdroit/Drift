@@ -8,6 +8,7 @@ from sqlalchemy.orm import selectinload
 from app.api.serializers import plan_detail, plan_summary
 from app.api.subjects import create_subject, get_subject_or_404
 from app.core.deps import DB, CurrentUser
+from app.models.exercise import Exercise
 from app.models.plan import Plan, PlanNode
 from app.models.subject import Subject
 from app.schemas.api import (
@@ -20,8 +21,11 @@ from app.schemas.api import (
     PlanDetailOut,
     PlanSummaryOut,
     PlanUpdate,
+    ScheduleOut,
 )
 from app.schemas.plan_format import plan_json_schema
+from app.services import activity
+from app.services import search as searchsvc
 from app.services.plan_export import export_plan
 from app.services.plan_import import (
     ImportError_,
@@ -32,6 +36,7 @@ from app.services.plan_import import (
     validate_text,
 )
 from app.services.plan_prompt import build_generation_prompt
+from app.services.schedule import build_schedule
 
 router = APIRouter(prefix="/plans", tags=["plans"])
 
@@ -101,8 +106,25 @@ def update(plan_id: int, body: PlanUpdate, db: DB, user: CurrentUser) -> PlanDet
 @router.delete("/{plan_id}", status_code=204)
 def delete(plan_id: int, db: DB, user: CurrentUser) -> None:
     plan = get_plan_or_404(db, plan_id, user.id)
+    for n in plan.nodes:
+        searchsvc.remove(db, "node", n.id)
+        searchsvc.remove(db, "note", n.id)
+    searchsvc.remove(db, "plan", plan.id)
     db.delete(plan)
     db.commit()
+
+
+@router.get("/{plan_id}/schedule", response_model=ScheduleOut)
+def schedule(plan_id: int, db: DB, user: CurrentUser) -> ScheduleOut:
+    plan = get_plan_or_404(db, plan_id, user.id)
+    result = build_schedule(plan)
+    return ScheduleOut(
+        summary=result.summary.__dict__,
+        days=[
+            {"date": d.date, "minutes": d.minutes, "nodes": [n.__dict__ for n in d.nodes]}
+            for d in result.days
+        ],
+    )
 
 
 @router.get("/{plan_id}/export")
@@ -222,6 +244,11 @@ def import_plan(body: ImportRequest, db: DB, user: CurrentUser) -> ImportResultO
         raise HTTPException(
             status.HTTP_422_UNPROCESSABLE_CONTENT, [i.as_dict() for i in exc.issues]
         ) from exc
+    searchsvc.index_plan_tree(db, plan)
+    for ex in db.scalars(select(Exercise).where(Exercise.plan_id == plan.id)):
+        searchsvc.index_exercise(db, ex)
+    activity.log(db, "import", subject_id=subject.id, detail=plan.key[:64])
+    db.commit()
     return ImportResultOut(
         plan_id=plan.id, subject_id=subject.id, issues=_issues_out(result.issues)
     )

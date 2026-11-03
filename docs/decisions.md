@@ -101,3 +101,42 @@ tokens only.
 
 **PyMuPDF pinned to 1.x.** 2.x pulls in onnxruntime/numpy for layout analysis that this project does
 not use (would add ~250 MB to the image).
+
+**Structured outputs instead of forced tool use.** Current models reject `tool_choice: tool/any`
+(adaptive thinking). `output_config.format` with a JSON schema gives constrained decoding; the
+schema is sanitised to the documented limits (no numeric/string constraints, every property
+required with nullable optionals, `additionalProperties: false`).
+
+## 2026-11-03 — Phase 3 (learning loop)
+
+**The schedule is stateless.** `build_schedule` recomputes on every request from the plan, the exam
+date and the daily capacity: remaining units (leaf topics or parents with their own estimate) in
+prerequisite order, in-progress first, packed day by day at `max(needed, 15)` minutes where
+`needed = ceil(remaining / study_days)`; the last day before the exam is a review buffer when there
+are more than three days left. Falling behind therefore re-spreads automatically; `behind` is raised
+when the needed pace exceeds the capacity instead of silently overflowing past the exam. Without an
+exam date the plan is paced by capacity and shows the projected finish date.
+
+**Activity log drives streaks.** Every learning action (status change, attempt, note, study session
+≥ 1 min, import, saved exercises) writes an `activity_events` row; streaks are computed per local
+day using the browser's timezone offset. A streak counts back from today or yesterday, so an
+evening session does not break it before you studied today.
+
+**Weak spots are attempt-based.** Topics ranked by `(failed + 0.5·partial) / attempts` over the last
+45 days (topics with no failures are excluded). "Retry these" lists exercises whose *latest* attempt
+was failed/partial.
+
+**Exam mix** samples without replacement, weighting failed (3×), partial (2×), untried (1.5×) and
+solved (0.6×) exercises, then orders easy → hard. Random/sequential modes are deterministic with a
+seed (used in tests).
+
+**One study session at a time.** Starting a session stops any running one; a forgotten timer is
+capped at 4 hours on stop. Actual minutes per topic are shown next to the estimate in the node panel.
+
+**Search is SQLite FTS5**, maintained incrementally on writes and fully rebuilt at startup (so older
+databases get indexed). LaTeX control sequences are stripped before indexing so "fourier" matches
+inside math. Queries are tokenised into quoted prefix terms, so partial words match.
+
+**Command palette (cmdk)** combines navigation, actions and search; `Ctrl/Cmd+K` or `/` open it,
+`?` shows the shortcut sheet, `g h / g s / g p` navigate, `m / o / s` switch plan views, and in
+practice `h / s / 1 2 3 / n` drive the session.

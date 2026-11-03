@@ -6,6 +6,7 @@ import { DashboardPage } from './routes/DashboardPage'
 import { LoginPage } from './routes/LoginPage'
 import { NotFoundPage } from './routes/NotFoundPage'
 import { PlanPage } from './routes/PlanPage'
+import { PracticePage } from './routes/PracticePage'
 import { ReviewPage } from './routes/ReviewPage'
 import { SubjectPage } from './routes/SubjectPage'
 import { SubjectsPage } from './routes/SubjectsPage'
@@ -25,6 +26,7 @@ export const router = createBrowserRouter([
       { path: '/plans/:planId', element: <PlanPage /> },
       { path: '/plans/:planId/:view', element: <PlanPage /> },
       { path: '/jobs/:jobId/review', element: <ReviewPage /> },
+      { path: '/practice', element: <PracticePage /> },
       { path: '/index.html', element: <Navigate to="/" replace /> },
       { path: '*', element: <NotFoundPage /> },
     ],

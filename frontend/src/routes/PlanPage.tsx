@@ -1,4 +1,4 @@
-import { ArrowLeft, CalendarClock, Download, ListTree, MoreHorizontal, Pencil, Trash2, Upload, Waypoints } from 'lucide-react'
+import { ArrowLeft, CalendarClock, CalendarDays, Download, ListTree, MoreHorizontal, Pencil, Trash2, Upload, Waypoints } from 'lucide-react'
 import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router'
 
@@ -11,11 +11,12 @@ import { ImportDialog } from '@/features/plans/ImportDialog'
 import { NodePanel } from '@/features/plans/NodePanel'
 import { OutlineView } from '@/features/plans/OutlineView'
 import { PlanEditDialog } from '@/features/plans/PlanEditDialog'
+import { ScheduleView } from '@/features/plans/ScheduleView'
 import { t } from '@/i18n'
 import { useIsMobile } from '@/lib/useMediaQuery'
 import { cn, daysUntil, downloadJson, formatDate, formatMinutes } from '@/lib/utils'
 
-type View = 'map' | 'outline'
+type View = 'map' | 'outline' | 'schedule'
 
 const MindMap = lazy(() => import('@/features/plans/MindMap').then((m) => ({ default: m.MindMap })))
 
@@ -33,7 +34,7 @@ export function PlanPage() {
   const [editOpen, setEditOpen] = useState(false)
   const [reimportOpen, setReimportOpen] = useState(false)
 
-  const view: View = params.view === 'outline' ? 'outline' : params.view === 'map' ? 'map' : isMobile ? 'outline' : 'map'
+  const view: View = params.view === 'outline' ? 'outline' : params.view === 'schedule' ? 'schedule' : params.view === 'map' ? 'map' : isMobile ? 'outline' : 'map'
   const selectedId = searchParams.get('node') ? Number(searchParams.get('node')) : null
 
   const select = useCallback(
@@ -53,14 +54,18 @@ export function PlanPage() {
 
   const onSetStatus = useCallback((nodeId: number, status: Status) => setStatus.mutate({ nodeId, status }), [setStatus])
 
-  // Escape closes the panel
+  // Escape closes the panel; m / o / s switch views (when not typing)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && selectedId !== null) select(null)
+      if (e.key === 'Escape' && selectedId !== null) return select(null)
+      const target = e.target as HTMLElement | null
+      if (e.metaKey || e.ctrlKey || e.altKey || target?.closest('input, textarea, select, [contenteditable="true"], [role="dialog"]')) return
+      const views: Record<string, View> = { m: 'map', o: 'outline', s: 'schedule' }
+      if (views[e.key]) navigate(`/plans/${planId}/${views[e.key]}${selectedId ? `?node=${selectedId}` : ''}`, { replace: true })
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [selectedId, select])
+  }, [selectedId, select, navigate, planId])
 
   if (isLoading || !plan) {
     return (
@@ -129,6 +134,7 @@ export function PlanPage() {
           <div className="hidden items-center rounded-lg bg-bg-sunken p-0.5 md:flex">
             {tab('map', <Waypoints className="h-4 w-4" />, t('plan.map'))}
             {tab('outline', <ListTree className="h-4 w-4" />, t('plan.outline'))}
+            {tab('schedule', <CalendarDays className="h-4 w-4" />, t('plan.schedule'))}
           </div>
           <Dropdown>
             <DropdownTrigger asChild>
@@ -162,14 +168,17 @@ export function PlanPage() {
         <div className="flex items-center gap-1 border-t bg-bg-sunken/60 px-2 py-1 md:hidden">
           {tab('map', <Waypoints className="h-4 w-4" />, t('plan.map'))}
           {tab('outline', <ListTree className="h-4 w-4" />, t('plan.outline'))}
+          {tab('schedule', <CalendarDays className="h-4 w-4" />, t('plan.schedule'))}
         </div>
       </header>
 
-      <div className={cn('relative min-h-0 flex-1', view === 'outline' && 'scrollbar-thin overflow-y-auto')}>
+      <div className={cn('relative min-h-0 flex-1', view !== 'map' && 'scrollbar-thin overflow-y-auto')}>
         {view === 'map' ? (
           <Suspense fallback={<Centered><Spinner className="h-5 w-5" /></Centered>}>
             <MindMap plan={plan} selectedId={selectedId} onSelect={select} onSetStatus={onSetStatus} />
           </Suspense>
+        ) : view === 'schedule' ? (
+          <ScheduleView plan={plan} selectedId={selectedId} onSelect={select} onSetStatus={onSetStatus} onEditPlan={() => setEditOpen(true)} />
         ) : (
           <OutlineView plan={plan} selectedId={selectedId} onSelect={select} onSetStatus={onSetStatus} />
         )}

@@ -1,5 +1,5 @@
-import { Home, Library, LogOut, Monitor, Moon, Plus, Sun } from 'lucide-react'
-import { useState } from 'react'
+import { Home, Library, LogOut, Monitor, Moon, Plus, Search, Sparkles, Sun } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router'
 
 import { useLogout, useSubjects } from '@/api/hooks'
@@ -8,24 +8,64 @@ import { t } from '@/i18n'
 import { useTheme, type Theme } from '@/lib/theme'
 import { cn } from '@/lib/utils'
 
+import { CommandPalette, ShortcutsDialog } from '../CommandPalette'
+import { StudyTimerPill } from '../StudyTimer'
 import { Button } from '../ui/button'
 import { Dropdown, DropdownContent, DropdownItem, DropdownSeparator, DropdownTrigger, ProgressRing, Tooltip } from '../ui/misc'
 
 export function AppShell() {
   const [importOpen, setImportOpen] = useState(false)
+  const [paletteOpen, setPaletteOpen] = useState(false)
+  const [shortcutsOpen, setShortcutsOpen] = useState(false)
+  const navigate = useNavigate()
+
+  // Global shortcuts: Ctrl/Cmd+K palette, "?" help, "/" search, "g h" / "g s" / "g p" navigation
+  useEffect(() => {
+    let pendingG = 0
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault()
+        setPaletteOpen((v) => !v)
+        return
+      }
+      const target = e.target as HTMLElement | null
+      if (e.metaKey || e.ctrlKey || e.altKey || target?.closest('input, textarea, select, [contenteditable="true"], [role="dialog"]')) return
+      if (e.key === '?') return setShortcutsOpen(true)
+      if (e.key === '/') {
+        e.preventDefault()
+        return setPaletteOpen(true)
+      }
+      if (e.key === 'g') {
+        pendingG = Date.now()
+        return
+      }
+      if (pendingG && Date.now() - pendingG < 800) {
+        pendingG = 0
+        if (e.key === 'h') navigate('/')
+        if (e.key === 's') navigate('/subjects')
+        if (e.key === 'p') navigate('/practice')
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [navigate])
+
   return (
     <div className="flex min-h-dvh">
-      <Sidebar onImport={() => setImportOpen(true)} />
+      <Sidebar onImport={() => setImportOpen(true)} onSearch={() => setPaletteOpen(true)} />
       <div className="flex min-w-0 flex-1 flex-col pb-[calc(3.5rem+env(safe-area-inset-bottom))] md:pb-0">
-        <Outlet context={{ openImport: () => setImportOpen(true) }} />
+        <Outlet context={{ openImport: () => setImportOpen(true), openSearch: () => setPaletteOpen(true) }} />
       </div>
-      <MobileNav onImport={() => setImportOpen(true)} />
+      <MobileNav onImport={() => setImportOpen(true)} onSearch={() => setPaletteOpen(true)} />
+      <StudyTimerPill />
       <ImportDialog open={importOpen} onOpenChange={setImportOpen} />
+      <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} onImport={() => setImportOpen(true)} onShortcuts={() => setShortcutsOpen(true)} />
+      <ShortcutsDialog open={shortcutsOpen} onOpenChange={setShortcutsOpen} />
     </div>
   )
 }
 
-function Sidebar({ onImport }: { onImport: () => void }) {
+function Sidebar({ onImport, onSearch }: { onImport: () => void; onSearch: () => void }) {
   const { data: subjects } = useSubjects()
   return (
     <aside className="sticky top-0 hidden h-dvh w-60 shrink-0 flex-col border-r bg-bg-elevated/60 md:flex">
@@ -33,9 +73,17 @@ function Sidebar({ onImport }: { onImport: () => void }) {
         <img src="/icon.svg" alt="" className="h-7 w-7 rounded-lg" />
         <span className="font-semibold tracking-tight">{t('app.name')}</span>
       </div>
+      <div className="px-2 pb-2">
+        <button onClick={onSearch} className="flex w-full items-center gap-2 rounded-md border bg-bg px-2.5 py-1.5 text-left text-sm text-fg-subtle hover:border-line-strong">
+          <Search className="h-4 w-4" />
+          <span className="flex-1">{t('common.search')}</span>
+          <kbd className="rounded border bg-bg-sunken px-1 font-mono text-[10px]">{t('palette.hint')}</kbd>
+        </button>
+      </div>
       <nav className="flex flex-col gap-0.5 px-2">
         <SideLink to="/" icon={<Home className="h-4 w-4" />} label={t('nav.home')} end />
         <SideLink to="/subjects" icon={<Library className="h-4 w-4" />} label={t('nav.subjects')} end />
+        <SideLink to="/practice" icon={<Sparkles className="h-4 w-4" />} label={t('practice.title')} />
       </nav>
       <div className="mt-4 flex items-center justify-between px-4 text-[11px] font-medium tracking-wide text-fg-subtle uppercase">
         <span>{t('nav.subjects')}</span>
@@ -81,7 +129,7 @@ function SideLink({ to, icon, label, end }: { to: string; icon: React.ReactNode;
   )
 }
 
-function MobileNav({ onImport }: { onImport: () => void }) {
+function MobileNav({ onImport, onSearch }: { onImport: () => void; onSearch: () => void }) {
   const item = 'flex flex-1 flex-col items-center justify-center gap-0.5 py-1.5 text-[10px] font-medium text-fg-muted'
   return (
     <nav className="fixed inset-x-0 bottom-0 z-30 flex border-t bg-bg-elevated/90 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden">
@@ -93,6 +141,14 @@ function MobileNav({ onImport }: { onImport: () => void }) {
         <Library className="h-5 w-5" />
         {t('nav.subjects')}
       </NavLink>
+      <NavLink to="/practice" className={({ isActive }) => cn(item, isActive && 'text-accent')}>
+        <Sparkles className="h-5 w-5" />
+        {t('practice.title')}
+      </NavLink>
+      <button className={item} onClick={onSearch}>
+        <Search className="h-5 w-5" />
+        {t('common.search')}
+      </button>
       <button className={item} onClick={onImport}>
         <Plus className="h-5 w-5" />
         {t('dashboard.importPlan')}

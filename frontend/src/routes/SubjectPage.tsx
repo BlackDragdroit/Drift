@@ -1,6 +1,6 @@
-import { ArrowLeft, CalendarClock, ClipboardList, FileText, MoreHorizontal, Pencil, Sparkles, Trash2, Upload } from 'lucide-react'
+import { ArrowLeft, CalendarClock, ClipboardList, Dumbbell, FileText, MoreHorizontal, Pencil, Sparkles, Trash2, Upload } from 'lucide-react'
 import { useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router'
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router'
 
 import { useDeleteSubject, useExercises, useSubject } from '@/api/hooks'
 import { PageHeader } from '@/components/layout/AppShell'
@@ -25,7 +25,8 @@ export function SubjectPage() {
   const [editOpen, setEditOpen] = useState(false)
   const [importOpen, setImportOpen] = useState(false)
   const [promptOpen, setPromptOpen] = useState(false)
-  const [exerciseId, setExerciseId] = useState<number | null>(null)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [exerciseId, setExerciseId] = useState<number | null>(searchParams.get('exercise') ? Number(searchParams.get('exercise')) : null)
 
   if (isLoading || !subject) {
     return (
@@ -143,10 +144,19 @@ export function SubjectPage() {
         <DocumentsSection subjectId={subject.id} plans={subject.plans} />
 
         <section>
-          <h2 className="mb-2.5 flex items-center gap-2 text-sm font-semibold tracking-tight">
-            {t('subject.exercises')}
-            {exercises && exercises.length > 0 && <span className="rounded-full bg-bg-sunken px-1.5 py-0.5 text-[11px] text-fg-muted tabular-nums">{exercises.length}</span>}
-          </h2>
+          <div className="mb-2.5 flex items-center justify-between">
+            <h2 className="flex items-center gap-2 text-sm font-semibold tracking-tight">
+              {t('subject.exercises')}
+              {exercises && exercises.length > 0 && <span className="rounded-full bg-bg-sunken px-1.5 py-0.5 text-[11px] text-fg-muted tabular-nums">{exercises.length}</span>}
+            </h2>
+            {exercises && exercises.length > 0 && (
+              <Button size="sm" variant="outline" asChild>
+                <Link to={`/practice?subject=${subject.id}`}>
+                  <Dumbbell className="h-4 w-4" /> {t('practice.title')}
+                </Link>
+              </Button>
+            )}
+          </div>
           {exercises && exercises.length > 0 ? (
             <ul className="divide-y rounded-xl border bg-bg-elevated shadow-card">
               {exercises.map((e) => (
@@ -164,7 +174,13 @@ export function SubjectPage() {
       <SubjectDialog open={editOpen} onOpenChange={setEditOpen} subject={subject} />
       <ImportDialog open={importOpen} onOpenChange={setImportOpen} subjectId={subject.id} />
       <GenerationPromptDialog open={promptOpen} onOpenChange={setPromptOpen} defaultTopic={subject.name} />
-      <ExerciseDialog exerciseId={exerciseId} onClose={() => setExerciseId(null)} />
+      <ExerciseDialog
+        exerciseId={exerciseId}
+        onClose={() => {
+          setExerciseId(null)
+          if (searchParams.has('exercise')) setSearchParams({}, { replace: true })
+        }}
+      />
     </>
   )
 }

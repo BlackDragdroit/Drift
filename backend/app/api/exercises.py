@@ -19,6 +19,8 @@ from app.schemas.api import (
     ExercisePartOut,
     ExerciseUpdate,
 )
+from app.services import activity
+from app.services import search as searchsvc
 
 router = APIRouter(prefix="/exercises", tags=["exercises"])
 
@@ -124,6 +126,8 @@ def create(body: ExerciseCreate, db: DB, user: CurrentUser) -> ExerciseOut:
         ExerciseNodeLink(node_id=n) for n in dict.fromkeys(body.node_ids) if n in allowed
     ]
     db.add(ex)
+    db.flush()
+    searchsvc.index_exercise(db, ex)
     db.commit()
     return _exercise_out(db, _get_exercise(db, ex.id, user.id))
 
@@ -162,6 +166,8 @@ def update(exercise_id: int, body: ExerciseUpdate, db: DB, user: CurrentUser) ->
         ex.node_links = [
             ExerciseNodeLink(node_id=n) for n in dict.fromkeys(node_ids) if n in allowed
         ]
+    db.flush()
+    searchsvc.index_exercise(db, ex)
     db.commit()
     return _exercise_out(db, _get_exercise(db, exercise_id, user.id))
 
@@ -169,6 +175,7 @@ def update(exercise_id: int, body: ExerciseUpdate, db: DB, user: CurrentUser) ->
 @router.delete("/{exercise_id}", status_code=204)
 def delete(exercise_id: int, db: DB, user: CurrentUser) -> None:
     ex = _get_exercise(db, exercise_id, user.id)
+    searchsvc.remove(db, "exercise", ex.id)
     db.delete(ex)
     db.commit()
 
@@ -183,6 +190,14 @@ def add_attempt(exercise_id: int, body: AttemptCreate, db: DB, user: CurrentUser
             notes=body.notes,
             duration_seconds=body.duration_seconds,
         )
+    )
+    activity.log(
+        db,
+        "attempt",
+        subject_id=ex.subject_id,
+        exercise_id=ex.id,
+        minutes=(body.duration_seconds or 0) // 60,
+        detail=body.result,
     )
     db.commit()
     return _exercise_out(db, _get_exercise(db, exercise_id, user.id))

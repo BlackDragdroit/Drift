@@ -20,7 +20,9 @@ from app.schemas.api import (
     JobDetailOut,
     JobOut,
 )
+from app.services import activity
 from app.services import pdf as pdfsvc
+from app.services import search as searchsvc
 from app.services.extraction import _new_id
 from app.services.jobs import runner
 
@@ -182,10 +184,18 @@ def commit(job_id: int, body: CommitRequest, db: DB, user: CurrentUser) -> Commi
             for nid in dict.fromkeys(d.node_ids)
             if nid in subject_nodes
         ]
+        searchsvc.index_exercise(db, ex)
         created.append(ex.id)
     job.status = "done"
     job.created_exercise_ids = created
     job.draft = None
     job.finished_at = utcnow()
+    if created:
+        activity.log(
+            db,
+            "exercises",
+            subject_id=doc.subject_id,
+            detail=f"{len(created)} from {doc.title[:40]}",
+        )
     db.commit()
     return CommitOut(exercise_ids=created, skipped=skipped)

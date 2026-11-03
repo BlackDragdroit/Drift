@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import select, text
 from sqlalchemy.orm import selectinload
 
 from app.api.serializers import load_subject, subject_out
@@ -8,6 +8,7 @@ from app.core.text import slugify, unique_slug
 from app.models.plan import Plan, PlanNode
 from app.models.subject import Subject
 from app.schemas.api import SubjectCreate, SubjectNodeOut, SubjectOut, SubjectUpdate
+from app.services import search as searchsvc
 
 router = APIRouter(prefix="/subjects", tags=["subjects"])
 
@@ -42,6 +43,8 @@ def create_subject(
         sort_order=max_order + 1,
     )
     db.add(subject)
+    db.flush()
+    searchsvc.index_subject(db, subject)
     db.commit()
     return subject
 
@@ -82,6 +85,7 @@ def update(subject_id: int, body: SubjectUpdate, db: DB, user: CurrentUser) -> S
         setattr(
             subject, field, value.strip() if isinstance(value, str) and field == "name" else value
         )
+    searchsvc.index_subject(db, subject)
     db.commit()
     return subject_out(db, get_subject_or_404(db, subject.id, user.id))
 
@@ -89,6 +93,7 @@ def update(subject_id: int, body: SubjectUpdate, db: DB, user: CurrentUser) -> S
 @router.delete("/{subject_id}", status_code=204)
 def delete(subject_id: int, db: DB, user: CurrentUser) -> None:
     subject = get_subject_or_404(db, subject_id, user.id)
+    db.execute(text("DELETE FROM search_index WHERE subject_id = :sid"), {"sid": subject.id})
     db.delete(subject)
     db.commit()
 

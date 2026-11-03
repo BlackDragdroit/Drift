@@ -213,6 +213,23 @@ export interface paths {
         patch: operations["update_api_plans__plan_id__patch"];
         trace?: never;
     };
+    "/api/plans/{plan_id}/schedule": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Schedule */
+        get: operations["schedule_api_plans__plan_id__schedule_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/plans/{plan_id}/export": {
         parameters: {
             query?: never;
@@ -577,6 +594,159 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/practice/queue": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Queue */
+        post: operations["queue_api_practice_queue_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/practice/stats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Stats */
+        get: operations["stats_api_practice_stats_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/sessions/active": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Active */
+        get: operations["active_api_sessions_active_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/sessions/start": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Start */
+        post: operations["start_api_sessions_start_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/sessions/{session_id}/stop": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Stop */
+        post: operations["stop_api_sessions__session_id__stop_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/sessions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Sessions */
+        get: operations["list_sessions_api_sessions_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/sessions/{session_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete */
+        delete: operations["delete_api_sessions__session_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Search */
+        get: operations["search_api_search_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/search/reindex": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reindex */
+        post: operations["reindex_api_search_reindex_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/files/{path}": {
         parameters: {
             query?: never;
@@ -665,8 +835,8 @@ export interface components {
              */
             caption: string;
         };
-        /** DashboardExam */
-        DashboardExam: {
+        /** DashboardExamOut */
+        DashboardExamOut: {
             /** Plan Id */
             plan_id: number;
             /** Plan Title */
@@ -690,9 +860,15 @@ export interface components {
             percent: number;
             /** Minutes Remaining */
             minutes_remaining: number;
+            /** Needed Per Day */
+            needed_per_day: number;
+            /** Capacity Minutes */
+            capacity_minutes: number;
+            /** Behind */
+            behind: boolean;
         };
-        /** DashboardNode */
-        DashboardNode: {
+        /** DashboardNodeOut */
+        DashboardNodeOut: {
             /** Node Id */
             node_id: number;
             /** Key */
@@ -703,8 +879,11 @@ export interface components {
             estimated_minutes: number;
             /** Difficulty */
             difficulty: number | null;
-            /** Status */
-            status: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "not_started" | "in_progress" | "understood" | "mastered";
             /** Plan Id */
             plan_id: number;
             /** Plan Title */
@@ -726,12 +905,22 @@ export interface components {
             nodes_total: number;
             /** Nodes Done */
             nodes_done: number;
+            /** Exercises Total */
+            exercises_total: number;
             /** Exams */
-            exams: components["schemas"]["DashboardExam"][];
+            exams: components["schemas"]["DashboardExamOut"][];
+            /** Due Today */
+            due_today: components["schemas"]["DashboardNodeOut"][];
             /** Ready */
-            ready: components["schemas"]["DashboardNode"][];
+            ready: components["schemas"]["DashboardNodeOut"][];
             /** In Progress */
-            in_progress: components["schemas"]["DashboardNode"][];
+            in_progress: components["schemas"]["DashboardNodeOut"][];
+            streak: components["schemas"]["StreakOut"];
+            /** Weak Spots */
+            weak_spots: components["schemas"]["WeakSpotOut"][];
+            /** Retry Exercises */
+            retry_exercises: components["schemas"]["RetryExerciseOut"][];
+            active_session?: components["schemas"]["SessionOut"] | null;
         };
         /** DocumentOut */
         DocumentOut: {
@@ -1319,6 +1508,11 @@ export interface components {
             flashcard_count: number;
             /** Exercise Count */
             exercise_count: number;
+            /**
+             * Actual Minutes
+             * @default 0
+             */
+            actual_minutes: number;
             /** Plan Id */
             plan_id: number;
             /** Plan Title */
@@ -1560,6 +1754,44 @@ export interface components {
             /** Daily Capacity Minutes */
             daily_capacity_minutes?: number | null;
         };
+        /** PracticeQueueOut */
+        PracticeQueueOut: {
+            /** Exercise Ids */
+            exercise_ids: number[];
+            /** Total Available */
+            total_available: number;
+        };
+        /** PracticeRequest */
+        PracticeRequest: {
+            /** Subject Id */
+            subject_id?: number | null;
+            /** Plan Id */
+            plan_id?: number | null;
+            /** Node Ids */
+            node_ids?: number[] | null;
+            /** Difficulty Min */
+            difficulty_min?: number | null;
+            /** Difficulty Max */
+            difficulty_max?: number | null;
+            /**
+             * Unsolved Only
+             * @default false
+             */
+            unsolved_only: boolean;
+            /**
+             * Limit
+             * @default 10
+             */
+            limit: number;
+            /**
+             * Mode
+             * @default random
+             * @enum {string}
+             */
+            mode: "sequential" | "random" | "exam";
+            /** Seed */
+            seed?: number | null;
+        };
         /** PrerequisiteOut */
         PrerequisiteOut: {
             /** Node Id */
@@ -1599,6 +1831,150 @@ export interface components {
              */
             status: "not_started" | "in_progress" | "understood" | "mastered";
         };
+        /** RetryExerciseOut */
+        RetryExerciseOut: {
+            /** Id */
+            id: number;
+            /** Title */
+            title: string;
+            /** Number */
+            number: string | null;
+            /** Subject Id */
+            subject_id: number;
+            /** Subject Name */
+            subject_name: string;
+            /** Subject Color */
+            subject_color: string;
+            /**
+             * Last Result
+             * @enum {string}
+             */
+            last_result: "solved" | "partial" | "failed";
+            /** Node Keys */
+            node_keys: string[];
+        };
+        /** ScheduleDayOut */
+        ScheduleDayOut: {
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+            /** Minutes */
+            minutes: number;
+            /** Nodes */
+            nodes: components["schemas"]["ScheduledNodeOut"][];
+        };
+        /** ScheduleOut */
+        ScheduleOut: {
+            summary: components["schemas"]["ScheduleSummaryOut"];
+            /** Days */
+            days: components["schemas"]["ScheduleDayOut"][];
+        };
+        /** ScheduleSummaryOut */
+        ScheduleSummaryOut: {
+            /** Exam Date */
+            exam_date: string | null;
+            /** Days Left */
+            days_left: number | null;
+            /** Study Days */
+            study_days: number;
+            /** Remaining Minutes */
+            remaining_minutes: number;
+            /** Remaining Nodes */
+            remaining_nodes: number;
+            /** Capacity Minutes */
+            capacity_minutes: number;
+            /** Needed Per Day */
+            needed_per_day: number;
+            /** Behind */
+            behind: boolean;
+            /** Finish Date */
+            finish_date: string | null;
+            /** In Progress */
+            in_progress: number;
+        };
+        /** ScheduledNodeOut */
+        ScheduledNodeOut: {
+            /** Node Id */
+            node_id: number;
+            /** Key */
+            key: string;
+            /** Title */
+            title: string;
+            /** Minutes */
+            minutes: number;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "not_started" | "in_progress" | "understood" | "mastered";
+            /** Ready */
+            ready: boolean;
+        };
+        /** SearchHitOut */
+        SearchHitOut: {
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "subject" | "plan" | "node" | "note" | "exercise";
+            /** Id */
+            id: number;
+            /** Title */
+            title: string;
+            /** Snippet */
+            snippet: string;
+            /** Subject Id */
+            subject_id: number;
+            /** Subject Name */
+            subject_name: string;
+            /** Subject Color */
+            subject_color: string;
+            /** Plan Id */
+            plan_id?: number | null;
+            /** Node Id */
+            node_id?: number | null;
+            /** Url */
+            url: string;
+        };
+        /** SessionOut */
+        SessionOut: {
+            /** Id */
+            id: number;
+            /** Subject Id */
+            subject_id: number | null;
+            /** Node Id */
+            node_id: number | null;
+            /** Node Title */
+            node_title?: string | null;
+            /**
+             * Started At
+             * Format: date-time
+             */
+            started_at: string;
+            /** Ended At */
+            ended_at: string | null;
+            /** Duration Seconds */
+            duration_seconds: number | null;
+            /** Note */
+            note: string;
+        };
+        /** SessionStart */
+        SessionStart: {
+            /** Subject Id */
+            subject_id?: number | null;
+            /** Node Id */
+            node_id?: number | null;
+        };
+        /** SessionStop */
+        SessionStop: {
+            /**
+             * Note
+             * @default
+             */
+            note: string;
+        };
         /** StartExtractionRequest */
         StartExtractionRequest: {
             /** Plan Id */
@@ -1607,6 +1983,19 @@ export interface components {
             page_from?: number | null;
             /** Page To */
             page_to?: number | null;
+        };
+        /** StreakOut */
+        StreakOut: {
+            /** Current */
+            current: number;
+            /** Longest */
+            longest: number;
+            /** Active Today */
+            active_today: boolean;
+            /** Minutes Today */
+            minutes_today: number;
+            /** Days */
+            days: string[];
         };
         /** SubjectCreate */
         SubjectCreate: {
@@ -1713,6 +2102,33 @@ export interface components {
             /** Context */
             ctx?: Record<string, never>;
         };
+        /** WeakSpotOut */
+        WeakSpotOut: {
+            /** Node Id */
+            node_id: number;
+            /** Key */
+            key: string;
+            /** Title */
+            title: string;
+            /** Plan Id */
+            plan_id: number;
+            /** Plan Title */
+            plan_title: string;
+            /** Subject Id */
+            subject_id: number;
+            /** Subject Name */
+            subject_name: string;
+            /** Subject Color */
+            subject_color: string;
+            /** Attempts */
+            attempts: number;
+            /** Failed */
+            failed: number;
+            /** Partial */
+            partial: number;
+            /** Score */
+            score: number;
+        };
     };
     responses: never;
     parameters: never;
@@ -1817,7 +2233,10 @@ export interface operations {
     };
     dashboard_api_dashboard_get: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Local timezone offset in minutes (JS getTimezoneOffset() * -1) */
+                tz_offset?: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -1831,6 +2250,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DashboardOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -2195,6 +2623,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PlanDetailOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    schedule_api_plans__plan_id__schedule_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                plan_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScheduleOut"];
                 };
             };
             /** @description Validation Error */
@@ -3118,6 +3577,277 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    queue_api_practice_queue_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PracticeRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PracticeQueueOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    stats_api_practice_stats_get: {
+        parameters: {
+            query?: {
+                subject_id?: number | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: number;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    active_api_sessions_active_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SessionOut"] | null;
+                };
+            };
+        };
+    };
+    start_api_sessions_start_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SessionStart"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SessionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    stop_api_sessions__session_id__stop_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SessionStop"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SessionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_sessions_api_sessions_get: {
+        parameters: {
+            query?: {
+                node_id?: number | null;
+                subject_id?: number | null;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SessionOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_api_sessions__session_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    search_api_search_get: {
+        parameters: {
+            query: {
+                q: string;
+                subject_id?: number | null;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SearchHitOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reindex_api_search_reindex_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: number;
+                    };
                 };
             };
         };

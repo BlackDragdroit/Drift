@@ -1,7 +1,9 @@
-import { ArrowDownRight, ArrowUpRight, BookOpen, Check, ChevronDown, ClipboardList, Clock, ExternalLink, Gauge, Layers, Lock, Pencil, Sparkles } from 'lucide-react'
+import { ArrowDownRight, ArrowUpRight, BookOpen, Check, ChevronDown, ClipboardList, Clock, Dumbbell, ExternalLink, Gauge, Layers, Lock, Pencil, Play, Sparkles, Square, Timer } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router'
 
 import { useNode, useSaveNote } from '@/api/hooks'
+import { useActiveSession, useStartSession, useStopSession } from '@/api/learning'
 import type { NodeDetail, PlanDetail, Prerequisite, Status } from '@/api/types'
 import { Markdown } from '@/components/Markdown'
 import { StatusDot, StatusSegmented } from '@/components/StatusControl'
@@ -9,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { Textarea } from '@/components/ui/input'
 import { Badge, Spinner } from '@/components/ui/misc'
+import { formatElapsed, useElapsed } from '@/components/StudyTimer'
 import { ExerciseDialog } from '@/features/exercises/ExerciseDialog'
 import { ExerciseRow } from '@/features/exercises/ExerciseRow'
 import { t } from '@/i18n'
@@ -84,6 +87,7 @@ function PanelBody({ node, plan, onSelect, onSetStatus }: { node: NodeDetail; pl
         <div className="mt-3">
           <StatusSegmented value={status} onChange={(s) => onSetStatus(node.id, s)} />
         </div>
+        <SessionRow node={node} subjectColor={plan.subject_color} />
         {node.ready && (
           <p className="mt-2 flex items-center gap-1.5 text-xs" style={{ color: plan.subject_color }}>
             <Sparkles className="h-3.5 w-3.5" /> {t('node.readyHint')}
@@ -178,11 +182,18 @@ function PanelBody({ node, plan, onSelect, onSetStatus }: { node: NodeDetail; pl
         {node.exercises.length === 0 ? (
           <p className="text-sm text-fg-subtle">{t('node.noExercises')}</p>
         ) : (
-          <ul className="divide-y rounded-lg border">
-            {node.exercises.map((e) => (
-              <ExerciseRow key={e.id} exercise={e} onOpen={() => setExerciseId(e.id)} />
-            ))}
-          </ul>
+          <>
+            <ul className="divide-y rounded-lg border">
+              {node.exercises.map((e) => (
+                <ExerciseRow key={e.id} exercise={e} onOpen={() => setExerciseId(e.id)} />
+              ))}
+            </ul>
+            <Button size="sm" variant="outline" className="mt-2" asChild>
+              <Link to={`/practice?subject=${plan.subject_id}&node=${node.id}&autostart=1`}>
+                <Dumbbell className="h-3.5 w-3.5" /> {t('practice.title')} {t('timer.forNode')}
+              </Link>
+            </Button>
+          </>
         )}
       </Section>
 
@@ -208,6 +219,36 @@ function PanelBody({ node, plan, onSelect, onSetStatus }: { node: NodeDetail; pl
 
       <NodeEditDialog open={editOpen} onOpenChange={setEditOpen} planId={plan.id} node={node} />
       <ExerciseDialog exerciseId={exerciseId} onClose={() => setExerciseId(null)} />
+    </div>
+  )
+}
+
+function SessionRow({ node, subjectColor }: { node: NodeDetail; subjectColor: string }) {
+  const { data: active } = useActiveSession()
+  const start = useStartSession()
+  const stop = useStopSession()
+  const mine = active?.node_id === node.id ? active : null
+  const elapsed = useElapsed(mine?.started_at)
+  const actual = node.actual_minutes + (mine ? Math.floor(elapsed / 60) : 0)
+  return (
+    <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-fg-muted">
+      {mine ? (
+        <Button size="sm" variant="secondary" onClick={() => stop.mutate({ id: mine.id })} disabled={stop.isPending} className="gap-1.5">
+          <Square className="h-3 w-3 fill-current text-emerald-500" /> {t('timer.stop')} <span className="font-mono tabular-nums">{formatElapsed(elapsed)}</span>
+        </Button>
+      ) : (
+        <Button size="sm" variant="outline" onClick={() => start.mutate({ node_id: node.id })} disabled={start.isPending} className="gap-1.5">
+          <Play className="h-3 w-3" style={{ color: subjectColor }} /> {t('timer.start')}
+        </Button>
+      )}
+      {(actual > 0 || node.estimated_minutes > 0) && (
+        <span className="inline-flex items-center gap-1 tabular-nums">
+          <Timer className="h-3.5 w-3.5" />
+          {actual > 0 && t('timer.actual', { time: formatMinutes(actual) })}
+          {actual > 0 && node.estimated_minutes > 0 && ' · '}
+          {node.estimated_minutes > 0 && t('timer.estimated', { time: formatMinutes(node.estimated_minutes) })}
+        </span>
+      )}
     </div>
   )
 }

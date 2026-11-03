@@ -80,6 +80,38 @@ export const en = {
     noDraft: 'This run has no draft (it was already saved or failed).', showPage: 'Show page', zoomIn: 'Zoom in', zoomOut: 'Zoom out', remove: 'Remove', recrop: 'Re-crop',
     jumpTo: 'Jump to page', figureOnPage: 'Figure on page {n}',
   },
+  schedule: {
+    title: 'Schedule', noExam: 'No exam date set', noExamHint: 'Set an exam date and the remaining topics are spread over the days until then. Without one, the plan is paced by your daily capacity.',
+    daysLeft: '{n} days left', studyDays: '{n} study days', remaining: '{time} remaining · {n} topics', perDay: '{time} / day needed', capacity: 'capacity {time} / day',
+    behind: 'Behind schedule: you need {needed} per day but your capacity is {capacity}. Raise the capacity, drop optional topics, or accept a tighter finish.',
+    onTrack: 'On track — finishes {date} at {time} / day.', finishBy: 'At {time} / day you finish on {date}.', today: 'Today', tomorrow: 'Tomorrow', thisWeek: 'This week', later: 'Later',
+    allDone: 'Everything is done. Time to review.', editCapacity: 'Change capacity', tick: 'Mark done',
+  },
+  practice: {
+    title: 'Practice', start: 'Start', setupTitle: 'Practice session', subject: 'Subject', topics: 'Topics', allTopics: 'All topics', difficulty: 'Difficulty', any: 'Any',
+    unsolvedOnly: 'Unsolved only', count: 'Exercises', mode: 'Mode', random: 'Random', sequential: 'In order', exam: 'Exam mix', examHint: 'Weighted towards failed and untried exercises, ordered easy → hard.',
+    available: '{n} exercises match', none: 'No exercises match these filters.', progress: '{i} of {n}', elapsed: 'Elapsed', next: 'Next', finish: 'Finish', skip: 'Skip',
+    summary: 'Session summary', solved: 'Solved', partial: 'Partial', failed: 'Failed', skipped: 'Skipped', totalTime: 'Total time', again: 'Practice again', back: 'Back to subject',
+    shortcuts: 'Shortcuts: H hint · S solution · 1/2/3 log solved/partial/failed · N next', quick: 'Quick exam mix', retry: 'Retry these',
+  },
+  palette: {
+    placeholder: 'Search topics, notes, exercises… or type a command', noResults: 'No results', actions: 'Actions', navigate: 'Go to', results: 'Search results',
+    home: 'Home', subjects: 'Subjects', importPlan: 'Import plan', newSubject: 'New subject', practice: 'Practice', toggleTheme: 'Toggle dark mode', shortcuts: 'Keyboard shortcuts',
+    hint: 'Ctrl K', kinds: { subject: 'Subject', plan: 'Plan', node: 'Topic', note: 'Note', exercise: 'Exercise' },
+  },
+  shortcuts: {
+    title: 'Keyboard shortcuts', palette: 'Command palette / search', goHome: 'Go home', goSubjects: 'Go to subjects', map: 'Map view', outline: 'Outline view', scheduleView: 'Schedule view',
+    closePanel: 'Close panel / dialog', practiceKeys: 'In practice: hint, solution, log 1/2/3, next',
+  },
+  timer: {
+    start: 'Start study session', stop: 'Stop', running: 'Studying', since: 'since {time}', actual: 'Studied {time}', estimated: 'estimated {time}', sessions: 'Sessions', noSessions: 'No study sessions yet.',
+    stopped: 'Session saved ({time}).', studyingNode: 'Studying: {title}', forNode: 'for this topic',
+  },
+  dashboard2: {
+    dueToday: 'Due today', streak: 'Streak', days: '{n} days', day: '1 day', bestStreak: 'best {n}', minutesToday: 'today', weakSpots: 'Weak spots', weakHint: 'Topics with the most failed exercises recently.',
+    retry: 'Retry these exercises', noWeak: 'No weak spots — keep logging attempts and this fills in.', quickPractice: 'Quick exam mix', continueSession: 'Session running',
+    behind: 'behind', needPerDay: '{time}/day',
+  },
   errors: { notFound: 'Not found.', offline: 'You appear to be offline.' },
 } as const
 

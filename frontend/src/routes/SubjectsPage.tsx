@@ -1,6 +1,6 @@
 import { Library, Plus } from 'lucide-react'
 import { useState } from 'react'
-import { Link } from 'react-router'
+import { Link, useSearchParams } from 'react-router'
 
 import { useSubjects } from '@/api/hooks'
 import { PageHeader } from '@/components/layout/AppShell'
@@ -12,7 +12,8 @@ import { t } from '@/i18n'
 
 export function SubjectsPage() {
   const { data: subjects, isLoading } = useSubjects()
-  const [createOpen, setCreateOpen] = useState(false)
+  const [params] = useSearchParams()
+  const [createOpen, setCreateOpen] = useState(params.get('new') === '1')
 
   return (
     <>

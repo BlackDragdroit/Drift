@@ -32,7 +32,11 @@
 | `app/services/pdf.py` | PyMuPDF: inspect (page count, text layer), render pages, crop figures, sub-PDFs, content-addressed upload storage |
 | `app/services/extraction.py` | Claude extraction: output schema (`ChunkOut`), system/user prompts, forced tool call, validation retry, chunk planning, stitching, draft building, cost table |
 | `app/services/jobs.py` | In-process job runner (`JobRunner`), `run_extraction`, startup recovery |
-| `app/api/` | Routers: `auth`, `dashboard`, `subjects`, `plans`, `nodes`, `exercises`, `documents`, `jobs`, `files`; `serializers.py` maps models → API |
+| `app/services/schedule.py` | Stateless scheduler: remaining topics in prerequisite order spread over the days until the exam, capacity-aware |
+| `app/services/activity.py` | Activity log, streaks, weak spots, study sessions |
+| `app/services/practice.py` | Practice queue (filters, random / sequential / exam mix) |
+| `app/services/search.py` | FTS5 index maintenance + search |
+| `app/api/` | Routers: `auth`, `dashboard`, `subjects`, `plans` (incl. `/schedule`), `nodes`, `exercises`, `documents`, `jobs`, `files`, `practice`, `sessions`, `search`; `serializers.py` maps models → API |
 | `alembic/` | Migrations (run automatically on startup) |
 | `tests/` | pytest: validation, merge, markdown, graph, API workflow |
 | `scripts/export_openapi.py` | Dumps `openapi.json` for the frontend type generator |
@@ -50,7 +54,12 @@ without HTTP.
 | `src/components/` | `Markdown` (react-markdown + KaTeX), `StatusControl`, layout shell |
 | `src/routes/` | Login, Dashboard, Subjects, Subject, Plan |
 | `src/features/plans/` | `graph.ts` (visibility/collapse/focus, pure), `layout.ts` (ELK compound layout), `MindMap`, `PlanNodeCard`, `PlanGroupNode`, `OutlineView`, `NodePanel`, `ImportDialog`, `GenerationPromptDialog`, edit dialogs |
-| `src/features/exercises/` | Exercise row + dialog (hints → solution reveal, attempt logging) |
+| `src/features/exercises/` | Exercise row + dialog (hints → solution reveal, attempt logging, edit/delete, source page) |
+| `src/features/documents/` | PDF upload section, job cards, review page parts (page viewer with crop tool, draft editor, topic picker, pure `draftOps`) |
+| `src/routes/PracticePage.tsx` | Practice setup → timed session with keyboard shortcuts → summary |
+| `src/features/plans/ScheduleView.tsx` | Schedule tab (pacing meters, day groups) |
+| `src/components/CommandPalette.tsx`, `StudyTimer.tsx` | Ctrl+K palette with live search + actions, shortcut sheet, floating study-timer pill |
+| `src/api/learning.ts` | Hooks for schedule, dashboard v2, practice queue, search, study sessions |
 | `src/features/subjects/` | Subject dialog + icon set |
 
 Type safety across the wire: `python scripts/export_openapi.py && npm run gen:api` regenerates

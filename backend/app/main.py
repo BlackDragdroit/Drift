@@ -13,6 +13,7 @@ from app.core.config import get_settings
 from app.core.db import get_engine, get_sessionmaker, run_migrations
 from app.core.security import ensure_owner_user, purge_expired_sessions
 from app.services.jobs import recover_stale_jobs, runner
+from app.services.search import reindex_all
 
 log = logging.getLogger("app")
 
@@ -31,6 +32,7 @@ async def lifespan(app: FastAPI):
         stale = recover_stale_jobs(db)
         if stale:
             log.warning("Marked %d interrupted extraction job(s) as failed", stale)
+        reindex_all(db)
     log.info("Data directory: %s", settings.data_dir.resolve())
     yield
     await runner.shutdown()

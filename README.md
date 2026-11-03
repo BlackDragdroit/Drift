@@ -136,6 +136,19 @@ docker compose up -d --build
    Scanned PDFs (no text layer) are sent as page images automatically.
 
    Try the review screen without an API key: `cd backend && uv run python scripts/seed_review_job.py`.
+7. **Schedule:** the plan's *Schedule* tab spreads the remaining topics over the days until the exam
+   (prerequisites first, started topics first). It is recomputed every time you open it, so falling
+   behind simply re-spreads the rest — and warns when the needed pace exceeds your daily capacity
+   (*Change capacity*). The dashboard shows today's due topics.
+8. **Practice:** *Practice* in the sidebar (or the exam-mix button on the dashboard, or "Practice
+   this topic" in a node panel). Filter by subject/topics/difficulty/unsolved, pick a mode, go.
+   Keyboard: `H` hint, `S` solution, `1 / 2 / 3` log solved/partial/failed, `N` next. The summary
+   shows your hit rate; failed exercises feed the dashboard's *Weak spots* and *Retry these*.
+9. **Study timer:** *Start study session* in a node panel; a floating pill shows the running time,
+   and the node shows studied vs. estimated minutes afterwards. Sessions, attempts, status changes
+   and notes all count towards the streak.
+10. **Search & shortcuts:** `Ctrl/Cmd+K` (or `/`) opens the command palette — search topics,
+    notes and exercises (LaTeX-aware), jump to plans, run actions. `?` lists all shortcuts.
 
 ## Roadmap
 
@@ -143,6 +156,6 @@ docker compose up -d --build
   notes, Docker/Coolify.
 - **Phase 2 (done):** PDF exercise import (Claude extraction with strict schema, chunking, figure
   cropping, scanned fallback, review screen, exercise editing).
-- **Phase 3:** practice mode, schedule view, dashboard with streaks/weak spots, search, command
-  palette, study timer.
+- **Phase 3 (done):** practice mode with exam mix, schedule view with live recalculation, dashboard
+  with due-today/streak/weak spots, FTS5 search, command palette + shortcuts, study timer.
 - **Phase 4:** FSRS flashcards, similar-exercise generation, backup/restore ZIP, PWA.

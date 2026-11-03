@@ -113,6 +113,22 @@
     ],
     "summary": "Dashboard",
     "operationId": "dashboard_api_dashboard_get",
+    "parameters": [
+     {
+      "name": "tz_offset",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "maximum": 840,
+       "minimum": -840,
+       "description": "Local timezone offset in minutes (JS getTimezoneOffset() * -1)",
+       "default": 0,
+       "title": "Tz Offset"
+      },
+      "description": "Local timezone offset in minutes (JS getTimezoneOffset() * -1)"
+     }
+    ],
     "responses": {
      "200": {
       "description": "Successful Response",
@@ -120,6 +136,16 @@
        "application/json": {
         "schema": {
          "$ref": "#/components/schemas/DashboardOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
         }
        }
       }
@@ -665,6 +691,48 @@
     "responses": {
      "204": {
       "description": "Successful Response"
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/plans/{plan_id}/schedule": {
+   "get": {
+    "tags": [
+     "plans"
+    ],
+    "summary": "Schedule",
+    "operationId": "schedule_api_plans__plan_id__schedule_get",
+    "parameters": [
+     {
+      "name": "plan_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Plan Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScheduleOut"
+        }
+       }
+      }
      },
      "422": {
       "description": "Validation Error",
@@ -2016,6 +2084,437 @@
     }
    }
   },
+  "/api/practice/queue": {
+   "post": {
+    "tags": [
+     "practice"
+    ],
+    "summary": "Queue",
+    "operationId": "queue_api_practice_queue_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/PracticeRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/PracticeQueueOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/practice/stats": {
+   "get": {
+    "tags": [
+     "practice"
+    ],
+    "summary": "Stats",
+    "operationId": "stats_api_practice_stats_get",
+    "parameters": [
+     {
+      "name": "subject_id",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "integer"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Subject Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "additionalProperties": {
+          "type": "integer"
+         },
+         "title": "Response Stats Api Practice Stats Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/sessions/active": {
+   "get": {
+    "tags": [
+     "sessions"
+    ],
+    "summary": "Active",
+    "operationId": "active_api_sessions_active_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "anyOf": [
+          {
+           "$ref": "#/components/schemas/SessionOut"
+          },
+          {
+           "type": "null"
+          }
+         ],
+         "title": "Response Active Api Sessions Active Get"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/sessions/start": {
+   "post": {
+    "tags": [
+     "sessions"
+    ],
+    "summary": "Start",
+    "operationId": "start_api_sessions_start_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/SessionStart"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SessionOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/sessions/{session_id}/stop": {
+   "post": {
+    "tags": [
+     "sessions"
+    ],
+    "summary": "Stop",
+    "operationId": "stop_api_sessions__session_id__stop_post",
+    "parameters": [
+     {
+      "name": "session_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Session Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/SessionStop"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SessionOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/sessions": {
+   "get": {
+    "tags": [
+     "sessions"
+    ],
+    "summary": "List Sessions",
+    "operationId": "list_sessions_api_sessions_get",
+    "parameters": [
+     {
+      "name": "node_id",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "integer"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Node Id"
+      }
+     },
+     {
+      "name": "subject_id",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "integer"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Subject Id"
+      }
+     },
+     {
+      "name": "limit",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "default": 50,
+       "title": "Limit"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/SessionOut"
+         },
+         "title": "Response List Sessions Api Sessions Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/sessions/{session_id}": {
+   "delete": {
+    "tags": [
+     "sessions"
+    ],
+    "summary": "Delete",
+    "operationId": "delete_api_sessions__session_id__delete",
+    "parameters": [
+     {
+      "name": "session_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Session Id"
+      }
+     }
+    ],
+    "responses": {
+     "204": {
+      "description": "Successful Response"
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/search": {
+   "get": {
+    "tags": [
+     "search"
+    ],
+    "summary": "Search",
+    "operationId": "search_api_search_get",
+    "parameters": [
+     {
+      "name": "q",
+      "in": "query",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "minLength": 1,
+       "maxLength": 200,
+       "title": "Q"
+      }
+     },
+     {
+      "name": "subject_id",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "integer"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Subject Id"
+      }
+     },
+     {
+      "name": "limit",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "maximum": 50,
+       "minimum": 1,
+       "default": 20,
+       "title": "Limit"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/SearchHitOut"
+         },
+         "title": "Response Search Api Search Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/search/reindex": {
+   "post": {
+    "tags": [
+     "search"
+    ],
+    "summary": "Reindex",
+    "operationId": "reindex_api_search_reindex_post",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": {
+          "type": "integer"
+         },
+         "type": "object",
+         "title": "Response Reindex Api Search Reindex Post"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
   "/api/files/{path}": {
    "get": {
     "tags": [
@@ -2236,7 +2735,7 @@
     ],
     "title": "CropRequest"
    },
-   "DashboardExam": {
+   "DashboardExamOut": {
     "properties": {
      "plan_id": {
       "type": "integer",
@@ -2285,6 +2784,18 @@
      "minutes_remaining": {
       "type": "integer",
       "title": "Minutes Remaining"
+     },
+     "needed_per_day": {
+      "type": "integer",
+      "title": "Needed Per Day"
+     },
+     "capacity_minutes": {
+      "type": "integer",
+      "title": "Capacity Minutes"
+     },
+     "behind": {
+      "type": "boolean",
+      "title": "Behind"
      }
     },
     "type": "object",
@@ -2298,11 +2809,14 @@
      "exam_name",
      "days_left",
      "percent",
-     "minutes_remaining"
+     "minutes_remaining",
+     "needed_per_day",
+     "capacity_minutes",
+     "behind"
     ],
-    "title": "DashboardExam"
+    "title": "DashboardExamOut"
    },
-   "DashboardNode": {
+   "DashboardNodeOut": {
     "properties": {
      "node_id": {
       "type": "integer",
@@ -2333,6 +2847,12 @@
      },
      "status": {
       "type": "string",
+      "enum": [
+       "not_started",
+       "in_progress",
+       "understood",
+       "mastered"
+      ],
       "title": "Status"
      },
      "plan_id": {
@@ -2370,7 +2890,7 @@
      "subject_name",
      "subject_color"
     ],
-    "title": "DashboardNode"
+    "title": "DashboardNodeOut"
    },
    "DashboardOut": {
     "properties": {
@@ -2390,26 +2910,64 @@
       "type": "integer",
       "title": "Nodes Done"
      },
+     "exercises_total": {
+      "type": "integer",
+      "title": "Exercises Total"
+     },
      "exams": {
       "items": {
-       "$ref": "#/components/schemas/DashboardExam"
+       "$ref": "#/components/schemas/DashboardExamOut"
       },
       "type": "array",
       "title": "Exams"
      },
+     "due_today": {
+      "items": {
+       "$ref": "#/components/schemas/DashboardNodeOut"
+      },
+      "type": "array",
+      "title": "Due Today"
+     },
      "ready": {
       "items": {
-       "$ref": "#/components/schemas/DashboardNode"
+       "$ref": "#/components/schemas/DashboardNodeOut"
       },
       "type": "array",
       "title": "Ready"
      },
      "in_progress": {
       "items": {
-       "$ref": "#/components/schemas/DashboardNode"
+       "$ref": "#/components/schemas/DashboardNodeOut"
       },
       "type": "array",
       "title": "In Progress"
+     },
+     "streak": {
+      "$ref": "#/components/schemas/StreakOut"
+     },
+     "weak_spots": {
+      "items": {
+       "$ref": "#/components/schemas/WeakSpotOut"
+      },
+      "type": "array",
+      "title": "Weak Spots"
+     },
+     "retry_exercises": {
+      "items": {
+       "$ref": "#/components/schemas/RetryExerciseOut"
+      },
+      "type": "array",
+      "title": "Retry Exercises"
+     },
+     "active_session": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/SessionOut"
+       },
+       {
+        "type": "null"
+       }
+      ]
      }
     },
     "type": "object",
@@ -2418,9 +2976,14 @@
      "plans_count",
      "nodes_total",
      "nodes_done",
+     "exercises_total",
      "exams",
+     "due_today",
      "ready",
-     "in_progress"
+     "in_progress",
+     "streak",
+     "weak_spots",
+     "retry_exercises"
     ],
     "title": "DashboardOut"
    },
@@ -4155,6 +4718,11 @@
       "type": "integer",
       "title": "Exercise Count"
      },
+     "actual_minutes": {
+      "type": "integer",
+      "title": "Actual Minutes",
+      "default": 0
+     },
      "plan_id": {
       "type": "integer",
       "title": "Plan Id"
@@ -4977,6 +5545,128 @@
     "type": "object",
     "title": "PlanUpdate"
    },
+   "PracticeQueueOut": {
+    "properties": {
+     "exercise_ids": {
+      "items": {
+       "type": "integer"
+      },
+      "type": "array",
+      "title": "Exercise Ids"
+     },
+     "total_available": {
+      "type": "integer",
+      "title": "Total Available"
+     }
+    },
+    "type": "object",
+    "required": [
+     "exercise_ids",
+     "total_available"
+    ],
+    "title": "PracticeQueueOut"
+   },
+   "PracticeRequest": {
+    "properties": {
+     "subject_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Subject Id"
+     },
+     "plan_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Plan Id"
+     },
+     "node_ids": {
+      "anyOf": [
+       {
+        "items": {
+         "type": "integer"
+        },
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Node Ids"
+     },
+     "difficulty_min": {
+      "anyOf": [
+       {
+        "type": "integer",
+        "maximum": 5.0,
+        "minimum": 1.0
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Difficulty Min"
+     },
+     "difficulty_max": {
+      "anyOf": [
+       {
+        "type": "integer",
+        "maximum": 5.0,
+        "minimum": 1.0
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Difficulty Max"
+     },
+     "unsolved_only": {
+      "type": "boolean",
+      "title": "Unsolved Only",
+      "default": false
+     },
+     "limit": {
+      "type": "integer",
+      "maximum": 100.0,
+      "minimum": 1.0,
+      "title": "Limit",
+      "default": 10
+     },
+     "mode": {
+      "type": "string",
+      "enum": [
+       "sequential",
+       "random",
+       "exam"
+      ],
+      "title": "Mode",
+      "default": "random"
+     },
+     "seed": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Seed"
+     }
+    },
+    "type": "object",
+    "title": "PracticeRequest"
+   },
    "PrerequisiteOut": {
     "properties": {
      "node_id": {
@@ -5077,6 +5767,441 @@
     ],
     "title": "ProgressUpdate"
    },
+   "RetryExerciseOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "number": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Number"
+     },
+     "subject_id": {
+      "type": "integer",
+      "title": "Subject Id"
+     },
+     "subject_name": {
+      "type": "string",
+      "title": "Subject Name"
+     },
+     "subject_color": {
+      "type": "string",
+      "title": "Subject Color"
+     },
+     "last_result": {
+      "type": "string",
+      "enum": [
+       "solved",
+       "partial",
+       "failed"
+      ],
+      "title": "Last Result"
+     },
+     "node_keys": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Node Keys"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "title",
+     "number",
+     "subject_id",
+     "subject_name",
+     "subject_color",
+     "last_result",
+     "node_keys"
+    ],
+    "title": "RetryExerciseOut"
+   },
+   "ScheduleDayOut": {
+    "properties": {
+     "date": {
+      "type": "string",
+      "format": "date",
+      "title": "Date"
+     },
+     "minutes": {
+      "type": "integer",
+      "title": "Minutes"
+     },
+     "nodes": {
+      "items": {
+       "$ref": "#/components/schemas/ScheduledNodeOut"
+      },
+      "type": "array",
+      "title": "Nodes"
+     }
+    },
+    "type": "object",
+    "required": [
+     "date",
+     "minutes",
+     "nodes"
+    ],
+    "title": "ScheduleDayOut"
+   },
+   "ScheduleOut": {
+    "properties": {
+     "summary": {
+      "$ref": "#/components/schemas/ScheduleSummaryOut"
+     },
+     "days": {
+      "items": {
+       "$ref": "#/components/schemas/ScheduleDayOut"
+      },
+      "type": "array",
+      "title": "Days"
+     }
+    },
+    "type": "object",
+    "required": [
+     "summary",
+     "days"
+    ],
+    "title": "ScheduleOut"
+   },
+   "ScheduleSummaryOut": {
+    "properties": {
+     "exam_date": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Exam Date"
+     },
+     "days_left": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Days Left"
+     },
+     "study_days": {
+      "type": "integer",
+      "title": "Study Days"
+     },
+     "remaining_minutes": {
+      "type": "integer",
+      "title": "Remaining Minutes"
+     },
+     "remaining_nodes": {
+      "type": "integer",
+      "title": "Remaining Nodes"
+     },
+     "capacity_minutes": {
+      "type": "integer",
+      "title": "Capacity Minutes"
+     },
+     "needed_per_day": {
+      "type": "integer",
+      "title": "Needed Per Day"
+     },
+     "behind": {
+      "type": "boolean",
+      "title": "Behind"
+     },
+     "finish_date": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Finish Date"
+     },
+     "in_progress": {
+      "type": "integer",
+      "title": "In Progress"
+     }
+    },
+    "type": "object",
+    "required": [
+     "exam_date",
+     "days_left",
+     "study_days",
+     "remaining_minutes",
+     "remaining_nodes",
+     "capacity_minutes",
+     "needed_per_day",
+     "behind",
+     "finish_date",
+     "in_progress"
+    ],
+    "title": "ScheduleSummaryOut"
+   },
+   "ScheduledNodeOut": {
+    "properties": {
+     "node_id": {
+      "type": "integer",
+      "title": "Node Id"
+     },
+     "key": {
+      "type": "string",
+      "title": "Key"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "minutes": {
+      "type": "integer",
+      "title": "Minutes"
+     },
+     "status": {
+      "type": "string",
+      "enum": [
+       "not_started",
+       "in_progress",
+       "understood",
+       "mastered"
+      ],
+      "title": "Status"
+     },
+     "ready": {
+      "type": "boolean",
+      "title": "Ready"
+     }
+    },
+    "type": "object",
+    "required": [
+     "node_id",
+     "key",
+     "title",
+     "minutes",
+     "status",
+     "ready"
+    ],
+    "title": "ScheduledNodeOut"
+   },
+   "SearchHitOut": {
+    "properties": {
+     "kind": {
+      "type": "string",
+      "enum": [
+       "subject",
+       "plan",
+       "node",
+       "note",
+       "exercise"
+      ],
+      "title": "Kind"
+     },
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "snippet": {
+      "type": "string",
+      "title": "Snippet"
+     },
+     "subject_id": {
+      "type": "integer",
+      "title": "Subject Id"
+     },
+     "subject_name": {
+      "type": "string",
+      "title": "Subject Name"
+     },
+     "subject_color": {
+      "type": "string",
+      "title": "Subject Color"
+     },
+     "plan_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Plan Id"
+     },
+     "node_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Node Id"
+     },
+     "url": {
+      "type": "string",
+      "title": "Url"
+     }
+    },
+    "type": "object",
+    "required": [
+     "kind",
+     "id",
+     "title",
+     "snippet",
+     "subject_id",
+     "subject_name",
+     "subject_color",
+     "url"
+    ],
+    "title": "SearchHitOut"
+   },
+   "SessionOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "subject_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Subject Id"
+     },
+     "node_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Node Id"
+     },
+     "node_title": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Node Title"
+     },
+     "started_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Started At"
+     },
+     "ended_at": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date-time"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Ended At"
+     },
+     "duration_seconds": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Duration Seconds"
+     },
+     "note": {
+      "type": "string",
+      "title": "Note"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "subject_id",
+     "node_id",
+     "started_at",
+     "ended_at",
+     "duration_seconds",
+     "note"
+    ],
+    "title": "SessionOut"
+   },
+   "SessionStart": {
+    "properties": {
+     "subject_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Subject Id"
+     },
+     "node_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Node Id"
+     }
+    },
+    "type": "object",
+    "title": "SessionStart"
+   },
+   "SessionStop": {
+    "properties": {
+     "note": {
+      "type": "string",
+      "title": "Note",
+      "default": ""
+     }
+    },
+    "type": "object",
+    "title": "SessionStop"
+   },
    "StartExtractionRequest": {
     "properties": {
      "plan_id": {
@@ -5117,6 +6242,43 @@
     },
     "type": "object",
     "title": "StartExtractionRequest"
+   },
+   "StreakOut": {
+    "properties": {
+     "current": {
+      "type": "integer",
+      "title": "Current"
+     },
+     "longest": {
+      "type": "integer",
+      "title": "Longest"
+     },
+     "active_today": {
+      "type": "boolean",
+      "title": "Active Today"
+     },
+     "minutes_today": {
+      "type": "integer",
+      "title": "Minutes Today"
+     },
+     "days": {
+      "items": {
+       "type": "string",
+       "format": "date"
+      },
+      "type": "array",
+      "title": "Days"
+     }
+    },
+    "type": "object",
+    "required": [
+     "current",
+     "longest",
+     "active_today",
+     "minutes_today",
+     "days"
+    ],
+    "title": "StreakOut"
    },
    "SubjectCreate": {
     "properties": {
@@ -5398,6 +6560,74 @@
      "type"
     ],
     "title": "ValidationError"
+   },
+   "WeakSpotOut": {
+    "properties": {
+     "node_id": {
+      "type": "integer",
+      "title": "Node Id"
+     },
+     "key": {
+      "type": "string",
+      "title": "Key"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "plan_id": {
+      "type": "integer",
+      "title": "Plan Id"
+     },
+     "plan_title": {
+      "type": "string",
+      "title": "Plan Title"
+     },
+     "subject_id": {
+      "type": "integer",
+      "title": "Subject Id"
+     },
+     "subject_name": {
+      "type": "string",
+      "title": "Subject Name"
+     },
+     "subject_color": {
+      "type": "string",
+      "title": "Subject Color"
+     },
+     "attempts": {
+      "type": "integer",
+      "title": "Attempts"
+     },
+     "failed": {
+      "type": "integer",
+      "title": "Failed"
+     },
+     "partial": {
+      "type": "integer",
+      "title": "Partial"
+     },
+     "score": {
+      "type": "number",
+      "title": "Score"
+     }
+    },
+    "type": "object",
+    "required": [
+     "node_id",
+     "key",
+     "title",
+     "plan_id",
+     "plan_title",
+     "subject_id",
+     "subject_name",
+     "subject_color",
+     "attempts",
+     "failed",
+     "partial",
+     "score"
+    ],
+    "title": "WeakSpotOut"
    }
   }
  }

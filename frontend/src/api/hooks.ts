@@ -150,6 +150,7 @@ export function useUpdatePlan(id: number) {
       unwrap(await api.PATCH('/api/plans/{plan_id}', { params: { path: { plan_id: id } }, body })) as PlanDetail,
     onSuccess: (plan) => {
       qc.setQueryData(keys.plan(id), plan)
+      qc.invalidateQueries({ queryKey: ['plans', id, 'schedule'] })
       qc.invalidateQueries({ queryKey: keys.subjects }); qc.invalidateQueries({ queryKey: ['dashboard'] })
     },
   })
@@ -240,8 +241,9 @@ export function useSetStatus(planId: number) {
       qc.invalidateQueries({ queryKey: keys.node(node.id) })
     },
     onSettled: () => {
-      // readiness of other nodes changes -> refetch whole plan (cheap) + subject summaries
+      // readiness of other nodes changes -> refetch whole plan (cheap) + subject summaries + schedule
       qc.invalidateQueries({ queryKey: keys.plan(planId) })
+      qc.invalidateQueries({ queryKey: ['plans', planId, 'schedule'] })
       qc.invalidateQueries({ queryKey: keys.subjects }); qc.invalidateQueries({ queryKey: ['dashboard'] })
     },
   })

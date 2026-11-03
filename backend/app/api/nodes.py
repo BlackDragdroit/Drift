@@ -17,6 +17,9 @@ from app.schemas.api import (
     PrerequisiteOut,
     ProgressUpdate,
 )
+from app.services import activity
+from app.services import search as searchsvc
+from app.services.activity import minutes_by_node
 from app.services.graph import compute_states
 from app.services.plan_import import load_plan, set_status
 
@@ -69,6 +72,7 @@ def get(node_id: int, db: DB, user: CurrentUser) -> NodeDetailOut:
     ).all()
     return NodeDetailOut(
         **base.model_dump(),
+        actual_minutes=minutes_by_node(db, [node.id]).get(node.id, 0),
         plan_id=plan.id,
         plan_title=plan.title,
         note=NoteOut(
@@ -90,6 +94,7 @@ def update(node_id: int, body: NodeUpdate, db: DB, user: CurrentUser) -> NodeOut
     node, plan = _get_node(db, node_id, user.id)
     for field, value in body.model_dump(exclude_unset=True).items():
         setattr(node, field, value)
+    searchsvc.index_node(db, node, plan.subject_id)
     db.commit()
     node, plan = _get_node(db, node_id, user.id)
     return _node_out(db, node, plan)
@@ -98,7 +103,10 @@ def update(node_id: int, body: NodeUpdate, db: DB, user: CurrentUser) -> NodeOut
 @router.put("/{node_id}/progress", response_model=NodeOut)
 def update_progress(node_id: int, body: ProgressUpdate, db: DB, user: CurrentUser) -> NodeOut:
     node, plan = _get_node(db, node_id, user.id)
+    previous = node.progress.status if node.progress else "not_started"
     set_status(node, body.status)
+    if body.status != previous:
+        activity.log(db, "status", subject_id=plan.subject_id, node_id=node.id, detail=body.status)
     db.commit()
     node, plan = _get_node(db, node_id, user.id)
     return _node_out(db, node, plan)
@@ -106,11 +114,14 @@ def update_progress(node_id: int, body: ProgressUpdate, db: DB, user: CurrentUse
 
 @router.put("/{node_id}/note", response_model=NoteOut)
 def update_note(node_id: int, body: NoteUpdate, db: DB, user: CurrentUser) -> NoteOut:
-    node, _ = _get_node(db, node_id, user.id)
+    node, plan = _get_node(db, node_id, user.id)
     if node.note is None:
         node.note = Note(content=body.content)
     else:
         node.note.content = body.content
+    db.flush()
+    searchsvc.index_note(db, node.note, node, plan.subject_id)
+    activity.log(db, "note", subject_id=plan.subject_id, node_id=node.id)
     db.commit()
     db.refresh(node.note)
     return NoteOut(content=node.note.content, updated_at=node.note.updated_at)

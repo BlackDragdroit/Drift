@@ -296,6 +296,7 @@ class AttemptCreate(BaseModel):
 
 
 class NodeDetailOut(NodeOut):
+    actual_minutes: int = 0
     plan_id: int
     plan_title: str
     note: NoteOut
@@ -454,3 +455,181 @@ class CommitRequest(BaseModel):
 class CommitOut(BaseModel):
     exercise_ids: list[int]
     skipped: int
+
+
+# ----------------------------------------------------------------------------- schedule
+
+
+class ScheduledNodeOut(BaseModel):
+    node_id: int
+    key: str
+    title: str
+    minutes: int
+    status: Status
+    ready: bool
+
+
+class ScheduleDayOut(BaseModel):
+    date: date
+    minutes: int
+    nodes: list[ScheduledNodeOut]
+
+
+class ScheduleSummaryOut(BaseModel):
+    exam_date: date | None
+    days_left: int | None
+    study_days: int
+    remaining_minutes: int
+    remaining_nodes: int
+    capacity_minutes: int
+    needed_per_day: int
+    behind: bool
+    finish_date: date | None
+    in_progress: int
+
+
+class ScheduleOut(BaseModel):
+    summary: ScheduleSummaryOut
+    days: list[ScheduleDayOut]
+
+
+# ----------------------------------------------------------------------------- practice
+
+
+class PracticeRequest(BaseModel):
+    subject_id: int | None = None
+    plan_id: int | None = None
+    node_ids: list[int] | None = None
+    difficulty_min: int | None = Field(None, ge=1, le=5)
+    difficulty_max: int | None = Field(None, ge=1, le=5)
+    unsolved_only: bool = False
+    limit: int = Field(10, ge=1, le=100)
+    mode: Literal["sequential", "random", "exam"] = "random"
+    seed: int | None = None
+
+
+class PracticeQueueOut(BaseModel):
+    exercise_ids: list[int]
+    total_available: int
+
+
+# ----------------------------------------------------------------------------- sessions
+
+
+class SessionStart(BaseModel):
+    subject_id: int | None = None
+    node_id: int | None = None
+
+
+class SessionStop(BaseModel):
+    note: str = ""
+
+
+class SessionOut(ORMModel):
+    id: int
+    subject_id: int | None
+    node_id: int | None
+    node_title: str | None = None
+    started_at: datetime
+    ended_at: datetime | None
+    duration_seconds: int | None
+    note: str
+
+
+# ----------------------------------------------------------------------------- search
+
+
+class SearchHitOut(BaseModel):
+    kind: Literal["subject", "plan", "node", "note", "exercise"]
+    id: int
+    title: str
+    snippet: str
+    subject_id: int
+    subject_name: str
+    subject_color: str
+    plan_id: int | None = None
+    node_id: int | None = None
+    url: str
+
+
+# ----------------------------------------------------------------------------- dashboard v2
+
+
+class DashboardNodeOut(BaseModel):
+    node_id: int
+    key: str
+    title: str
+    estimated_minutes: int
+    difficulty: int | None
+    status: Status
+    plan_id: int
+    plan_title: str
+    subject_id: int
+    subject_name: str
+    subject_color: str
+
+
+class DashboardExamOut(BaseModel):
+    plan_id: int
+    plan_title: str
+    subject_id: int
+    subject_name: str
+    subject_color: str
+    exam_date: date
+    exam_name: str | None
+    days_left: int
+    percent: float
+    minutes_remaining: int
+    needed_per_day: int
+    capacity_minutes: int
+    behind: bool
+
+
+class StreakOut(BaseModel):
+    current: int
+    longest: int
+    active_today: bool
+    minutes_today: int
+    days: list[date]
+
+
+class WeakSpotOut(BaseModel):
+    node_id: int
+    key: str
+    title: str
+    plan_id: int
+    plan_title: str
+    subject_id: int
+    subject_name: str
+    subject_color: str
+    attempts: int
+    failed: int
+    partial: int
+    score: float
+
+
+class RetryExerciseOut(BaseModel):
+    id: int
+    title: str
+    number: str | None
+    subject_id: int
+    subject_name: str
+    subject_color: str
+    last_result: AttemptResult
+    node_keys: list[str]
+
+
+class DashboardOut(BaseModel):
+    subjects_count: int
+    plans_count: int
+    nodes_total: int
+    nodes_done: int
+    exercises_total: int
+    exams: list[DashboardExamOut]
+    due_today: list[DashboardNodeOut]
+    ready: list[DashboardNodeOut]
+    in_progress: list[DashboardNodeOut]
+    streak: StreakOut
+    weak_spots: list[WeakSpotOut]
+    retry_exercises: list[RetryExerciseOut]
+    active_session: SessionOut | None = None
