@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight, Check, Eye, EyeOff, Flag, Lightbulb, Play, RotateCcw, Shuffle, Sigma, SkipForward, Timer } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Check, Eye, EyeOff, Flag, Lightbulb, PenLine, Play, RotateCcw, Shuffle, Sigma, SkipForward, Timer } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router'
 
@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Field, Input, Select } from '@/components/ui/input'
 import { Badge, Checkbox, Kbd, ProgressBar, Spinner } from '@/components/ui/misc'
 import { TopicPicker } from '@/features/documents/TopicPicker'
+import { AnswerBox } from '@/features/exercises/AnswerBox'
 import { FormulaQuickAdd } from '@/features/formulas/FormulaQuickAdd'
 import { RESULT_COLOR } from '@/features/exercises/ExerciseRow'
 import { t } from '@/i18n'
@@ -37,6 +38,7 @@ export function PracticePage() {
   const [phase, setPhase] = useState<Phase>('setup')
   const [loading, setLoading] = useState(false)
   const [outcomes, setOutcomes] = useState<Record<number, Outcome>>({})
+  const [answered, setAnswered] = useState<Record<number, boolean>>({})
   const [index, setIndex] = useState(0)
   const startedAt = useRef<number>(0)
 
@@ -72,6 +74,7 @@ export function PracticePage() {
       if (q.exercise_ids.length === 0) return
       setQueue(q.exercise_ids)
       setOutcomes({})
+      setAnswered({})
       setIndex(0)
       startedAt.current = Date.now()
       setPhase('session')
@@ -93,6 +96,7 @@ export function PracticePage() {
         index={index}
         outcomes={outcomes}
         onOutcome={(id, o) => setOutcomes((prev) => ({ ...prev, [id]: o }))}
+        onAnswered={(id, v) => setAnswered((prev) => ({ ...prev, [id]: v }))}
         onIndex={setIndex}
         onFinish={() => setPhase('summary')}
         onQuit={() => setPhase('setup')}
@@ -104,6 +108,7 @@ export function PracticePage() {
       <Summary
         queue={queue}
         outcomes={outcomes}
+        answered={answered}
         seconds={Math.round((Date.now() - startedAt.current) / 1000)}
         onAgain={() => setPhase('setup')}
         onBack={() => navigate(subjectId ? `/subjects/${subjectId}` : '/')}
@@ -169,19 +174,24 @@ export function PracticePage() {
   )
 }
 
-function Session({ queue, index, outcomes, onOutcome, onIndex, onFinish, onQuit }: { queue: number[]; index: number; outcomes: Record<number, Outcome>; onOutcome: (id: number, o: Outcome) => void; onIndex: (i: number) => void; onFinish: () => void; onQuit: () => void }) {
+function Session({ queue, index, outcomes, onOutcome, onAnswered, onIndex, onFinish, onQuit }: { queue: number[]; index: number; outcomes: Record<number, Outcome>; onOutcome: (id: number, o: Outcome) => void; onAnswered: (id: number, v: boolean) => void; onIndex: (i: number) => void; onFinish: () => void; onQuit: () => void }) {
   const exerciseId = queue[index]
   const { data: exercise, isLoading } = useExercise(exerciseId)
   const addAttempt = useAddAttempt()
   const [hintsShown, setHintsShown] = useState(0)
   const [showSolution, setShowSolution] = useState(false)
   const [formulaOpen, setFormulaOpen] = useState(false)
+  const [answer, setAnswer] = useState('')
+  const [locked, setLocked] = useState(false)
+  const answerRef = useRef<HTMLTextAreaElement>(null)
   const [elapsed, setElapsed] = useState(0)
   const startRef = useRef(Date.now())
 
   useEffect(() => {
     setHintsShown(0)
     setShowSolution(false)
+    setAnswer('')
+    setLocked(false)
     startRef.current = Date.now()
     setElapsed(0)
     const id = window.setInterval(() => setElapsed(Math.round((Date.now() - startRef.current) / 1000)), 1000)
@@ -193,13 +203,26 @@ function Session({ queue, index, outcomes, onOutcome, onIndex, onFinish, onQuit 
     else onFinish()
   }, [index, queue.length, onIndex, onFinish])
 
+  // revealing the solution freezes the scratch answer
+  const reveal = useCallback(() => {
+    setShowSolution(true)
+    setLocked(true)
+    answerRef.current?.blur()
+  }, [])
+  const toggleSolution = useCallback(() => {
+    if (showSolution) setShowSolution(false)
+    else reveal()
+  }, [showSolution, reveal])
+
   const log = useCallback(
     (result: AttemptResult) => {
       if (!exercise || outcomes[exercise.id]) return
       onOutcome(exercise.id, result)
-      addAttempt.mutate({ exerciseId: exercise.id, body: { result, notes: '', answer: '', duration_seconds: Math.round((Date.now() - startRef.current) / 1000) } })
+      onAnswered(exercise.id, answer.trim().length > 0)
+      setLocked(true)
+      addAttempt.mutate({ exerciseId: exercise.id, body: { result, notes: '', answer: answer.trim(), duration_seconds: Math.round((Date.now() - startRef.current) / 1000) } })
     },
-    [exercise, outcomes, onOutcome, addAttempt],
+    [exercise, outcomes, onOutcome, onAnswered, answer, addAttempt],
   )
 
   useEffect(() => {
@@ -208,15 +231,18 @@ function Session({ queue, index, outcomes, onOutcome, onIndex, onFinish, onQuit 
       if (e.metaKey || e.ctrlKey || e.altKey || target?.closest('input, textarea, select')) return
       const totalHints = (exercise?.hints.length ?? 0)
       if (e.key === 'h' && hintsShown < totalHints) setHintsShown((h) => h + 1)
-      else if (e.key === 's' && (exercise?.solution || exercise?.parts.some((p) => p.solution))) setShowSolution((v) => !v)
-      else if (e.key === '1') log('solved')
+      else if (e.key === 's' && (exercise?.solution || exercise?.parts.some((p) => p.solution))) toggleSolution()
+      else if (e.key === 'a' && !locked) {
+        e.preventDefault()
+        answerRef.current?.focus()
+      } else if (e.key === '1') log('solved')
       else if (e.key === '2') log('partial')
       else if (e.key === '3') log('failed')
       else if (e.key === 'n' || e.key === 'ArrowRight') next()
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [exercise, hintsShown, log, next])
+  }, [exercise, hintsShown, log, next, toggleSolution, locked])
 
   const outcome = exercise ? outcomes[exercise.id] : undefined
   const mm = String(Math.floor(elapsed / 60)).padStart(2, '0')
@@ -252,7 +278,15 @@ function Session({ queue, index, outcomes, onOutcome, onIndex, onFinish, onQuit 
                 {exercise.node_keys.map((k) => <Badge key={k} className="font-mono">{k}</Badge>)}
               </p>
             </header>
-            <ExerciseContent exercise={exercise} hintsShown={hintsShown} onHint={() => setHintsShown(hintsShown + 1)} showSolution={showSolution} onToggleSolution={() => setShowSolution(!showSolution)} onAddFormula={() => setFormulaOpen(true)} />
+            <ExerciseContent
+              exercise={exercise}
+              hintsShown={hintsShown}
+              onHint={() => setHintsShown(hintsShown + 1)}
+              showSolution={showSolution}
+              onToggleSolution={toggleSolution}
+              onAddFormula={() => setFormulaOpen(true)}
+              answerSlot={<AnswerBox ref={answerRef} value={answer} onChange={setAnswer} locked={locked} onReveal={reveal} showKey />}
+            />
             <FormulaQuickAdd exercise={exercise} open={formulaOpen} onOpenChange={setFormulaOpen} />
 
             <section className="rounded-xl border bg-bg-sunken/40 p-4">
@@ -290,7 +324,7 @@ function Session({ queue, index, outcomes, onOutcome, onIndex, onFinish, onQuit 
   )
 }
 
-function ExerciseContent({ exercise, hintsShown, onHint, showSolution, onToggleSolution, onAddFormula }: { exercise: Exercise; hintsShown: number; onHint: () => void; showSolution: boolean; onToggleSolution: () => void; onAddFormula: () => void }) {
+function ExerciseContent({ exercise, hintsShown, onHint, showSolution, onToggleSolution, onAddFormula, answerSlot }: { exercise: Exercise; hintsShown: number; onHint: () => void; showSolution: boolean; onToggleSolution: () => void; onAddFormula: () => void; answerSlot?: React.ReactNode }) {
   const figureFor = (partId: number | null) => exercise.figures.filter((f) => f.part_id === partId)
   return (
     <>
@@ -319,6 +353,7 @@ function ExerciseContent({ exercise, hintsShown, onHint, showSolution, onToggleS
           ))}
         </ol>
       )}
+      {answerSlot}
       <div className="flex flex-wrap items-center gap-2">
         {exercise.hints.length > 0 && hintsShown < exercise.hints.length && (
           <Button size="sm" variant="outline" onClick={onHint}>
@@ -351,9 +386,11 @@ function ExerciseContent({ exercise, hintsShown, onHint, showSolution, onToggleS
   )
 }
 
-function Summary({ queue, outcomes, seconds, onAgain, onBack }: { queue: number[]; outcomes: Record<number, Outcome>; seconds: number; onAgain: () => void; onBack: () => void }) {
+function Summary({ queue, outcomes, answered, seconds, onAgain, onBack }: { queue: number[]; outcomes: Record<number, Outcome>; answered: Record<number, boolean>; seconds: number; onAgain: () => void; onBack: () => void }) {
   const counts = { solved: 0, partial: 0, failed: 0, skipped: 0 }
   for (const id of queue) counts[outcomes[id] ?? 'skipped'] += 1
+  const logged = queue.filter((id) => outcomes[id] && outcomes[id] !== 'skipped')
+  const answeredCount = logged.filter((id) => answered[id]).length
   const mins = Math.floor(seconds / 60)
   return (
     <>
@@ -380,6 +417,12 @@ function Summary({ queue, outcomes, seconds, onAgain, onBack }: { queue: number[
           <p className="mt-4 text-sm text-fg-muted">
             {t('practice.totalTime')}: {mins} {t('common.minutes')} {seconds % 60}s
           </p>
+          {logged.length > 0 && (
+            <p className="mt-1 text-sm text-fg-muted">
+              <PenLine className="mr-1 inline h-3.5 w-3.5 align-[-2px]" />
+              {t('practice.answeredCount', { n: answeredCount, total: logged.length })}
+            </p>
+          )}
           <div className="mt-6 flex justify-center gap-2">
             <Button variant="outline" onClick={onBack}>
               <Check className="h-4 w-4" /> {t('practice.back')}

@@ -162,7 +162,7 @@ export function ShortcutsDialog({ open, onOpenChange }: { open: boolean; onOpenC
     [t('shortcuts.scheduleView'), ['s']],
     [t('shortcuts.formulasView'), ['f']],
     [t('shortcuts.closePanel'), ['Esc']],
-    [t('shortcuts.practiceKeys'), ['h', 's', '1-3', 'n']],
+    [t('shortcuts.practiceKeys'), ['a', 'h', 's', '1-3', 'n']],
   ]
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

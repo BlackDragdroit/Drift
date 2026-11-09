@@ -14,6 +14,7 @@ import { FormulaQuickAdd } from '@/features/formulas/FormulaQuickAdd'
 import { t } from '@/i18n'
 import { cn, difficultyDots, formatDate } from '@/lib/utils'
 
+import { AnswerBox } from './AnswerBox'
 import { ExerciseEditDialog } from './ExerciseEditDialog'
 import { RESULT_COLOR } from './ExerciseRow'
 
@@ -114,15 +115,27 @@ function SourcePageDialog({ open, onOpenChange, documentId, pageFrom, pageTo, ti
 function ExerciseBody({ exercise }: { exercise: Exercise }) {
   const addAttempt = useAddAttempt()
   const [notes, setNotes] = useState('')
+  const [answer, setAnswer] = useState('')
+  const [locked, setLocked] = useState(false)
   const [showSolution, setShowSolution] = useState(false)
   const [hintsShown, setHintsShown] = useState(0)
+  const hasSolution = !!exercise.solution || exercise.parts.some((p) => p.solution)
 
   useEffect(() => {
     setShowSolution(false)
     setHintsShown(0)
+    setAnswer('')
+    setLocked(false)
   }, [exercise.id])
 
-  const log = (result: AttemptResult) => addAttempt.mutate({ exerciseId: exercise.id, body: { result, notes, answer: '' } }, { onSuccess: () => setNotes('') })
+  const reveal = () => {
+    setShowSolution(true)
+    setLocked(true)
+  }
+  const log = (result: AttemptResult) => {
+    setLocked(true)
+    addAttempt.mutate({ exerciseId: exercise.id, body: { result, notes, answer: answer.trim() } }, { onSuccess: () => { setNotes(''); setAnswer(''); setLocked(false) } })
+  }
   const figureFor = (partId: number | null) => exercise.figures.filter((f) => f.part_id === partId)
 
   return (
@@ -151,13 +164,15 @@ function ExerciseBody({ exercise }: { exercise: Exercise }) {
                     <Figure key={f.id} url={f.url} caption={f.caption} />
                   ))}
                   <HintList hints={p.hints} />
-                  {p.solution && <Solution text={p.solution} />}
+                  {p.solution && <Solution text={p.solution} onReveal={() => setLocked(true)} />}
                 </div>
               </div>
             </li>
           ))}
         </ol>
       )}
+
+      {hasSolution && <AnswerBox value={answer} onChange={setAnswer} locked={locked} onReveal={exercise.solution ? reveal : undefined} />}
 
       {exercise.hints.length > 0 && (
         <div className="space-y-2">
@@ -177,7 +192,7 @@ function ExerciseBody({ exercise }: { exercise: Exercise }) {
 
       {exercise.solution && (
         <div>
-          <Button size="sm" variant={showSolution ? 'secondary' : 'outline'} onClick={() => setShowSolution(!showSolution)}>
+          <Button size="sm" variant={showSolution ? 'secondary' : 'outline'} onClick={() => (showSolution ? setShowSolution(false) : reveal())}>
             {showSolution ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
             {showSolution ? t('exercise.hideSolution') : t('exercise.solution')}
           </Button>
@@ -214,6 +229,7 @@ function ExerciseBody({ exercise }: { exercise: Exercise }) {
                 <div className="min-w-0 flex-1">
                   <span className="font-medium">{t(`exercise.${a.result}`)}</span>
                   <span className="ml-2 text-xs text-fg-subtle">{formatDate(a.created_at, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
+                  {a.answer && <AttemptAnswer answer={a.answer} />}
                   {a.notes && <p className="text-fg-muted">{a.notes}</p>}
                 </div>
               </li>
@@ -254,11 +270,27 @@ function HintList({ hints }: { hints: string[] }) {
   )
 }
 
-function Solution({ text }: { text: string }) {
+function AttemptAnswer({ answer }: { answer: string }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <div className="mt-0.5">
+      <button className="text-xs text-fg-muted hover:text-fg" onClick={() => setOpen(!open)}>
+        {open ? '▾' : '▸'} {t('exercise.yourAnswer')}
+      </button>
+      {open && (
+        <div className="mt-1 rounded-md border bg-bg-sunken/40 px-2.5 py-1.5 text-sm">
+          <Markdown>{answer}</Markdown>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function Solution({ text, onReveal }: { text: string; onReveal?: () => void }) {
   const [open, setOpen] = useState(false)
   return (
     <div>
-      <button className={cn('text-xs font-medium text-emerald-600 hover:underline dark:text-emerald-400')} onClick={() => setOpen(!open)}>
+      <button className={cn('text-xs font-medium text-emerald-600 hover:underline dark:text-emerald-400')} onClick={() => { if (!open) onReveal?.(); setOpen(!open) }}>
         {open ? t('exercise.hideSolution') : t('exercise.solution')}
       </button>
       {open && (

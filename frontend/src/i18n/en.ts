@@ -58,6 +58,9 @@ export const en = {
     solved: 'Solved', partial: 'Partially', failed: 'Failed', attemptNotes: 'Notes (what went wrong, what to remember)', attempts: 'Attempts', noAttempts: 'No attempts yet.',
     difficulty: 'Difficulty', source: 'Source', linkedTopics: 'Linked topics', edit: 'Edit exercise', delete: 'Delete exercise', showSource: 'Show source page',
     deleteConfirm: 'Delete this exercise and its attempt history?', new: 'New exercise', create: 'Create exercise',
+    yourAnswer: 'Your answer', answerPlaceholder: 'Work it out here before you reveal the solution — result, approach, sketch in words. Markdown + $LaTeX$.',
+    answerLocked: 'Locked when the solution was revealed', answerEmpty: 'You revealed the solution without writing an answer.', revealHint: 'Ctrl+Enter reveals the solution',
+    compare: 'Compare', noAnswer: 'no answer written',
   },
   documents: {
     title: 'Exercise sheets (PDF)', upload: 'Upload PDF', dropHint: 'Drop a PDF here or click to choose', uploading: 'Uploading…',
@@ -93,7 +96,8 @@ export const en = {
     unsolvedOnly: 'Unsolved only', count: 'Exercises', mode: 'Mode', random: 'Random', sequential: 'In order', exam: 'Exam mix', examHint: 'Weighted towards failed and untried exercises, ordered easy → hard.',
     available: '{n} exercises match', none: 'No exercises match these filters.', progress: '{i} of {n}', elapsed: 'Elapsed', next: 'Next', finish: 'Finish', skip: 'Skip',
     summary: 'Session summary', solved: 'Solved', partial: 'Partial', failed: 'Failed', skipped: 'Skipped', totalTime: 'Total time', again: 'Practice again', back: 'Back to subject',
-    shortcuts: 'Shortcuts: H hint · S solution · 1/2/3 log solved/partial/failed · N next', quick: 'Quick exam mix', retry: 'Retry these',
+    shortcuts: 'Shortcuts: A answer · H hint · S solution · 1/2/3 log solved/partial/failed · N next', quick: 'Quick exam mix', retry: 'Retry these',
+    answered: 'answered first', answeredCount: '{n} of {total} answered before revealing',
   },
   palette: {
     placeholder: 'Search topics, notes, exercises… or type a command', noResults: 'No results', actions: 'Actions', navigate: 'Go to', results: 'Search results',
@@ -102,7 +106,7 @@ export const en = {
   },
   shortcuts: {
     title: 'Keyboard shortcuts', palette: 'Command palette / search', goHome: 'Go home', goSubjects: 'Go to subjects', map: 'Map view', outline: 'Outline view', scheduleView: 'Schedule view', formulasView: 'Formula sheet',
-    closePanel: 'Close panel / dialog', practiceKeys: 'In practice: hint, solution, log 1/2/3, next',
+    closePanel: 'Close panel / dialog', practiceKeys: 'In practice: answer, hint, solution, log 1/2/3, next',
   },
   timer: {
     start: 'Start study session', stop: 'Stop', running: 'Studying', since: 'since {time}', actual: 'Studied {time}', estimated: 'estimated {time}', sessions: 'Sessions', noSessions: 'No study sessions yet.',
