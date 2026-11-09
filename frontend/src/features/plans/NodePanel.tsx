@@ -13,6 +13,7 @@ import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { Textarea } from '@/components/ui/input'
 import { Badge, Spinner } from '@/components/ui/misc'
 import { formatElapsed, useElapsed } from '@/components/StudyTimer'
+import { requestTimerPopout } from '@/components/TimerPopout'
 import { ExerciseDialog } from '@/features/exercises/ExerciseDialog'
 import { ExerciseRow } from '@/features/exercises/ExerciseRow'
 import { NodeFormulas } from '@/features/formulas/NodeFormulas'
@@ -240,7 +241,7 @@ function SessionRow({ node, subjectColor }: { node: NodeDetail; subjectColor: st
           <Square className="h-3 w-3 fill-current text-emerald-500" /> {t('timer.stop')} <span className="font-mono tabular-nums">{formatElapsed(elapsed)}</span>
         </Button>
       ) : (
-        <Button size="sm" variant="outline" onClick={() => start.mutate({ node_id: node.id })} disabled={start.isPending} className="gap-1.5">
+        <Button size="sm" variant="outline" onClick={() => { start.mutate({ node_id: node.id }); requestTimerPopout() }} disabled={start.isPending} className="gap-1.5">
           <Play className="h-3 w-3" style={{ color: subjectColor }} /> {t('timer.start')}
         </Button>
       )}

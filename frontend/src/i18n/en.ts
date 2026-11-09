@@ -111,6 +111,7 @@ export const en = {
   timer: {
     start: 'Start study session', stop: 'Stop', running: 'Studying', since: 'since {time}', actual: 'Studied {time}', estimated: 'estimated {time}', sessions: 'Sessions', noSessions: 'No study sessions yet.',
     stopped: 'Session saved ({time}).', studyingNode: 'Studying: {title}', forNode: 'for this topic', collapse: 'Minimise (click the chip to expand, drag to move)',
+    popout: 'Pop out — floats above every other window', popin: 'Back to the tab', popoutVideoHint: 'shows the time only; stop from the tab',
   },
   dashboard2: {
     dueToday: 'Due today', streak: 'Streak', days: '{n} days', day: '1 day', bestStreak: 'best {n}', minutesToday: 'today', weakSpots: 'Weak spots', weakHint: 'Topics with the most failed exercises recently.',

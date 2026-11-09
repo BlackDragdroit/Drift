@@ -1,10 +1,11 @@
-import { GripVertical, Minimize2, Square, Timer } from 'lucide-react'
+import { GripVertical, Minimize2, PictureInPicture2, Square, Timer } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState, type PointerEvent } from 'react'
 
 import { useActiveSession, useStopSession } from '@/api/learning'
 import { t } from '@/i18n'
 import { cn } from '@/lib/utils'
 
+import { useTimerPopout } from './TimerPopout'
 import { Button } from './ui/button'
 
 export function useElapsed(startedAt: string | null | undefined) {
@@ -57,6 +58,8 @@ export function StudyTimerPill() {
   const [pos, setPos] = useState<Pos | null>(() => readPos())
   const [collapsed, setCollapsed] = useState(() => localStorage.getItem(COLLAPSED_KEY) === '1')
   const drag = useRef<{ dx: number; dy: number; moved: boolean; start: Pos } | null>(null)
+  const onStop = useCallback(() => session && stop.mutate({ id: session.id }), [session, stop])
+  const popout = useTimerPopout({ session, elapsed, onStop })
 
   // Default corner: bottom-right (above the mobile nav), measured after first paint.
   useEffect(() => {
@@ -102,6 +105,8 @@ export function StudyTimerPill() {
   }
 
   if (!session) return null
+  // Document PiP shows the whole pill in its own always-on-top window; the in-page one steps aside.
+  if (popout.mode === 'document' && popout.active) return popout.portal
 
   return (
     <div
@@ -133,9 +138,19 @@ export function StudyTimerPill() {
           <Timer className="h-3.5 w-3.5 text-fg-muted" />
           <span className="font-mono text-sm tabular-nums">{formatElapsed(elapsed)}</span>
           {session.node_title && <span className="hidden max-w-[180px] truncate text-xs text-fg-muted sm:inline">{session.node_title}</span>}
-          <Button size="sm" variant="secondary" className="h-7 rounded-full px-2.5" onClick={() => stop.mutate({ id: session.id })} disabled={stop.isPending}>
+          <Button size="sm" variant="secondary" className="h-7 rounded-full px-2.5" onClick={onStop} disabled={stop.isPending}>
             <Square className="h-3 w-3 fill-current" /> {t('timer.stop')}
           </Button>
+          {popout.mode && (
+            <button
+              onClick={() => (popout.active ? popout.close() : popout.open())}
+              className={cn('rounded-full p-1.5 hover:bg-bg-sunken hover:text-fg', popout.active ? 'text-accent' : 'text-fg-subtle')}
+              aria-label={popout.active ? t('timer.popin') : t('timer.popout')}
+              title={popout.active ? t('timer.popin') : popout.mode === 'video' ? `${t('timer.popout')} — ${t('timer.popoutVideoHint')}` : t('timer.popout')}
+            >
+              <PictureInPicture2 className="h-3.5 w-3.5" />
+            </button>
+          )}
           <button onClick={toggleCollapsed} className="rounded-full p-1.5 text-fg-subtle hover:bg-bg-sunken hover:text-fg" aria-label={t('timer.collapse')} title={t('timer.collapse')}>
             <Minimize2 className="h-3.5 w-3.5" />
           </button>

@@ -191,3 +191,14 @@ is what the student wrote *before* revealing the solution, notes are the reflect
 **Schema sanitiser bug fixed**: `_inline_refs` removed every `"title"` key while stripping pydantic's
 schema metadata, which also deleted *properties* named `title` (extraction `ExerciseOut.title`,
 variations, formula candidates). Only the metadata key is removed now; a test pins this.
+
+## 2026-11-09 — Timer pop-out
+
+**Always-on-top timer via Picture-in-Picture, no desktop wrapper.** Chrome/Edge get Document PiP
+(`documentPictureInPicture.requestWindow`): the pill is portalled into the PiP window, the app's
+`<style>`/`<link>` tags and the `dark` class are mirrored (plus a `<base>` so relative URLs
+resolve), and the in-page pill steps aside while it is open. Safari and Android Chrome fall back to
+video PiP fed by a canvas redrawn once a second (display only). Firefox has no programmatic PiP,
+so the button is hidden there. PiP needs a user gesture, so "pop out again next time" is done by
+dispatching an event from the Start button's click handler while the activation is still fresh;
+closing the window by hand while a session runs clears that preference.
