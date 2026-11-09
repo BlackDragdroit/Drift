@@ -68,7 +68,7 @@ export function AppShell() {
 function Sidebar({ onImport, onSearch }: { onImport: () => void; onSearch: () => void }) {
   const { data: subjects } = useSubjects()
   return (
-    <aside className="sticky top-0 hidden h-dvh w-60 shrink-0 flex-col border-r bg-bg-elevated/60 md:flex">
+    <aside className="sticky top-0 hidden h-dvh w-60 shrink-0 flex-col border-r bg-bg-elevated/60 print:hidden md:flex">
       <div className="flex items-center gap-2.5 px-4 pt-4 pb-3">
         <img src="/icon.svg" alt="" className="h-7 w-7 rounded-lg" />
         <span className="font-semibold tracking-tight">{t('app.name')}</span>
@@ -133,7 +133,7 @@ function SideLink({ to, icon, label, end }: { to: string; icon: React.ReactNode;
 function MobileNav({ onImport, onSearch }: { onImport: () => void; onSearch: () => void }) {
   const item = 'flex flex-1 flex-col items-center justify-center gap-0.5 py-1.5 text-[10px] font-medium text-fg-muted'
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-30 flex border-t bg-bg-elevated/90 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden">
+    <nav className="fixed inset-x-0 bottom-0 z-30 flex border-t bg-bg-elevated/90 pb-[env(safe-area-inset-bottom)] backdrop-blur print:hidden md:hidden">
       <NavLink to="/" end className={({ isActive }) => cn(item, isActive && 'text-accent')}>
         <Home className="h-5 w-5" />
         {t('nav.home')}

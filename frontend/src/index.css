@@ -151,6 +151,25 @@
     scrollbar-width: thin;
     scrollbar-color: var(--line-strong) transparent;
   }
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media print {
+  @page {
+    margin: 14mm;
+  }
+  body {
+    background: #fff;
+    color: #000;
+  }
+  .formula-sheet .katex {
+    color: #000;
+  }
 }
 
 /* React Flow theming */

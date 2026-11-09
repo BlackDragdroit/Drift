@@ -17,6 +17,7 @@ volume.
 | **PDF → exercises** — upload a sheet, Claude extracts every exercise with sub-parts, LaTeX, solutions and figure bounding boxes. Review side by side with the original page: edit, merge, split, draw a rectangle to re-crop a figure, confirm suggested topics, save. | ![Review extraction](docs/screenshots/review-extraction.png) |
 | **Practice** — filters by subject/topic/difficulty, random / in-order / weighted *exam mix*; hints and solutions revealed step by step; keyboard-driven; attempts logged with time. Failed exercises feed the dashboard's weak spots. | ![Practice](docs/screenshots/practice.png) |
 | **Flashcards (FSRS)** — cards from plans, your own, or generated from a topic and your notes. Each rating button shows the next interval. | ![Flashcards](docs/screenshots/flashcards.png) |
+| **Formula sheet per plan** — the formulas you actually need, grouped by topic, added from exercise solutions while you practise (Claude can propose the ones found in a solution; you tick what to keep). Print it or download as Markdown before the exam. | |
 
 <p>
   <img src="docs/screenshots/mind-map-phone.png" alt="Mind map on a phone" width="300" />

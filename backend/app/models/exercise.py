@@ -115,6 +115,8 @@ class Attempt(Base):
     )
     result: Mapped[str] = mapped_column(String(16), nullable=False)
     notes: Mapped[str] = mapped_column(Text, default="", nullable=False)
+    # What the student wrote before revealing the solution (practice "scratch answer").
+    answer: Mapped[str] = mapped_column(Text, default="", nullable=False)
     duration_seconds: Mapped[int | None] = mapped_column(Integer)
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=utcnow, nullable=False, index=True

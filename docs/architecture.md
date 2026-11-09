@@ -38,8 +38,9 @@
 | `app/services/search.py` | FTS5 index maintenance + search |
 | `app/services/flashcards.py` | FSRS scheduling (py-fsrs), due queue, interval previews |
 | `app/services/generation.py` | Claude structured-output helpers: flashcards from a topic, exercise variations |
+| `app/services/formulas.py` | Formula sheet: tree-ordered listing, Markdown export, Claude harvest of formulas from an exercise/topic (proposals only) |
 | `app/services/backup.py` | ZIP backup (SQLite snapshot + uploads) and restore |
-| `app/api/` | Routers: `auth`, `dashboard`, `subjects`, `plans` (incl. `/schedule`), `nodes`, `exercises`, `documents`, `jobs`, `files`, `practice`, `sessions`, `search`, `flashcards`, `system` (backup/restore/reindex/similar); `serializers.py` maps models → API |
+| `app/api/` | Routers: `auth`, `dashboard`, `subjects`, `plans` (incl. `/schedule`), `nodes`, `exercises`, `documents`, `jobs`, `files`, `practice`, `sessions`, `search`, `flashcards`, `formulas`, `system` (backup/restore/reindex/similar); `serializers.py` maps models → API |
 | `alembic/` | Migrations (run automatically on startup) |
 | `tests/` | pytest: validation, merge, markdown, graph, API workflow |
 | `scripts/export_openapi.py` | Dumps `openapi.json` for the frontend type generator |

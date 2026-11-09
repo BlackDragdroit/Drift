@@ -2880,6 +2880,313 @@
     }
    }
   },
+  "/api/formulas": {
+   "get": {
+    "tags": [
+     "formulas"
+    ],
+    "summary": "List Entries",
+    "operationId": "list_entries_api_formulas_get",
+    "parameters": [
+     {
+      "name": "plan_id",
+      "in": "query",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Plan Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/FormulaOut"
+         },
+         "title": "Response List Entries Api Formulas Get"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "post": {
+    "tags": [
+     "formulas"
+    ],
+    "summary": "Create",
+    "operationId": "create_api_formulas_post",
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/FormulaCreate"
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FormulaOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/formulas/export.md": {
+   "get": {
+    "tags": [
+     "formulas"
+    ],
+    "summary": "Export Markdown",
+    "operationId": "export_markdown_api_formulas_export_md_get",
+    "parameters": [
+     {
+      "name": "plan_id",
+      "in": "query",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Plan Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/formulas/{entry_id}": {
+   "patch": {
+    "tags": [
+     "formulas"
+    ],
+    "summary": "Update",
+    "operationId": "update_api_formulas__entry_id__patch",
+    "parameters": [
+     {
+      "name": "entry_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Entry Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/FormulaUpdate"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FormulaOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "delete": {
+    "tags": [
+     "formulas"
+    ],
+    "summary": "Delete",
+    "operationId": "delete_api_formulas__entry_id__delete",
+    "parameters": [
+     {
+      "name": "entry_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Entry Id"
+      }
+     }
+    ],
+    "responses": {
+     "204": {
+      "description": "Successful Response"
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/formulas/reorder": {
+   "post": {
+    "tags": [
+     "formulas"
+    ],
+    "summary": "Reorder",
+    "operationId": "reorder_api_formulas_reorder_post",
+    "parameters": [
+     {
+      "name": "plan_id",
+      "in": "query",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Plan Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/FormulaReorder"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/FormulaOut"
+         },
+         "title": "Response Reorder Api Formulas Reorder Post"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/formulas/harvest": {
+   "post": {
+    "tags": [
+     "formulas"
+    ],
+    "summary": "Harvest",
+    "operationId": "harvest_api_formulas_harvest_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/FormulaHarvestRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FormulaHarvestOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
   "/api/system/stats": {
    "get": {
     "tags": [
@@ -3087,6 +3394,11 @@
       "title": "Notes",
       "default": ""
      },
+     "answer": {
+      "type": "string",
+      "title": "Answer",
+      "default": ""
+     },
      "duration_seconds": {
       "anyOf": [
        {
@@ -3124,6 +3436,11 @@
      "notes": {
       "type": "string",
       "title": "Notes"
+     },
+     "answer": {
+      "type": "string",
+      "title": "Answer",
+      "default": ""
      },
      "duration_seconds": {
       "anyOf": [
@@ -3997,6 +4314,29 @@
     ],
     "title": "ExerciseListItem"
    },
+   "ExerciseNodeRef": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "plan_id": {
+      "type": "integer",
+      "title": "Plan Id"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "title",
+     "plan_id"
+    ],
+    "title": "ExerciseNodeRef"
+   },
    "ExerciseOut": {
     "properties": {
      "id": {
@@ -4173,6 +4513,14 @@
       },
       "type": "array",
       "title": "Node Ids",
+      "default": []
+     },
+     "nodes": {
+      "items": {
+       "$ref": "#/components/schemas/ExerciseNodeRef"
+      },
+      "type": "array",
+      "title": "Nodes",
       "default": []
      }
     },
@@ -4711,6 +5059,339 @@
     },
     "type": "object",
     "title": "FlashcardUpdate"
+   },
+   "FormulaCandidateOut": {
+    "properties": {
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "content": {
+      "type": "string",
+      "title": "Content"
+     },
+     "note": {
+      "type": "string",
+      "title": "Note"
+     }
+    },
+    "type": "object",
+    "required": [
+     "title",
+     "content",
+     "note"
+    ],
+    "title": "FormulaCandidateOut"
+   },
+   "FormulaCreate": {
+    "properties": {
+     "plan_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Plan Id"
+     },
+     "node_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Node Id"
+     },
+     "exercise_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Exercise Id"
+     },
+     "title": {
+      "type": "string",
+      "maxLength": 200,
+      "title": "Title",
+      "default": ""
+     },
+     "content": {
+      "type": "string",
+      "minLength": 1,
+      "title": "Content"
+     },
+     "note": {
+      "type": "string",
+      "title": "Note",
+      "default": ""
+     },
+     "source": {
+      "type": "string",
+      "enum": [
+       "manual",
+       "exercise",
+       "generated"
+      ],
+      "title": "Source",
+      "default": "manual"
+     }
+    },
+    "type": "object",
+    "required": [
+     "content"
+    ],
+    "title": "FormulaCreate",
+    "description": "Either `plan_id` or `node_id` (the plan is derived from the node)."
+   },
+   "FormulaHarvestOut": {
+    "properties": {
+     "plan_id": {
+      "type": "integer",
+      "title": "Plan Id"
+     },
+     "node_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Node Id"
+     },
+     "exercise_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Exercise Id"
+     },
+     "candidates": {
+      "items": {
+       "$ref": "#/components/schemas/FormulaCandidateOut"
+      },
+      "type": "array",
+      "title": "Candidates"
+     },
+     "input_tokens": {
+      "type": "integer",
+      "title": "Input Tokens"
+     },
+     "output_tokens": {
+      "type": "integer",
+      "title": "Output Tokens"
+     }
+    },
+    "type": "object",
+    "required": [
+     "plan_id",
+     "node_id",
+     "exercise_id",
+     "candidates",
+     "input_tokens",
+     "output_tokens"
+    ],
+    "title": "FormulaHarvestOut"
+   },
+   "FormulaHarvestRequest": {
+    "properties": {
+     "exercise_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Exercise Id"
+     },
+     "node_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Node Id"
+     }
+    },
+    "type": "object",
+    "title": "FormulaHarvestRequest",
+    "description": "Exactly one of `exercise_id` / `node_id`: the material the formulas are extracted from."
+   },
+   "FormulaOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "plan_id": {
+      "type": "integer",
+      "title": "Plan Id"
+     },
+     "node_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Node Id"
+     },
+     "node_title": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Node Title"
+     },
+     "exercise_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Exercise Id"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "content": {
+      "type": "string",
+      "title": "Content"
+     },
+     "note": {
+      "type": "string",
+      "title": "Note"
+     },
+     "source": {
+      "type": "string",
+      "enum": [
+       "manual",
+       "exercise",
+       "generated"
+      ],
+      "title": "Source"
+     },
+     "sort_order": {
+      "type": "integer",
+      "title": "Sort Order"
+     },
+     "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Updated At"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "plan_id",
+     "node_id",
+     "exercise_id",
+     "title",
+     "content",
+     "note",
+     "source",
+     "sort_order",
+     "updated_at"
+    ],
+    "title": "FormulaOut"
+   },
+   "FormulaReorder": {
+    "properties": {
+     "ids": {
+      "items": {
+       "type": "integer"
+      },
+      "type": "array",
+      "title": "Ids"
+     }
+    },
+    "type": "object",
+    "required": [
+     "ids"
+    ],
+    "title": "FormulaReorder"
+   },
+   "FormulaUpdate": {
+    "properties": {
+     "node_id": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Node Id"
+     },
+     "title": {
+      "anyOf": [
+       {
+        "type": "string",
+        "maxLength": 200
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Title"
+     },
+     "content": {
+      "anyOf": [
+       {
+        "type": "string",
+        "minLength": 1
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Content"
+     },
+     "note": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Note"
+     }
+    },
+    "type": "object",
+    "title": "FormulaUpdate"
    },
    "GenerateCardsRequest": {
     "properties": {

@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight, Check, Eye, EyeOff, Flag, Lightbulb, Play, RotateCcw, Shuffle, SkipForward, Timer } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Check, Eye, EyeOff, Flag, Lightbulb, Play, RotateCcw, Shuffle, Sigma, SkipForward, Timer } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router'
 
@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Field, Input, Select } from '@/components/ui/input'
 import { Badge, Checkbox, Kbd, ProgressBar, Spinner } from '@/components/ui/misc'
 import { TopicPicker } from '@/features/documents/TopicPicker'
+import { FormulaQuickAdd } from '@/features/formulas/FormulaQuickAdd'
 import { RESULT_COLOR } from '@/features/exercises/ExerciseRow'
 import { t } from '@/i18n'
 import { cn, difficultyDots } from '@/lib/utils'
@@ -174,6 +175,7 @@ function Session({ queue, index, outcomes, onOutcome, onIndex, onFinish, onQuit 
   const addAttempt = useAddAttempt()
   const [hintsShown, setHintsShown] = useState(0)
   const [showSolution, setShowSolution] = useState(false)
+  const [formulaOpen, setFormulaOpen] = useState(false)
   const [elapsed, setElapsed] = useState(0)
   const startRef = useRef(Date.now())
 
@@ -195,7 +197,7 @@ function Session({ queue, index, outcomes, onOutcome, onIndex, onFinish, onQuit 
     (result: AttemptResult) => {
       if (!exercise || outcomes[exercise.id]) return
       onOutcome(exercise.id, result)
-      addAttempt.mutate({ exerciseId: exercise.id, body: { result, notes: '', duration_seconds: Math.round((Date.now() - startRef.current) / 1000) } })
+      addAttempt.mutate({ exerciseId: exercise.id, body: { result, notes: '', answer: '', duration_seconds: Math.round((Date.now() - startRef.current) / 1000) } })
     },
     [exercise, outcomes, onOutcome, addAttempt],
   )
@@ -250,7 +252,8 @@ function Session({ queue, index, outcomes, onOutcome, onIndex, onFinish, onQuit 
                 {exercise.node_keys.map((k) => <Badge key={k} className="font-mono">{k}</Badge>)}
               </p>
             </header>
-            <ExerciseContent exercise={exercise} hintsShown={hintsShown} onHint={() => setHintsShown(hintsShown + 1)} showSolution={showSolution} onToggleSolution={() => setShowSolution(!showSolution)} />
+            <ExerciseContent exercise={exercise} hintsShown={hintsShown} onHint={() => setHintsShown(hintsShown + 1)} showSolution={showSolution} onToggleSolution={() => setShowSolution(!showSolution)} onAddFormula={() => setFormulaOpen(true)} />
+            <FormulaQuickAdd exercise={exercise} open={formulaOpen} onOpenChange={setFormulaOpen} />
 
             <section className="rounded-xl border bg-bg-sunken/40 p-4">
               {outcome ? (
@@ -287,7 +290,7 @@ function Session({ queue, index, outcomes, onOutcome, onIndex, onFinish, onQuit 
   )
 }
 
-function ExerciseContent({ exercise, hintsShown, onHint, showSolution, onToggleSolution }: { exercise: Exercise; hintsShown: number; onHint: () => void; showSolution: boolean; onToggleSolution: () => void }) {
+function ExerciseContent({ exercise, hintsShown, onHint, showSolution, onToggleSolution, onAddFormula }: { exercise: Exercise; hintsShown: number; onHint: () => void; showSolution: boolean; onToggleSolution: () => void; onAddFormula: () => void }) {
   const figureFor = (partId: number | null) => exercise.figures.filter((f) => f.part_id === partId)
   return (
     <>
@@ -325,6 +328,11 @@ function ExerciseContent({ exercise, hintsShown, onHint, showSolution, onToggleS
         {(exercise.solution || exercise.parts.some((p) => p.solution)) && (
           <Button size="sm" variant={showSolution ? 'secondary' : 'outline'} onClick={onToggleSolution}>
             {showSolution ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />} {showSolution ? t('exercise.hideSolution') : t('exercise.solution')} <Kbd>S</Kbd>
+          </Button>
+        )}
+        {showSolution && exercise.nodes.length > 0 && (
+          <Button size="sm" variant="ghost" onClick={onAddFormula} className="animate-rise">
+            <Sigma className="h-3.5 w-3.5" /> {t('formulas.addTo')}
           </Button>
         )}
       </div>

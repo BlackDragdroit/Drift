@@ -7,6 +7,7 @@ from app.api import (
     exercises,
     files,
     flashcards,
+    formulas,
     jobs,
     nodes,
     plans,
@@ -31,6 +32,7 @@ for module in (
     sessions,
     search,
     flashcards,
+    formulas,
     system,
     files,
 ):

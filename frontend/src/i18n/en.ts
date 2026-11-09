@@ -101,7 +101,7 @@ export const en = {
     hint: 'Ctrl K', kinds: { subject: 'Subject', plan: 'Plan', node: 'Topic', note: 'Note', exercise: 'Exercise' },
   },
   shortcuts: {
-    title: 'Keyboard shortcuts', palette: 'Command palette / search', goHome: 'Go home', goSubjects: 'Go to subjects', map: 'Map view', outline: 'Outline view', scheduleView: 'Schedule view',
+    title: 'Keyboard shortcuts', palette: 'Command palette / search', goHome: 'Go home', goSubjects: 'Go to subjects', map: 'Map view', outline: 'Outline view', scheduleView: 'Schedule view', formulasView: 'Formula sheet',
     closePanel: 'Close panel / dialog', practiceKeys: 'In practice: hint, solution, log 1/2/3, next',
   },
   timer: {
@@ -128,6 +128,18 @@ export const en = {
     about: 'About',
   },
   similar: { generate: 'Generate similar exercise', generating: 'Generating variation…', done: 'Variation created.' },
+  formulas: {
+    tab: 'Formulas', title: 'Formula sheet', count: '{n} formulas', empty: 'Your formula sheet is empty.',
+    emptyHint: 'Add the formulas you actually need while working through exercises: from a solution (“Add to formula sheet”), from a topic, or by hand here. Keep it short enough to fit on a page before the exam.',
+    add: 'Add formula', addTo: 'Add to formula sheet', titleField: 'Name', titlePlaceholder: 'e.g. Convolution integral', content: 'Formula',
+    contentPlaceholder: '$$ y(t) = \\int_{-\\infty}^{\\infty} x(\\tau)\\,h(t-\\tau)\\,d\\tau $$', note: 'When it applies', notePlaceholder: 'Conditions, typical use, pitfalls (optional)',
+    topic: 'Topic', general: 'General', unassigned: 'No topic', preview: 'Preview', edit: 'Edit formula', delete: 'Delete formula', deleteConfirm: 'Remove this formula from the sheet?',
+    moveUp: 'Move up', moveDown: 'Move down', export: 'Download as Markdown', print: 'Print', added: 'Added to the formula sheet.',
+    harvest: 'Extract formulas', harvestFromExercise: 'Extract formulas from this solution', harvestFromTopic: 'Extract formulas from this topic', harvesting: 'Reading the material…',
+    candidates: 'Suggested formulas — tick the ones to keep', noCandidates: 'No new formulas found in this material.', addSelected: 'Add {n} selected', fromExercise: 'from exercise',
+    source: { manual: 'yours', exercise: 'from exercise', generated: 'AI' }, needsTopic: 'Link the exercise to a topic first — the formula sheet belongs to a plan.',
+    onlyDone: 'Only finished topics', showAll: 'All topics', inSheet: '{n} on the sheet', openSheet: 'Open formula sheet',
+  },
   errors: { notFound: 'Not found.', offline: 'You appear to be offline.' },
 } as const
 

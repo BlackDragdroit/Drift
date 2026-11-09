@@ -834,6 +834,93 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/formulas": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Entries */
+        get: operations["list_entries_api_formulas_get"];
+        put?: never;
+        /** Create */
+        post: operations["create_api_formulas_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/formulas/export.md": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Export Markdown */
+        get: operations["export_markdown_api_formulas_export_md_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/formulas/{entry_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete */
+        delete: operations["delete_api_formulas__entry_id__delete"];
+        options?: never;
+        head?: never;
+        /** Update */
+        patch: operations["update_api_formulas__entry_id__patch"];
+        trace?: never;
+    };
+    "/api/formulas/reorder": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reorder */
+        post: operations["reorder_api_formulas_reorder_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/formulas/harvest": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Harvest */
+        post: operations["harvest_api_formulas_harvest_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/system/stats": {
         parameters: {
             query?: never;
@@ -952,6 +1039,11 @@ export interface components {
              * @default
              */
             notes: string;
+            /**
+             * Answer
+             * @default
+             */
+            answer: string;
             /** Duration Seconds */
             duration_seconds?: number | null;
         };
@@ -966,6 +1058,11 @@ export interface components {
             result: "solved" | "partial" | "failed";
             /** Notes */
             notes: string;
+            /**
+             * Answer
+             * @default
+             */
+            answer: string;
             /** Duration Seconds */
             duration_seconds: number | null;
             /**
@@ -1290,6 +1387,15 @@ export interface components {
              */
             attempt_count: number;
         };
+        /** ExerciseNodeRef */
+        ExerciseNodeRef: {
+            /** Id */
+            id: number;
+            /** Title */
+            title: string;
+            /** Plan Id */
+            plan_id: number;
+        };
         /** ExerciseOut */
         ExerciseOut: {
             /** Id */
@@ -1343,6 +1449,11 @@ export interface components {
              * @default []
              */
             node_ids: number[];
+            /**
+             * Nodes
+             * @default []
+             */
+            nodes: components["schemas"]["ExerciseNodeRef"][];
         };
         /** ExercisePartIn */
         ExercisePartIn: {
@@ -1491,6 +1602,117 @@ export interface components {
             front?: string | null;
             /** Back */
             back?: string | null;
+        };
+        /** FormulaCandidateOut */
+        FormulaCandidateOut: {
+            /** Title */
+            title: string;
+            /** Content */
+            content: string;
+            /** Note */
+            note: string;
+        };
+        /**
+         * FormulaCreate
+         * @description Either `plan_id` or `node_id` (the plan is derived from the node).
+         */
+        FormulaCreate: {
+            /** Plan Id */
+            plan_id?: number | null;
+            /** Node Id */
+            node_id?: number | null;
+            /** Exercise Id */
+            exercise_id?: number | null;
+            /**
+             * Title
+             * @default
+             */
+            title: string;
+            /** Content */
+            content: string;
+            /**
+             * Note
+             * @default
+             */
+            note: string;
+            /**
+             * Source
+             * @default manual
+             * @enum {string}
+             */
+            source: "manual" | "exercise" | "generated";
+        };
+        /** FormulaHarvestOut */
+        FormulaHarvestOut: {
+            /** Plan Id */
+            plan_id: number;
+            /** Node Id */
+            node_id: number | null;
+            /** Exercise Id */
+            exercise_id: number | null;
+            /** Candidates */
+            candidates: components["schemas"]["FormulaCandidateOut"][];
+            /** Input Tokens */
+            input_tokens: number;
+            /** Output Tokens */
+            output_tokens: number;
+        };
+        /**
+         * FormulaHarvestRequest
+         * @description Exactly one of `exercise_id` / `node_id`: the material the formulas are extracted from.
+         */
+        FormulaHarvestRequest: {
+            /** Exercise Id */
+            exercise_id?: number | null;
+            /** Node Id */
+            node_id?: number | null;
+        };
+        /** FormulaOut */
+        FormulaOut: {
+            /** Id */
+            id: number;
+            /** Plan Id */
+            plan_id: number;
+            /** Node Id */
+            node_id: number | null;
+            /** Node Title */
+            node_title?: string | null;
+            /** Exercise Id */
+            exercise_id: number | null;
+            /** Title */
+            title: string;
+            /** Content */
+            content: string;
+            /** Note */
+            note: string;
+            /**
+             * Source
+             * @enum {string}
+             */
+            source: "manual" | "exercise" | "generated";
+            /** Sort Order */
+            sort_order: number;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** FormulaReorder */
+        FormulaReorder: {
+            /** Ids */
+            ids: number[];
+        };
+        /** FormulaUpdate */
+        FormulaUpdate: {
+            /** Node Id */
+            node_id?: number | null;
+            /** Title */
+            title?: string | null;
+            /** Content */
+            content?: string | null;
+            /** Note */
+            note?: string | null;
         };
         /** GenerateCardsRequest */
         GenerateCardsRequest: {
@@ -4368,6 +4590,233 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["GeneratedOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_entries_api_formulas_get: {
+        parameters: {
+            query: {
+                plan_id: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FormulaOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_api_formulas_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FormulaCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FormulaOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    export_markdown_api_formulas_export_md_get: {
+        parameters: {
+            query: {
+                plan_id: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_api_formulas__entry_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                entry_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_api_formulas__entry_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                entry_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FormulaUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FormulaOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reorder_api_formulas_reorder_post: {
+        parameters: {
+            query: {
+                plan_id: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FormulaReorder"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FormulaOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    harvest_api_formulas_harvest_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FormulaHarvestRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FormulaHarvestOut"];
                 };
             };
             /** @description Validation Error */

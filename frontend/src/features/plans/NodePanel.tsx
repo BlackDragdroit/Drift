@@ -15,6 +15,7 @@ import { Badge, Spinner } from '@/components/ui/misc'
 import { formatElapsed, useElapsed } from '@/components/StudyTimer'
 import { ExerciseDialog } from '@/features/exercises/ExerciseDialog'
 import { ExerciseRow } from '@/features/exercises/ExerciseRow'
+import { NodeFormulas } from '@/features/formulas/NodeFormulas'
 import { t } from '@/i18n'
 import { cn, difficultyDots, formatMinutes } from '@/lib/utils'
 
@@ -206,6 +207,8 @@ export function PanelBody({ node, plan, onSelect, onSetStatus, wide }: { node: N
       </Section>
 
       <CardsSection node={node} plan={plan} />
+
+      <NodeFormulas node={node} plan={plan} />
 
       {node.keywords.length > 0 && (
         <div className="flex flex-wrap gap-1">

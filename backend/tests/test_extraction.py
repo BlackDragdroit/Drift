@@ -36,6 +36,10 @@ def test_tool_schema_has_no_refs():
     assert (
         schema["properties"]["exercises"]["items"]["properties"]["page_from"]["type"] == "integer"
     )
+    # a *property* named "title" must survive the removal of schema `title` metadata
+    exercise = schema["properties"]["exercises"]["items"]
+    assert "title" in exercise["properties"] and "title" in exercise["required"]
+    assert "title" not in schema and "title" not in exercise
 
 
 def test_parse_chunk_validates_and_clamps_bbox():

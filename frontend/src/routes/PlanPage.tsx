@@ -1,4 +1,4 @@
-import { ArrowLeft, CalendarClock, CalendarDays, Download, ListTree, MoreHorizontal, Pencil, Trash2, Upload, Waypoints } from 'lucide-react'
+import { ArrowLeft, CalendarClock, CalendarDays, Download, ListTree, MoreHorizontal, Pencil, Sigma, Trash2, Upload, Waypoints } from 'lucide-react'
 import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router'
 
@@ -7,6 +7,7 @@ import { exportUrl } from '@/api/hooks'
 import type { Status } from '@/api/types'
 import { Button } from '@/components/ui/button'
 import { Badge, Dropdown, DropdownContent, DropdownItem, DropdownLabel, DropdownSeparator, DropdownTrigger, ProgressBar, Spinner } from '@/components/ui/misc'
+import { FormulaSheet } from '@/features/formulas/FormulaSheet'
 import { ImportDialog } from '@/features/plans/ImportDialog'
 import { NodePanel } from '@/features/plans/NodePanel'
 import { OutlineView } from '@/features/plans/OutlineView'
@@ -16,7 +17,7 @@ import { t } from '@/i18n'
 import { useIsMobile } from '@/lib/useMediaQuery'
 import { cn, daysUntil, downloadJson, formatDate, formatMinutes } from '@/lib/utils'
 
-type View = 'map' | 'outline' | 'schedule'
+type View = 'map' | 'outline' | 'schedule' | 'formulas'
 
 const MindMap = lazy(() => import('@/features/plans/MindMap').then((m) => ({ default: m.MindMap })))
 
@@ -34,7 +35,7 @@ export function PlanPage() {
   const [editOpen, setEditOpen] = useState(false)
   const [reimportOpen, setReimportOpen] = useState(false)
 
-  const view: View = params.view === 'outline' ? 'outline' : params.view === 'schedule' ? 'schedule' : params.view === 'map' ? 'map' : isMobile ? 'outline' : 'map'
+  const view: View = params.view === 'outline' ? 'outline' : params.view === 'schedule' ? 'schedule' : params.view === 'formulas' ? 'formulas' : params.view === 'map' ? 'map' : isMobile ? 'outline' : 'map'
   const selectedId = searchParams.get('node') ? Number(searchParams.get('node')) : null
 
   const select = useCallback(
@@ -54,13 +55,13 @@ export function PlanPage() {
 
   const onSetStatus = useCallback((nodeId: number, status: Status) => setStatus.mutate({ nodeId, status }), [setStatus])
 
-  // Escape closes the panel; m / o / s switch views (when not typing)
+  // Escape closes the panel; m / o / s / f switch views (when not typing)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && selectedId !== null) return select(null)
       const target = e.target as HTMLElement | null
       if (e.metaKey || e.ctrlKey || e.altKey || target?.closest('input, textarea, select, [contenteditable="true"], [role="dialog"]')) return
-      const views: Record<string, View> = { m: 'map', o: 'outline', s: 'schedule' }
+      const views: Record<string, View> = { m: 'map', o: 'outline', s: 'schedule', f: 'formulas' }
       if (views[e.key]) navigate(`/plans/${planId}/${views[e.key]}${selectedId ? `?node=${selectedId}` : ''}`, { replace: true })
     }
     window.addEventListener('keydown', onKey)
@@ -86,7 +87,7 @@ export function PlanPage() {
     <Link
       to={`/plans/${plan.id}/${v}${selectedId ? `?node=${selectedId}` : ''}`}
       replace
-      className={cn('inline-flex h-8 items-center gap-1.5 rounded-md px-3 text-sm font-medium transition-colors', view === v ? 'bg-bg-elevated text-fg shadow-sm' : 'text-fg-muted hover:text-fg')}
+      className={cn('inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md px-2.5 text-sm font-medium transition-colors md:px-3', view === v ? 'bg-bg-elevated text-fg shadow-sm' : 'text-fg-muted hover:text-fg')}
     >
       {icon}
       {label}
@@ -95,7 +96,7 @@ export function PlanPage() {
 
   return (
     <div className="flex h-[calc(100dvh-3.5rem-env(safe-area-inset-bottom))] flex-col md:h-dvh">
-      <header className="z-20 border-b bg-bg/85 backdrop-blur">
+      <header className="z-20 border-b bg-bg/85 backdrop-blur print:hidden">
         <div className="flex items-center gap-2 px-3 py-2.5 md:px-5">
           <Button variant="ghost" size="icon-sm" asChild className="-ml-1 shrink-0">
             <Link to={`/subjects/${plan.subject_id}`} aria-label={t('common.back')}>
@@ -135,6 +136,7 @@ export function PlanPage() {
             {tab('map', <Waypoints className="h-4 w-4" />, t('plan.map'))}
             {tab('outline', <ListTree className="h-4 w-4" />, t('plan.outline'))}
             {tab('schedule', <CalendarDays className="h-4 w-4" />, t('plan.schedule'))}
+            {tab('formulas', <Sigma className="h-4 w-4" />, t('formulas.tab'))}
           </div>
           <Dropdown>
             <DropdownTrigger asChild>
@@ -165,10 +167,11 @@ export function PlanPage() {
           </Dropdown>
         </div>
         <ProgressBar value={plan.progress.percent} color={plan.subject_color} height="h-[3px]" className="rounded-none" />
-        <div className="flex items-center gap-1 border-t bg-bg-sunken/60 px-2 py-1 md:hidden">
+        <div className="scrollbar-none flex items-center gap-1 overflow-x-auto border-t bg-bg-sunken/60 px-2 py-1 md:hidden">
           {tab('map', <Waypoints className="h-4 w-4" />, t('plan.map'))}
           {tab('outline', <ListTree className="h-4 w-4" />, t('plan.outline'))}
           {tab('schedule', <CalendarDays className="h-4 w-4" />, t('plan.schedule'))}
+          {tab('formulas', <Sigma className="h-4 w-4" />, t('formulas.tab'))}
         </div>
       </header>
 
@@ -179,6 +182,8 @@ export function PlanPage() {
           </Suspense>
         ) : view === 'schedule' ? (
           <ScheduleView plan={plan} selectedId={selectedId} onSelect={select} onSetStatus={onSetStatus} onEditPlan={() => setEditOpen(true)} />
+        ) : view === 'formulas' ? (
+          <FormulaSheet plan={plan} onSelect={select} />
         ) : (
           <OutlineView plan={plan} selectedId={selectedId} onSelect={select} onSetStatus={onSetStatus} />
         )}

@@ -258,8 +258,15 @@ class AttemptOut(ORMModel):
     id: int
     result: AttemptResult
     notes: str
+    answer: str = ""
     duration_seconds: int | None
     created_at: datetime
+
+
+class ExerciseNodeRef(BaseModel):
+    id: int
+    title: str
+    plan_id: int
 
 
 class ExerciseListItem(ORMModel):
@@ -287,11 +294,13 @@ class ExerciseOut(ExerciseListItem):
     figures: list[ExerciseFigureOut]
     attempts: list[AttemptOut]
     node_ids: list[int] = []
+    nodes: list[ExerciseNodeRef] = []
 
 
 class AttemptCreate(BaseModel):
     result: AttemptResult
     notes: str = ""
+    answer: str = ""
     duration_seconds: int | None = Field(None, ge=0)
 
 
@@ -704,3 +713,67 @@ class DashboardOut(BaseModel):
     weak_spots: list[WeakSpotOut]
     retry_exercises: list[RetryExerciseOut]
     active_session: SessionOut | None = None
+
+
+# --- Formula sheet -------------------------------------------------------------------------------
+
+FormulaSource = Literal["manual", "exercise", "generated"]
+
+
+class FormulaOut(ORMModel):
+    id: int
+    plan_id: int
+    node_id: int | None
+    node_title: str | None = None
+    exercise_id: int | None
+    title: str
+    content: str
+    note: str
+    source: FormulaSource
+    sort_order: int
+    updated_at: datetime
+
+
+class FormulaCreate(BaseModel):
+    """Either `plan_id` or `node_id` (the plan is derived from the node)."""
+
+    plan_id: int | None = None
+    node_id: int | None = None
+    exercise_id: int | None = None
+    title: str = Field("", max_length=200)
+    content: str = Field(min_length=1)
+    note: str = ""
+    source: FormulaSource = "manual"
+
+
+class FormulaUpdate(BaseModel):
+    node_id: int | None = None
+    title: str | None = Field(None, max_length=200)
+    content: str | None = Field(None, min_length=1)
+    note: str | None = None
+
+
+class FormulaReorder(BaseModel):
+    ids: list[int]
+
+
+class FormulaHarvestRequest(BaseModel):
+    """Exactly one of `exercise_id` / `node_id`: the material the formulas are extracted from."""
+
+    exercise_id: int | None = None
+    node_id: int | None = None
+
+
+class FormulaCandidateOut(BaseModel):
+    title: str
+    content: str
+    note: str
+
+
+class FormulaHarvestOut(BaseModel):
+    plan_id: int
+    node_id: int | None
+    exercise_id: int | None
+    candidates: list[FormulaCandidateOut]
+    input_tokens: int
+    output_tokens: int

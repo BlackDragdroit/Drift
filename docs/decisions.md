@@ -169,3 +169,25 @@ failed migration run can leave it half-applied.
 **PWA is deliberately minimal**: a web manifest + a hand-written service worker that caches hashed
 assets and the app shell for offline start, and never touches `/api`. No background sync; the app
 needs the server for data anyway.
+
+## 2026-11-09 — Formula sheet, scratch answers
+
+**Formula sheet is a per-plan table (`formula_entries`), not part of the plan format.** It is the
+student's curated artefact (what *they* want on one page before the exam), so imports never touch
+it and a topic being archived only unassigns the entry (`node_id` → NULL, shown under "General").
+Entries are grouped by topic in tree order; `sort_order` is per topic.
+
+**AI only proposes, never writes.** `POST /api/formulas/harvest` asks Claude for formulas that
+*appear in* one exercise's solution or one topic's material (description, objectives, note, linked
+solutions) and returns candidates; the UI shows them with checkboxes and only ticked ones are
+created (`source = generated`). Rationale: formulas are the one place where a hallucination is
+expensive and a human check is cheap. We decided against generated per-topic "lessons" for the same
+reason (see conversation 2026-11-09): cheap in tokens, but it competes with the textbook and with
+active practice.
+
+**Scratch answer** lives on the attempt (`attempts.answer`) next to the free-form `notes`: the answer
+is what the student wrote *before* revealing the solution, notes are the reflection afterwards.
+
+**Schema sanitiser bug fixed**: `_inline_refs` removed every `"title"` key while stripping pydantic's
+schema metadata, which also deleted *properties* named `title` (extraction `ExerciseOut.title`,
+variations, formula candidates). Only the metadata key is removed now; a test pins this.

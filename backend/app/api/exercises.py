@@ -15,6 +15,7 @@ from app.schemas.api import (
     ExerciseCreate,
     ExerciseFigureOut,
     ExerciseListItem,
+    ExerciseNodeRef,
     ExerciseOut,
     ExercisePartOut,
     ExerciseUpdate,
@@ -72,6 +73,15 @@ def _exercise_out(db: DB, ex: Exercise) -> ExerciseOut:
         ],
         attempts=[AttemptOut.model_validate(a) for a in ex.attempts],
         node_ids=[link.node_id for link in ex.node_links],
+        nodes=[
+            ExerciseNodeRef(id=nid, title=title, plan_id=plan_id)
+            for nid, title, plan_id in db.execute(
+                select(PlanNode.id, PlanNode.title, PlanNode.plan_id)
+                .join(ExerciseNodeLink, ExerciseNodeLink.node_id == PlanNode.id)
+                .where(ExerciseNodeLink.exercise_id == ex.id)
+                .order_by(PlanNode.plan_id, PlanNode.sort_order)
+            ).all()
+        ],
     )
 
 
@@ -188,6 +198,7 @@ def add_attempt(exercise_id: int, body: AttemptCreate, db: DB, user: CurrentUser
             exercise_id=ex.id,
             result=body.result,
             notes=body.notes,
+            answer=body.answer,
             duration_seconds=body.duration_seconds,
         )
     )
@@ -200,6 +211,7 @@ def add_attempt(exercise_id: int, body: AttemptCreate, db: DB, user: CurrentUser
         detail=body.result,
     )
     db.commit()
+    db.expire(ex, ["attempts"])
     return _exercise_out(db, _get_exercise(db, exercise_id, user.id))
 
 

@@ -114,12 +114,17 @@ def _inline_refs(schema: dict[str, Any]) -> dict[str, Any]:
     """Resolve local $refs so the schema has no $defs."""
     defs = schema.pop("$defs", {})
 
-    def walk(node: Any) -> Any:
+    def walk(node: Any, in_properties: bool = False) -> Any:
         if isinstance(node, dict):
             if "$ref" in node:
                 name = node["$ref"].split("/")[-1]
                 return walk(defs[name])
-            return {k: walk(v) for k, v in node.items() if k != "title"}
+            # Drop pydantic's schema `title` metadata, but never a *property* called "title".
+            return {
+                k: walk(v, in_properties=(k == "properties"))
+                for k, v in node.items()
+                if in_properties or k != "title"
+            }
         if isinstance(node, list):
             return [walk(v) for v in node]
         return node

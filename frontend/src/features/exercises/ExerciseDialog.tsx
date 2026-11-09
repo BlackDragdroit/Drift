@@ -1,4 +1,4 @@
-import { Eye, EyeOff, FileText, Lightbulb, MoreHorizontal, Pencil, Sparkles, Trash2 } from 'lucide-react'
+import { Eye, EyeOff, FileText, Lightbulb, MoreHorizontal, Pencil, Sigma, Sparkles, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 import { pageImageUrl, useDeleteExercise } from '@/api/documents'
@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { Textarea } from '@/components/ui/input'
 import { Badge, Dropdown, DropdownContent, DropdownItem, DropdownSeparator, DropdownTrigger, Spinner } from '@/components/ui/misc'
+import { FormulaQuickAdd } from '@/features/formulas/FormulaQuickAdd'
 import { t } from '@/i18n'
 import { cn, difficultyDots, formatDate } from '@/lib/utils'
 
@@ -25,6 +26,7 @@ export function ExerciseDialog({ exerciseId, onClose }: { exerciseId: number | n
   useEffect(() => { setOverrideId(null) }, [exerciseId])
   const [editOpen, setEditOpen] = useState(false)
   const [sourceOpen, setSourceOpen] = useState(false)
+  const [formulaOpen, setFormulaOpen] = useState(false)
 
   const onDelete = () => {
     if (exercise && confirm(t('exercise.deleteConfirm'))) del.mutate(exercise.id, { onSuccess: onClose })
@@ -50,6 +52,11 @@ export function ExerciseDialog({ exerciseId, onClose }: { exerciseId: number | n
                   <FileText className="h-3.5 w-3.5" /> {t('exercise.showSource')}
                 </Button>
               )}
+              {exercise.nodes.length > 0 && (
+                <Button size="sm" variant="outline" onClick={() => setFormulaOpen(true)}>
+                  <Sigma className="h-3.5 w-3.5" /> {t('formulas.addTo')}
+                </Button>
+              )}
               <Dropdown>
                 <DropdownTrigger asChild>
                   <Button size="sm" variant="ghost" className="ml-auto" aria-label={t('common.more')}>
@@ -72,6 +79,7 @@ export function ExerciseDialog({ exerciseId, onClose }: { exerciseId: number | n
             </div>
             <ExerciseBody key={exercise.id} exercise={exercise} />
             <ExerciseEditDialog open={editOpen} onOpenChange={setEditOpen} exercise={exercise} subjectId={exercise.subject_id} />
+            <FormulaQuickAdd exercise={exercise} open={formulaOpen} onOpenChange={setFormulaOpen} />
             {exercise.document_id && exercise.page_from && (
               <SourcePageDialog open={sourceOpen} onOpenChange={setSourceOpen} documentId={exercise.document_id} pageFrom={exercise.page_from} pageTo={exercise.page_to ?? exercise.page_from} title={exercise.document_title ?? ''} />
             )}
@@ -114,7 +122,7 @@ function ExerciseBody({ exercise }: { exercise: Exercise }) {
     setHintsShown(0)
   }, [exercise.id])
 
-  const log = (result: AttemptResult) => addAttempt.mutate({ exerciseId: exercise.id, body: { result, notes } }, { onSuccess: () => setNotes('') })
+  const log = (result: AttemptResult) => addAttempt.mutate({ exerciseId: exercise.id, body: { result, notes, answer: '' } }, { onSuccess: () => setNotes('') })
   const figureFor = (partId: number | null) => exercise.figures.filter((f) => f.part_id === partId)
 
   return (

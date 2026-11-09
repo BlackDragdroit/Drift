@@ -160,6 +160,7 @@ export function ShortcutsDialog({ open, onOpenChange }: { open: boolean; onOpenC
     [t('shortcuts.map'), ['m']],
     [t('shortcuts.outline'), ['o']],
     [t('shortcuts.scheduleView'), ['s']],
+    [t('shortcuts.formulasView'), ['f']],
     [t('shortcuts.closePanel'), ['Esc']],
     [t('shortcuts.practiceKeys'), ['h', 's', '1-3', 'n']],
   ]
