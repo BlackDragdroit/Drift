@@ -1,4 +1,4 @@
-import { ExternalLink, Square } from 'lucide-react'
+import { Square } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
@@ -6,7 +6,6 @@ import type { StudySession } from '@/api/learning'
 import { t } from '@/i18n'
 
 import { formatElapsed } from './StudyTimer'
-import { Button } from './ui/button'
 
 /**
  * "Pop out" the study timer into a window that stays above every other application.
@@ -109,7 +108,8 @@ export function useTimerPopout({ session, elapsed, onStop }: { session: StudySes
 
   const openDocument = useCallback(async () => {
     if (!window.documentPictureInPicture || pipWin.current) return
-    const win = await window.documentPictureInPicture.requestWindow({ width: 320, height: 150 })
+    // One slim row, like the in-app pill. Chrome adds its own title bar with back-to-tab / close.
+    const win = await window.documentPictureInPicture.requestWindow({ width: 268, height: 52 })
     pipWin.current = win
     mirrorStyles(win.document)
     const root = win.document.createElement('div')
@@ -213,37 +213,28 @@ export function useTimerPopout({ session, elapsed, onStop }: { session: StudySes
   useEffect(() => () => pipWin.current?.close(), [])
 
   const active = pipRoot !== null || videoActive
-  const portal = pipRoot
-    ? createPortal(
-        <PopoutContent elapsed={elapsed} title={session?.node_title ?? ''} onStop={onStop} onBack={close} />,
-        pipRoot,
-      )
-    : null
+  const portal = pipRoot ? createPortal(<PopoutContent elapsed={elapsed} title={session?.node_title ?? ''} onStop={onStop} />, pipRoot) : null
 
   return { mode, active, open, close, portal }
 }
 
-function PopoutContent({ elapsed, title, onStop, onBack }: { elapsed: number; title: string; onStop: () => void; onBack: () => void }) {
+function PopoutContent({ elapsed, title, onStop }: { elapsed: number; title: string; onStop: () => void }) {
   return (
-    <div className="flex h-screen select-none flex-col justify-between overflow-hidden bg-bg-elevated px-4 py-3 text-fg">
-      <div className="flex items-center gap-2 text-xs text-fg-muted">
-        <span className="relative flex h-2 w-2 shrink-0">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
-          <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-        </span>
-        <span className="font-medium">Drift</span>
-        <span>·</span>
-        <span className="truncate">{title || t('timer.running')}</span>
-      </div>
-      <div className="font-mono text-[40px] leading-none font-semibold tracking-tight tabular-nums">{formatElapsed(elapsed)}</div>
-      <div className="flex items-center gap-1.5">
-        <Button size="sm" variant="primary" className="h-7 rounded-full px-3" onClick={onStop}>
-          <Square className="h-3 w-3 fill-current" /> {t('timer.stop')}
-        </Button>
-        <Button size="sm" variant="ghost" className="h-7 rounded-full px-2.5 text-fg-muted" onClick={onBack} title={t('timer.popin')}>
-          <ExternalLink className="h-3.5 w-3.5 rotate-180" /> {t('timer.popin')}
-        </Button>
-      </div>
+    <div className="flex h-screen items-center gap-2.5 overflow-hidden bg-bg-elevated px-3 text-fg select-none">
+      <span className="relative flex h-2 w-2 shrink-0">
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
+        <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+      </span>
+      <span className="font-mono text-[15px] font-semibold tracking-tight tabular-nums">{formatElapsed(elapsed)}</span>
+      <span className="min-w-0 flex-1 truncate text-xs text-fg-muted" title={title}>{title || t('timer.running')}</span>
+      <button
+        onClick={onStop}
+        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-bg-sunken text-fg-muted transition-colors hover:bg-red-500/15 hover:text-red-500"
+        aria-label={t('timer.stop')}
+        title={t('timer.stop')}
+      >
+        <Square className="h-3 w-3 fill-current" />
+      </button>
     </div>
   )
 }
